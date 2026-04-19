@@ -46,10 +46,10 @@ Fantôme IV V1 repose sur :
 - `1 Daisy Seed 65MB`
 - `1 entrée MIDI DIN 5 broches`
 - `1 sortie ligne stéréo sur jack TRS 6,35 mm`
-- `1 écran OLED 128x64`
+- `1 écran OLED 128x64` de type `SSD1306`
 - `8 potentiomètres`
 - `1 encodeur rotatif cliquable`
-- `4 boutons`
+- `4 boutons poussoirs momentané NO`
 
 Principe général :
 
@@ -73,8 +73,8 @@ Face avant
     |
     +-- 8 potentiomètres -> ADC
     +-- 1 encodeur + switch -> GPIO
-    +-- 4 boutons -> GPIO
-    +-- OLED 128x64 -> I2C ou SPI
+    +-- 4 boutons poussoirs -> GPIO
+    +-- OLED SSD1306 128x64 -> I2C
 
 Daisy Seed 65MB
     |
@@ -139,8 +139,8 @@ Décision :
 
 - `8 potentiomètres`
 - `1 encodeur rotatif cliquable`
-- `4 boutons`
-- `1 OLED 128x64`
+- `4 boutons poussoirs momentané NO`
+- `1 OLED 128x64` de type `SSD1306`
 
 ### 4.2 Répartition retenue
 
@@ -170,6 +170,10 @@ Boutons :
 - `Page +`
 - `Shift / Back`
 - `Preset / Save / Action`
+
+Note :
+
+- ces `4` boutons sont distincts du bouton poussoir intégré à l'encodeur
 
 ### 4.3 Philosophie UI hardware
 
@@ -233,17 +237,24 @@ Ce bloc reçoit le MIDI entrant depuis un clavier, séquenceur ou autre contrôl
 Au minimum :
 
 - connecteur DIN 5
-- optocoupleur
+- optocoupleur de type `H11L1` ou compatible
 - résistances du circuit MIDI
+- découplage local de l'optocoupleur
 - liaison RX vers la Daisy
 
 ### 6.4 Référence de conception
 
 Ce bloc devra suivre une topologie MIDI In standard.
 
+Référence prototype retenue :
+
+- optocoupleur de type `H11L1` ou compatible
+- résistances dédiées au MIDI In
+- condensateur de découplage local `100nF`
+
 À figer au schéma :
 
-- référence exacte de l'optocoupleur
+- référence exacte de l'optocoupleur si une alternative au `H11L1` est retenue
 - valeurs exactes des résistances
 - filtrage ou protection complémentaire éventuels
 - broche Daisy retenue pour l'UART MIDI
@@ -325,13 +336,13 @@ Exigences :
 Exigences :
 
 - `128x64`
+- contrôleur `SSD1306`
 - très lisible
 - pilotable simplement
 
 À figer :
 
-- `I2C` ou `SPI`
-- référence exacte du module
+- variante mécanique exacte du module
 - implantation mécanique
 
 ## 9. Alimentation et stratégie de bruit
@@ -388,11 +399,11 @@ Ordre de mise en œuvre recommandé :
 
 Avant de considérer la base hardware comme totalement verrouillée, il reste à figer :
 
-- référence exacte de l'optocoupleur MIDI
-- type exact d'écran OLED
 - brochage Daisy détaillé
 - topologie exacte de la sortie audio
 - stratégie d'alimentation finale
+- référence finale de l'optocoupleur si différente du `H11L1`
+- variante mécanique exacte de l'écran OLED
 - conventions mécaniques des potentiomètres, boutons et encodeur
 
 ## 13. Critère de solidité documentaire hardware

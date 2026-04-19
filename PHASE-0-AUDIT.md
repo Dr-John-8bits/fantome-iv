@@ -169,11 +169,11 @@ Documents concernés :
 À verrouiller avant clôture sereine de la phase 0 :
 
 - brochage détaillé de la `Daisy Seed`
-- référence exacte de l'optocoupleur MIDI
 - valeurs exactes du circuit `MIDI In`
-- type exact d'écran `OLED`
 - topologie exacte de la sortie audio
 - stratégie d'alimentation finale et règles de masse associées
+- référence finale de l'optocoupleur si différente du `H11L1`
+- variante mécanique exacte de l'écran `OLED`
 
 ### 2.2 Choix mécaniques
 

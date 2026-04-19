@@ -27,12 +27,13 @@ Important :
 - un lot de fils Dupont
 - 8 potentiomètres linéaires `10k`
 - 1 encodeur rotatif avec bouton poussoir
-- 4 boutons poussoirs momentané
-- 1 écran `OLED 128x64` I2C ou SPI
+- 4 boutons poussoirs momentané NO
+- 1 écran `OLED 128x64` `SSD1306` `I2C`
 - 1 petit lot de résistances et condensateurs de base
 - 1 jack TRS stéréo `6,35 mm` pour la sortie audio
 - 1 connecteur MIDI In
-- 1 optocoupleur pour l'entrée MIDI
+- 1 optocoupleur `H11L1` ou compatible pour l'entrée MIDI
+- 1 résistance `220R`, 1 résistance `270R` et 1 condensateur `100nF` pour le bloc MIDI In de départ
 - 1 casque ou enceintes de monitoring
 - 1 clavier MIDI ou contrôleur MIDI que tu as déjà
 

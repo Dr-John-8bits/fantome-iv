@@ -7,8 +7,8 @@ Elle est orientée prototype réel autour de la route retenue :
 - `Daisy Seed 65MB`
 - `8 potentiomètres`
 - `1 encodeur rotatif cliquable`
-- `4 boutons`
-- `1 écran OLED 128x64`
+- `4 boutons poussoirs momentané NO`
+- `1 écran OLED 128x64` de type `SSD1306`
 - `MIDI In` physique
 - sortie audio stéréo
 
@@ -30,11 +30,13 @@ Elle est orientée prototype réel autour de la route retenue :
 | Proto | Fils Dupont | mâle/mâle + mâle/femelle | 1 lot | 1 lot | Indispensable | Pour tout le câblage de bench |
 | Interface | Potentiomètres | `10k` linéaires | 8 | 10 | Indispensable | 8 pour le projet, 2 de marge |
 | Interface | Encodeur rotatif | incrémental + bouton poussoir | 1 | 2 | Indispensable | 1 pour le projet, 1 de secours |
-| Interface | Boutons poussoirs | momentané NO | 4 | 6 | Indispensable | 4 pour le projet, 2 de marge |
-| Interface | Écran OLED | `128x64`, SSD1306, I2C ou SPI | 1 | 1 à 2 | Indispensable | I2C simple pour démarrer |
+| Interface | Boutons poussoirs | momentané NO | 4 | 6 | Indispensable | 4 boutons de face avant, hors bouton intégré à l'encodeur |
+| Interface | Écran OLED | `128x64`, `SSD1306`, `I2C` | 1 | 1 à 2 | Indispensable | Module simple 4 broches recommandé pour démarrer |
 | Audio | Sortie audio | jack TRS stéréo `6,35 mm` | 1 | 1 | Indispensable | Cible produit V1 |
 | MIDI | Connecteur MIDI In | DIN 5 broches femelle | 1 | 1 | Indispensable | Interface musicale principale de la V1 |
-| MIDI | Optocoupleur | compatible MIDI In | 1 | 2 | Indispensable | Entrée MIDI opto-isolée |
+| MIDI | Optocoupleur | `H11L1` ou compatible MIDI In | 1 | 2 | Indispensable | Référence de départ du prototype |
+| MIDI | Résistances MIDI In | `220R`, `270R` | 2 | 2 à 4 | Indispensable | Valeurs de départ à valider au schéma final |
+| MIDI | Condensateur MIDI In | `100nF` | 1 | 2 à 4 | Indispensable | Découplage local de l'optocoupleur |
 | Composants | Résistances | assortiment de base | 1 lot | 1 lot | Indispensable | Pour MIDI, LED, pull-up, essais |
 | Composants | Condensateurs | assortiment de base | 1 lot | 1 lot | Indispensable | Découplage et essais |
 | Test | Casque ou monitoring | sortie ligne ou casque | 1 | 1 | Indispensable | Pour écouter le proto |
@@ -55,10 +57,10 @@ Ces éléments existeront probablement, mais la référence exacte dépendra du 
 
 | Élément | Direction actuelle | Statut |
 |---|---|---|
-| Circuit MIDI In | DIN 5 + optocoupleur + résistances | À figer |
+| Circuit MIDI In | DIN 5 + `H11L1` ou compatible + résistances + `100nF` | À figer |
 | Étage de sortie audio | sortie stéréo propre, niveau maîtrisé | À figer |
 | Alimentation finale | hors USB uniquement si nécessaire | À figer |
-| Type exact d'OLED | I2C ou SPI | À figer |
+| Variante mécanique de l'OLED | `SSD1306 128x64 I2C` | À figer |
 | Type exact de potentiomètres | encombrement, axe, fixation | À figer |
 | Type exact d'encodeur | encombrement, filetage, sensation | À figer |
 | Support mécanique de la Daisy | headers, entretoises, support | À figer |

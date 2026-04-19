@@ -32,10 +32,10 @@ Statut actuel :
 Le schéma V1 doit permettre :
 
 - de jouer Fantôme IV via `MIDI DIN 5 broches`
-- d'afficher l'UI sur `OLED 128x64`
+- d'afficher l'UI sur `OLED SSD1306 128x64`
 - de lire `8 potentiomètres`
 - de lire `1 encodeur rotatif cliquable`
-- de lire `4 boutons`
+- de lire `4 boutons poussoirs momentané NO`
 - de sortir l'audio en `ligne stéréo TRS 6,35 mm`
 - de programmer et débugger la Daisy via `micro-USB`
 
@@ -47,10 +47,10 @@ Le schéma V1 doit comporter au minimum les blocs suivants :
 2. `alimentation et découplage`
 3. `MIDI In DIN 5 broches`
 4. `sortie audio stéréo`
-5. `OLED 128x64`
+5. `OLED SSD1306 128x64`
 6. `8 potentiomètres`
 7. `1 encodeur + switch`
-8. `4 boutons`
+8. `4 boutons poussoirs momentané NO`
 9. `headers / points de debug / accès de programmation` si utile
 
 ## 3. Bloc Daisy Seed 65MB
@@ -114,8 +114,9 @@ Recevoir le MIDI externe comme interface musicale principale.
 ### 5.2 Le schéma doit contenir
 
 - un connecteur `DIN 5 broches`
-- un optocoupleur
+- un optocoupleur de type `H11L1` ou compatible
 - les résistances du circuit MIDI In
+- un condensateur de découplage local `100nF`
 - la liaison vers une entrée UART RX de la Daisy
 
 ### 5.3 Exigences
@@ -126,7 +127,7 @@ Recevoir le MIDI externe comme interface musicale principale.
 
 ### 5.4 À figer
 
-- référence exacte de l'optocoupleur
+- référence exacte de l'optocoupleur si une alternative au `H11L1` est retenue
 - valeurs exactes des résistances
 - éventuel indicateur LED MIDI
 - broche UART retenue
@@ -165,6 +166,7 @@ Afficher l'interface utilisateur de Fantôme IV.
 ### 7.2 Le schéma doit contenir
 
 - le module `OLED 128x64`
+- son contrôleur `SSD1306`
 - son alimentation
 - son bus de communication
 
@@ -176,11 +178,11 @@ Afficher l'interface utilisateur de Fantôme IV.
 
 ### 7.4 Décision actuelle
 
-- `I2C` privilégié pour simplifier le prototype, sauf conflit matériel ultérieur
+- `I2C` retenu pour simplifier le prototype, sauf blocage matériel majeur découvert plus tard
 
 ### 7.5 À figer
 
-- référence exacte du module
+- variante mécanique exacte du module
 - pull-up externes si nécessaires
 - brochage Daisy retenu
 
@@ -246,6 +248,7 @@ Piloter la navigation et les actions de l'interface.
 
 - `4 boutons` momentané NO
 - câblage GPIO
+- liaison au `GND` si les pull-up internes de la Daisy sont retenus pour le prototype
 
 ### 10.3 Fonctions retenues
 
@@ -256,7 +259,7 @@ Piloter la navigation et les actions de l'interface.
 
 ### 10.4 À figer
 
-- pull-up internes ou externes
+- validation finale des pull-up internes ou externes
 - éventuel filtrage ou anti-rebond matériel
 
 ## 11. Budget de brochage

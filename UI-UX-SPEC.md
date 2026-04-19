@@ -63,7 +63,7 @@ Elle cherche à être claire et musicale.
 
 - `8 potentiomètres`
 - `1 encodeur rotatif cliquable`
-- `4 boutons`
+- `4 boutons poussoirs momentanés`
 - `1 OLED 128x64`
 
 ### 3.2 Contrôles dédiés
@@ -101,6 +101,11 @@ Appui :
 - `Page +` : page suivante
 - `Shift / Back` : action secondaire, retour, annulation
 - `Preset / Save / Action` : actions liées aux presets ou à la validation selon contexte
+
+Nature des contrôles :
+
+- ce sont `4` boutons poussoirs momentanés
+- ils sont distincts du bouton intégré à l'encodeur
 
 ### 3.6 Règle de base de l'encodeur
 

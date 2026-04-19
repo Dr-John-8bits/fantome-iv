@@ -169,3 +169,71 @@ Impact :
 
 - l'encodeur ne doit pas se comporter comme un formulaire à valider à chaque étape
 - l'édition des effets, du MIDI et des presets doit rester fluide
+
+## D-0010 - Écran OLED prototype retenu
+
+Statut :
+
+- actée
+
+Décision :
+
+- l'écran de travail retenu pour la V1 est un `OLED 128x64` de type `SSD1306`
+- le bus retenu par défaut pour le prototype est `I2C`
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- la BOM peut être resserrée sur un module `SSD1306 I2C`
+- le schéma peut partir sur une liaison écran simple sans ouvrir une branche `SPI`
+
+## D-0011 - Boutons physiques V1 retenus
+
+Statut :
+
+- actée
+
+Décision :
+
+- les `4` boutons de face avant sont des boutons poussoirs momentanés `NO`
+- ils sont distincts du bouton poussoir intégré à l'encodeur
+- leurs rôles de base sont `Page -`, `Page +`, `Shift / Back`, `Preset / Save / Action`
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+
+Impact :
+
+- le budget GPIO reste clair
+- la mécanique de façade peut être pensée autour de `4` poussoirs simples
+
+## D-0012 - Base de travail du bloc MIDI In prototype
+
+Statut :
+
+- actée
+
+Décision :
+
+- le bloc `MIDI In` du prototype part sur une topologie standard opto-isolée
+- la référence de départ retenue est un optocoupleur de type `H11L1` ou compatible
+- le bloc prévoit un découplage local `100nF`
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- le champ des achats et du schéma se resserre
+- la référence exacte pourra encore changer si disponibilité ou validation électrique contraires
