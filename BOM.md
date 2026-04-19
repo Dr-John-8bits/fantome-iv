@@ -16,6 +16,7 @@ Elle est orientée prototype réel autour de la route retenue :
 
 - prototype câblé à la main sur breadboard ou plaque de prototypage
 - développement firmware sur Mac via USB
+- usage musical normal via MIDI DIN
 - pas de PCB custom dans l'immédiat
 - pas de façade définitive dans l'immédiat
 
@@ -24,7 +25,7 @@ Elle est orientée prototype réel autour de la route retenue :
 | Catégorie | Élément | Spécification cible | Qté projet | Qté achat conseillée | Priorité | Note |
 |---|---|---|---:|---:|---|---|
 | Calcul | Daisy Seed | `Daisy Seed 65MB` | 1 | 1 | Indispensable | Cœur du projet |
-| Connexion | Câble USB | `micro-USB` données | 1 | 1 | Indispensable | Sert à l'alimentation USB et au flash |
+| Connexion | Câble USB | `micro-USB` données | 1 | 1 | Indispensable | Sert au développement, au flash et au debug |
 | Proto | Breadboard | format moyen ou grand | 1 | 1 à 2 | Indispensable | Plus confortable si deux plaques |
 | Proto | Fils Dupont | mâle/mâle + mâle/femelle | 1 lot | 1 lot | Indispensable | Pour tout le câblage de bench |
 | Interface | Potentiomètres | `10k` linéaires | 8 | 10 | Indispensable | 8 pour le projet, 2 de marge |
@@ -32,8 +33,8 @@ Elle est orientée prototype réel autour de la route retenue :
 | Interface | Boutons poussoirs | momentané NO | 4 | 6 | Indispensable | 4 pour le projet, 2 de marge |
 | Interface | Écran OLED | `128x64`, SSD1306, I2C ou SPI | 1 | 1 à 2 | Indispensable | I2C simple pour démarrer |
 | Audio | Sortie audio | jack TRS stéréo `6,35 mm` | 1 | 1 | Indispensable | Cible produit V1 |
-| MIDI | Connecteur MIDI In | DIN 5 broches femelle | 1 | 1 | Indispensable | Entrée MIDI physique |
-| MIDI | Optocoupleur | compatible MIDI In | 1 | 2 | Indispensable | Référence exacte à figer au schéma |
+| MIDI | Connecteur MIDI In | DIN 5 broches femelle | 1 | 1 | Indispensable | Interface musicale principale de la V1 |
+| MIDI | Optocoupleur | compatible MIDI In | 1 | 2 | Indispensable | Entrée MIDI opto-isolée |
 | Composants | Résistances | assortiment de base | 1 lot | 1 lot | Indispensable | Pour MIDI, LED, pull-up, essais |
 | Composants | Condensateurs | assortiment de base | 1 lot | 1 lot | Indispensable | Découplage et essais |
 | Test | Casque ou monitoring | sortie ligne ou casque | 1 | 1 | Indispensable | Pour écouter le proto |

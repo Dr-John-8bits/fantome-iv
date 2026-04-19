@@ -14,6 +14,11 @@ L'idée est d'acheter seulement ce qui sert à notre vrai prototype, sans ouvrir
 
 Pour la version détaillée et structurée, voir aussi [BOM.md](./BOM.md).
 
+Important :
+
+- l'USB sert au développement et au flash
+- l'usage musical normal de la V1 passe par `MIDI DIN 5 broches`
+
 ## À acheter maintenant
 
 - 1 `Daisy Seed 65MB`

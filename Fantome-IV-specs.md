@@ -18,7 +18,7 @@ Positionnement V1 :
 - Synthèse numérique de type analogique
 - 4 voix de polyphonie
 - Sortie stéréo
-- MIDI In
+- MIDI In DIN 5 broches
 - Écran OLED et presets
 - Modulations musicales simples et efficaces
 - Effets stéréo intégrés
@@ -411,10 +411,18 @@ Recommandation actuelle :
 Minimum V1 :
 
 - MIDI In physique
+- interface principale en DIN 5 broches
+- entrée opto-isolée
 
 Implémentation hardware recommandée :
 
 - DIN 5 broches avec optocoupleur
+
+Décision V1 :
+
+- le MIDI musical de la V1 passe par l'entrée DIN
+- l'USB sert au développement, au flash et au debug
+- l'USB n'est pas une exigence d'usage musical de la V1
 
 Extension acceptable plus tard :
 
@@ -459,6 +467,11 @@ Mapping additionnel à définir pendant l'implémentation :
 - LFO rates
 - FX mix
 - Preset-safe parameters
+
+### 13.5 Exigence d'intégration
+
+- le synthé doit être pleinement jouable via son entrée MIDI DIN sans dépendre de l'USB
+- le comportement MIDI doit rester identique que l'appareil soit branché ou non à un ordinateur
 
 ## 14. Presets
 
@@ -746,6 +759,8 @@ Définition d'une "V1 réussie" :
 ### Phase 0 - Cadrage
 
 - Valider ces spécifications
+- Consolider la documentation comme source de vérité
+- Ouvrir le journal de décisions du projet
 - Ouvrir le nouveau dépôt
 - Poser l'arborescence du projet
 - Définir les conventions de nommage et de build
