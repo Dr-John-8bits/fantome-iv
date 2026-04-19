@@ -66,7 +66,6 @@ Hors scope de la V1 :
 - CV/Gate
 - Arpégiateur
 - Séquenceur interne complet
-- Delay
 - Matrice de modulation complexe
 - Aftertouch
 - USB host MIDI
@@ -93,6 +92,7 @@ Fantôme IV V1 doit offrir :
 - 1 ADSR VCA par voix
 - 1 ADSR filtre par voix
 - Chorus stéréo global
+- Delay stéréo global
 - Reverb stéréo globale
 
 ### 6.2 Architecture audio globale
@@ -104,8 +104,9 @@ Architecture recommandée :
 3. Moteur de synthèse par voix
 4. Mix des 4 voix
 5. Chorus stéréo global
-6. Reverb stéréo globale
-7. Sortie stéréo
+6. Delay stéréo global
+7. Reverb stéréo globale
+8. Sortie stéréo
 
 ### 6.3 Architecture par voix
 
@@ -338,7 +339,24 @@ Objectif :
 - Élargir l'image stéréo
 - Donner de l'ampleur sans rendre le son flou par défaut
 
-### 11.2 Reverb
+### 11.2 Delay
+
+Type :
+
+- Delay stéréo global
+
+Paramètres minimum :
+
+- Time
+- Feedback
+- Mix
+
+Objectif :
+
+- Ajouter de l'espace rythmique sans compliquer l'interface
+- Rester musical et facile à doser dans un contexte polysynth
+
+### 11.3 Reverb
 
 Type :
 
@@ -355,11 +373,11 @@ Objectif :
 - Reverb musicale, légère à moyenne
 - Utilisable en contexte synthé sans noyer le signal
 
-### 11.3 Ordre des effets
+### 11.4 Ordre des effets
 
 Ordre recommandé :
 
-- Mix des voix -> Chorus -> Reverb -> Sortie
+- Mix des voix -> Chorus -> Delay -> Reverb -> Sortie
 
 ## 12. Sortie stéréo
 
@@ -564,6 +582,9 @@ Liste minimale recommandée :
 - Chorus rate
 - Chorus depth
 - Chorus mix
+- Delay time
+- Delay feedback
+- Delay mix
 - Reverb size
 - Reverb tone
 - Reverb mix
@@ -626,6 +647,7 @@ Modules logiciels à prévoir :
 - `Lfo`
 - `SampleHold`
 - `FxChorus`
+- `FxDelay`
 - `FxReverb`
 - `PresetManager`
 - `MidiManager`
@@ -649,6 +671,7 @@ Le système doit tenir :
 - 2 enveloppes par voix
 - filtre par voix
 - chorus stéréo
+- delay stéréo
 - reverb stéréo
 - UI réactive
 - MIDI fiable
@@ -699,6 +722,7 @@ Définition d'une "V1 réussie" :
 ### Phase 3 - Effets
 
 - Intégrer chorus stéréo
+- Intégrer delay stéréo
 - Intégrer reverb stéréo
 - Stabiliser le gain staging et le niveau de sortie
 
@@ -725,8 +749,9 @@ Définition d'une "V1 réussie" :
 
 ## 22. Risques à surveiller
 
-- Charge CPU trop haute avec chorus + reverb + 4 voix
+- Charge CPU trop haute avec chorus + delay + reverb + 4 voix
 - Reverb trop coûteuse pour la V1
+- Delay mal dosé ou trop envahissant dans le mix global
 - Mauvais gain staging provoquant saturation ou souffle
 - Sortie TRS mal définie entre usage ligne et casque
 - Potentiomètres page-based sans soft takeover, donc UX frustrante
@@ -736,6 +761,7 @@ Définition d'une "V1 réussie" :
 Mitigations :
 
 - Commencer sans reverb lourde si nécessaire
+- Garder un delay global simple en V1
 - Mesurer la charge DSP très tôt
 - Garder les effets sur bus global uniquement
 - Fixer l'interface physique avant la PCB
@@ -750,7 +776,7 @@ Fantôme IV V1 est considérée comme terminée si :
 - Les 2 ADSR par voix fonctionnent correctement
 - Les 2 LFO fonctionnent correctement
 - Le Sample & Hold filtre fonctionne avec bruit blanc
-- Chorus et reverb stéréo sont utilisables
+- Chorus, delay et reverb stéréo sont utilisables
 - Les presets peuvent être sauvegardés et rappelés
 - L'écran permet l'édition sans confusion
 - MIDI In fonctionne de manière fiable
@@ -761,7 +787,6 @@ Fantôme IV V1 est considérée comme terminée si :
 
 - CV In pour cutoff ou pitch mono
 - Gate In
-- Delay
 - Unison
 - Arpégiateur
 - Matrice de modulation
@@ -787,6 +812,7 @@ Décisions à considérer comme figées au début du projet :
 - 1 LFO filtre global
 - 1 Sample & Hold filtre global à partir de bruit blanc
 - Chorus stéréo global
+- Delay stéréo global
 - Reverb stéréo globale
 - Pas de CV/Gate en V1
 

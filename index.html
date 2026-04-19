@@ -3,1115 +3,281 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fantôme IV — Mise à jour</title>
+  <title>Fantôme IV</title>
+  <meta name="description" content="Fantôme IV est un projet de synthétiseur numérique polyphonique open source construit autour d'une Daisy Seed." />
   <link rel="icon" type="image/webp" href="F-IV-Logo.webp" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
-
   <style>
-    /* ═══════════════════════════════════════════════════════
-       TOKENS — light mode (default)
-    ═══════════════════════════════════════════════════════ */
     :root {
-      --bg:          #f2efe7;
-      --surface:     #e8e5db;
-      --surface-hi:  #dedad0;
-      --border:      #c6c2b4;
-      --border-lo:   #d8d4c8;
-      --text:        #26221a;
-      --text-2:      #68624e;
-      --text-3:      #a09880;
-      --bright:      #0a0804;
-      --accent:      #004f38;
-      --accent-bg:   rgba(0,79,56,.08);
-      --accent-2:    #6a3e00;
-      --accent-2-bg: rgba(106,62,0,.08);
-      --danger:      #7a1e22;
-      --nav-bg:      rgba(242,239,231,.92);
-      --grain-op:    .04;
-      --scan:        none;
-      --display: 'Fraunces', serif;
-      --brand:   'Orbitron', sans-serif;
-      --mono:    'JetBrains Mono', monospace;
+      --bg: #f4efe7;
+      --surface: rgba(255, 251, 245, 0.76);
+      --line: #d7cdbd;
+      --text: #201b17;
+      --muted: #65584a;
+      --accent: #1d5a49;
+      --accent-soft: #dcebe4;
+      --shadow: 0 20px 60px rgba(32, 27, 23, 0.08);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg:          #06060e;
-        --surface:     #0c0c1a;
-        --surface-hi:  #121224;
-        --border:      #18182e;
-        --border-lo:   #0f0f20;
-        --text:        #aeaec4;
-        --text-2:      #4c4c60;
-        --text-3:      #262638;
-        --bright:      #eaeaf6;
-        --accent:      #00eba0;
-        --accent-bg:   rgba(0,235,160,.10);
-        --accent-2:    #ffb220;
-        --accent-2-bg: rgba(255,178,32,.10);
-        --danger:      #ff3c58;
-        --nav-bg:      rgba(6,6,14,.92);
-        --grain-op:    .55;
-        --scan:        block;
-      }
+    * {
+      box-sizing: border-box;
     }
-
-    /* ═══════════════════════════════════════════════════════
-       RESET & BASE
-    ═══════════════════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html {
       font-size: 16px;
       scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
-      background: var(--bg);
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
       color: var(--text);
-      font-family: var(--display);
-      line-height: 1.7;
-      overflow-x: hidden;
-      transition: background .45s, color .45s;
+      background:
+        radial-gradient(circle at top left, rgba(29, 90, 73, 0.1), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(167, 120, 43, 0.12), transparent 28%),
+        linear-gradient(180deg, #f8f3eb 0%, var(--bg) 100%);
+      line-height: 1.6;
     }
 
-    a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
-
-    /* ═══════════════════════════════════════════════════════
-       TEXTURE
-    ═══════════════════════════════════════════════════════ */
-    .grain {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
-      opacity: var(--grain-op);
-      transition: opacity .45s;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    img {
+      display: block;
+      max-width: 100%;
     }
 
-    .scan {
-      display: var(--scan);
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent, transparent 2px,
-        rgba(0,0,0,.055) 2px, rgba(0,0,0,.055) 4px
-      );
+    .shell {
+      width: min(980px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1rem 0 3rem;
     }
 
-    .page { position: relative; z-index: 1; }
-
-    /* ═══════════════════════════════════════════════════════
-       LAYOUT
-    ═══════════════════════════════════════════════════════ */
-    .wrap      { max-width: 820px;  margin: 0 auto; padding: 0 2.5rem; }
-    .wrap-wide { max-width: 1080px; margin: 0 auto; padding: 0 2.5rem; }
-
-    /* ═══════════════════════════════════════════════════════
-       NAV
-    ═══════════════════════════════════════════════════════ */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      height: 54px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2.5rem;
-      background: var(--nav-bg);
-      backdrop-filter: blur(20px) saturate(1.5);
-      -webkit-backdrop-filter: blur(20px) saturate(1.5);
-      border-bottom: 1px solid var(--border-lo);
-      transition: background .45s;
+    .hero,
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(215, 205, 189, 0.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
 
-    .nav-brand { display: flex; align-items: center; gap: .8rem; }
-
-    .nav-logo { height: 26px; }
-
-    @media (prefers-color-scheme: dark) {
-      .nav-logo { filter: drop-shadow(0 0 10px rgba(0,235,160,.4)); }
+    .hero {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 2rem;
+      margin-top: 1rem;
     }
 
-    .nav-name {
-      font-family: var(--brand);
-      font-size: .68rem; font-weight: 700;
-      letter-spacing: .24em; text-transform: uppercase;
+    .hero img {
+      width: 100%;
+      filter: drop-shadow(0 20px 30px rgba(29, 90, 73, 0.18));
+    }
+
+    .eyebrow {
+      margin: 0 0 0.4rem;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", "Andale Mono", monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
       color: var(--accent);
     }
 
-    .nav-ver {
-      font-family: var(--mono);
-      font-size: .62rem; letter-spacing: .08em;
-      color: var(--text-3);
+    h1,
+    h2 {
+      margin: 0;
+      line-height: 1.05;
+      font-weight: 700;
     }
 
-    /* ═══════════════════════════════════════════════════════
-       SCROLL REVEAL
-    ═══════════════════════════════════════════════════════ */
-    [data-r] {
-      opacity: 0; transform: translateY(18px);
-      transition:
-        opacity .75s cubic-bezier(.16,1,.3,1),
-        transform .75s cubic-bezier(.16,1,.3,1);
-    }
-    [data-r].on { opacity: 1; transform: none; }
-    [data-r][data-d="1"] { transition-delay: .07s; }
-    [data-r][data-d="2"] { transition-delay: .14s; }
-    [data-r][data-d="3"] { transition-delay: .21s; }
-    [data-r][data-d="4"] { transition-delay: .28s; }
-    [data-r][data-d="5"] { transition-delay: .35s; }
-
-    /* ═══════════════════════════════════════════════════════
-       POST HEADER
-    ═══════════════════════════════════════════════════════ */
-    .hdr {
-      padding: 116px 0 80px;
-      border-bottom: 1px solid var(--border);
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 4.8rem);
     }
 
-    .hdr-eyebrow {
-      font-family: var(--mono);
-      font-size: .62rem; letter-spacing: .32em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 2.5rem;
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      margin-bottom: 0.75rem;
     }
 
-    .hdr-hero {
-      display: flex; align-items: flex-end; gap: 2.5rem;
-      margin-bottom: 2.5rem;
+    .intro {
+      margin: 1rem 0 0;
+      max-width: 44rem;
+      font-size: 1.12rem;
+      color: var(--muted);
     }
 
-    .hdr-logo { width: clamp(68px,10vw,108px); flex-shrink: 0; }
-
-    @media (prefers-color-scheme: dark) {
-      .hdr-logo { filter: drop-shadow(0 0 28px rgba(0,235,160,.28)); }
+    .tags,
+    .grid {
+      display: grid;
+      gap: 1rem;
     }
 
-    .hdr-title {
-      font-family: var(--brand);
-      font-size: clamp(2.5rem,8vw,5.4rem);
-      font-weight: 900; letter-spacing: .04em; line-height: .95;
-      color: var(--bright);
+    .tags {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 1.5rem;
     }
 
-    .hdr-title-accent { color: var(--accent); }
-
-    .hdr-sub {
-      font-family: var(--display);
-      font-style: italic; font-weight: 300;
-      font-size: clamp(1.1rem,2.8vw,1.72rem);
-      color: var(--text-2); margin-top: .9rem;
-      line-height: 1.3; letter-spacing: .008em;
+    .tag {
+      padding: 0.9rem 1rem;
+      background: rgba(255, 250, 243, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", "Andale Mono", monospace;
+      font-size: 0.82rem;
+      color: var(--muted);
     }
 
-    .hdr-meta {
-      display: flex; align-items: center;
-      flex-wrap: wrap; gap: .5rem 1.5rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-lo);
+    .tag strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.98rem;
+      color: var(--text);
     }
 
-    .hdr-date {
-      font-family: var(--mono);
-      font-size: .66rem; letter-spacing: .1em; color: var(--text-2);
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1.2rem;
     }
 
-    .badge-row { display: flex; flex-wrap: wrap; gap: .5rem; }
-
-    .badge {
-      display: inline-flex; align-items: center; gap: .38em;
-      font-family: var(--mono);
-      font-size: .6rem; letter-spacing: .1em; text-transform: uppercase;
-      padding: .28em .8em;
-      border: 1px solid var(--border);
-      color: var(--text-2); border-radius: 2px;
-      transition: border-color .2s, color .2s;
+    .panel {
+      padding: 1.6rem;
+      margin-top: 1.2rem;
     }
 
-    .badge-g { border-color: var(--accent);   color: var(--accent);   background: var(--accent-bg); }
-    .badge-a { border-color: var(--accent-2); color: var(--accent-2); background: var(--accent-2-bg); }
-
-    .dot {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: currentColor; flex-shrink: 0;
+    .panel p,
+    .panel li {
+      color: var(--muted);
     }
 
-    .badge-a .dot { animation: blink 1.6s ease-in-out infinite; }
-
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
-
-    /* ═══════════════════════════════════════════════════════
-       SECTION
-    ═══════════════════════════════════════════════════════ */
-    .s {
-      padding: 76px 0;
-      border-bottom: 1px solid var(--border-lo);
+    ul {
+      margin: 0.85rem 0 0;
+      padding-left: 1.1rem;
     }
 
-    .s:last-of-type { border-bottom: none; }
-
-    .s-label {
-      font-family: var(--mono);
-      font-size: .58rem; letter-spacing: .38em; text-transform: uppercase;
-      color: var(--text-3);
-      display: flex; align-items: center; gap: 1rem;
-      margin-bottom: 1.5rem;
+    li + li {
+      margin-top: 0.45rem;
     }
 
-    .s-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--border-lo);
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: "SFMono-Regular", "Menlo", "Monaco", "Andale Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
-    .s-h {
-      font-family: var(--display);
-      font-size: clamp(1.55rem,3.5vw,2.3rem);
-      font-weight: 700; color: var(--bright);
-      line-height: 1.12; letter-spacing: -.01em;
-      margin-bottom: 1.2rem;
+    .status::before {
+      content: "";
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 999px;
+      background: currentColor;
     }
 
-    .s-lead {
-      font-family: var(--display);
-      font-size: 1.05rem; font-weight: 300;
-      color: var(--text); line-height: 1.78;
-      max-width: 560px;
-    }
-
-    .s-lead + * { margin-top: 2.75rem; }
-    .s-lead p + p { margin-top: .9rem; }
-
-    /* ═══════════════════════════════════════════════════════
-       SPEC GRID
-    ═══════════════════════════════════════════════════════ */
-    .spec-grid {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1px; background: var(--border);
-      border: 1px solid var(--border);
-      margin-top: 2.75rem;
-    }
-
-    .spec-cell {
-      background: var(--surface);
-      padding: 1.75rem 2rem;
-      transition: background .2s;
-    }
-
-    .spec-cell:hover { background: var(--surface-hi); }
-
-    .spec-num {
-      font-family: var(--brand);
-      font-size: 2.6rem; font-weight: 900;
-      line-height: 1; color: var(--accent);
-      letter-spacing: .02em; margin-bottom: .45rem;
-    }
-
-    .spec-num-a { color: var(--accent-2); }
-
-    .spec-lbl {
-      font-family: var(--mono);
-      font-size: .62rem; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--text-2);
-    }
-
-    /* Nope tags */
-    .nope-set { margin-top: 3rem; }
-
-    .nope-lbl {
-      font-family: var(--mono);
-      font-size: .58rem; letter-spacing: .3em;
-      text-transform: uppercase; color: var(--text-3);
-      margin-bottom: .85rem;
-    }
-
-    .nope-row { display: flex; flex-wrap: wrap; gap: .55rem; }
-
-    .nope-tag {
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .06em; padding: .28em .8em;
-      border: 1px solid var(--border); color: var(--text-3);
-      border-radius: 2px; position: relative; overflow: hidden;
-    }
-
-    .nope-tag::after {
-      content: ''; position: absolute;
-      top: 50%; left: 0; right: 0; height: 1px;
-      background: var(--danger); opacity: .55;
-    }
-
-    /* ═══════════════════════════════════════════════════════
-       CHAIN
-    ═══════════════════════════════════════════════════════ */
-    .chain-wrap {
-      overflow-x: auto; padding: .25rem 0 1rem;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .chain-wrap::-webkit-scrollbar { height: 3px; }
-    .chain-wrap::-webkit-scrollbar-track { background: var(--border-lo); }
-    .chain-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .chain { display: flex; align-items: stretch; min-width: max-content; }
-
-    .cn {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 1rem 1.4rem;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center; text-align: center;
-      position: relative; overflow: hidden;
-      transition: background .2s, border-color .22s; cursor: default;
-    }
-
-    .cn::before {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: var(--accent);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform .35s cubic-bezier(.16,1,.3,1);
-    }
-
-    .cn:hover { background: var(--surface-hi); border-color: var(--accent); }
-    .cn:hover::before { transform: scaleX(1); }
-
-    .cn-fx::before { background: var(--accent-2); }
-    .cn-fx:hover   { border-color: var(--accent-2); }
-
-    .cn-out { border-color: var(--accent); background: var(--accent-bg); }
-    .cn-out::before { background: var(--accent); }
-
-    .cn-t {
-      font-family: var(--mono); font-size: .62rem; font-weight: 500;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--bright); white-space: nowrap;
-    }
-
-    .cn-s {
-      font-family: var(--mono); font-size: .54rem;
-      color: var(--text-2); margin-top: .22rem;
-      white-space: nowrap; letter-spacing: .04em;
-    }
-
-    .ca {
-      display: flex; align-items: center;
-      padding: 0 .45rem; flex-shrink: 0;
-      color: var(--text-3); font-family: var(--mono); font-size: .78rem;
-    }
-
-    .chain-sub-lbl {
-      font-family: var(--mono); font-size: .58rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--accent); margin-top: 2.25rem; margin-bottom: .8rem;
-    }
-
-    /* ═══════════════════════════════════════════════════════
-       MOD CARDS
-    ═══════════════════════════════════════════════════════ */
-    .mod-grid {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem;
-    }
-
-    .mod-card {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 1.75rem; position: relative; overflow: hidden;
-      transition: background .2s, border-color .22s;
-    }
-
-    .mod-card::after {
-      content: ''; position: absolute;
-      bottom: 0; left: 0; right: 0; height: 2px;
-      background: var(--accent);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform .4s cubic-bezier(.16,1,.3,1);
-    }
-
-    .mod-card:hover { background: var(--surface-hi); border-color: var(--accent); }
-    .mod-card:hover::after { transform: scaleX(1); }
-
-    .mod-card-a::after  { background: var(--accent-2); }
-    .mod-card-a:hover   { border-color: var(--accent-2); }
-
-    .mod-ey {
-      font-family: var(--mono); font-size: .56rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: .6rem;
-    }
-
-    .mod-card-a .mod-ey { color: var(--accent-2); }
-
-    .mod-tt {
-      font-family: var(--display); font-size: 1rem; font-weight: 600;
-      color: var(--bright); margin-bottom: 1.1rem; letter-spacing: .01em;
-    }
-
-    .mod-list { list-style: none; display: flex; flex-direction: column; gap: .38rem; }
-
-    .mod-list li {
-      font-family: var(--mono); font-size: .62rem;
-      color: var(--text-2); padding-left: 1rem;
-      position: relative; letter-spacing: .03em;
-    }
-
-    .mod-list li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
-    .mod-card-a .mod-list li::before { color: var(--accent-2); }
-
-    /* ═══════════════════════════════════════════════════════
-       ROADMAP
-    ═══════════════════════════════════════════════════════ */
-    .roadmap { position: relative; margin-top: 2.75rem; }
-
-    .roadmap::before {
-      content: ''; position: absolute;
-      top: 0; bottom: 0; left: 80px;
-      width: 1px; background: var(--border);
-    }
-
-    .phase {
-      display: grid; grid-template-columns: 80px 1fr;
-      padding: 1.85rem 0;
-      border-bottom: 1px solid var(--border-lo);
-      position: relative;
-    }
-
-    .phase:last-child { border-bottom: none; }
-
-    .phase::before {
-      content: '';
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--border); border: 2px solid var(--bg);
-      position: absolute; left: 76.5px; top: 1.95rem;
-      transition: background .3s;
-    }
-
-    .ph-done::before   { background: var(--accent); }
-    .ph-active::before {
-      background: var(--accent-2);
-      box-shadow: 0 0 0 5px var(--accent-2-bg);
-      animation: ppulse 2.2s ease-in-out infinite;
-    }
-
-    @keyframes ppulse {
-      0%,100% { box-shadow: 0 0 0 5px var(--accent-2-bg); }
-      50%     { box-shadow: 0 0 0 10px transparent; }
-    }
-
-    .phase-id {
-      font-family: var(--brand); font-size: .72rem; font-weight: 900;
-      letter-spacing: .06em; color: var(--text-3); line-height: 1;
-    }
-
-    .ph-done   .phase-id { color: var(--accent); }
-    .ph-active .phase-id { color: var(--accent-2); }
-
-    .phase-body { padding-left: 2rem; }
-
-    .phase-name {
-      font-family: var(--display); font-size: .97rem; font-weight: 600;
-      color: var(--bright); margin-bottom: .65rem; letter-spacing: .01em;
-    }
-
-    .ph-pending .phase-name { color: var(--text-2); }
-
-    .phase-tags { display: flex; flex-wrap: wrap; gap: .48rem; }
-
-    .ptag {
-      font-family: var(--mono); font-size: .58rem;
-      letter-spacing: .07em; padding: .24em .7em;
-      border: 1px solid var(--border); color: var(--text-2); border-radius: 2px;
-    }
-
-    .ph-done   .ptag { border-color: var(--accent-bg);   color: var(--accent);   background: var(--accent-bg); }
-    .ph-active .ptag { border-color: var(--accent-2-bg); color: var(--accent-2); }
-
-    /* ═══════════════════════════════════════════════════════
-       HW GRID
-    ═══════════════════════════════════════════════════════ */
-    .hw-grid {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1px; background: var(--border);
-      border: 1px solid var(--border); margin-top: 2.75rem;
-    }
-
-    .hw-cell {
-      background: var(--surface); padding: 1.75rem 2rem;
-      transition: background .2s;
-    }
-
-    .hw-cell:hover { background: var(--surface-hi); }
-
-    .hw-chip {
-      font-family: var(--mono); font-size: .56rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: .5rem; opacity: .8;
-    }
-
-    .hw-name {
-      font-family: var(--display); font-size: 1rem; font-weight: 600;
-      color: var(--bright); margin-bottom: .45rem; letter-spacing: .01em;
-    }
-
-    .hw-detail {
-      font-family: var(--mono); font-size: .6rem;
-      color: var(--text-2); line-height: 1.55; letter-spacing: .03em;
-    }
-
-    /* ═══════════════════════════════════════════════════════
-       RISK TABLE
-    ═══════════════════════════════════════════════════════ */
-    .risk-table { border: 1px solid var(--border); margin-top: 2.75rem; }
-
-    .risk-row {
-      display: grid; grid-template-columns: 8px 1fr auto;
-      align-items: center; gap: 1.25rem;
-      padding: 1.05rem 1.5rem;
-      border-bottom: 1px solid var(--border-lo);
-      transition: background .18s;
-    }
-
-    .risk-row:last-child { border-bottom: none; }
-    .risk-row:hover { background: var(--surface); }
-
-    .rdot {
-      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-    }
-
-    .rdot-h { background: var(--danger); }
-    .rdot-m { background: var(--accent-2); }
-    .rdot-l { background: var(--accent); }
-
-    .rtxt {
-      font-family: var(--mono); font-size: .68rem;
-      color: var(--text); letter-spacing: .03em;
-    }
-
-    .rmit {
-      font-family: var(--mono); font-size: .58rem;
-      color: var(--text-3); letter-spacing: .04em;
-      text-align: right; white-space: nowrap;
-    }
-
-    /* ═══════════════════════════════════════════════════════
-       NEXT BOX
-    ═══════════════════════════════════════════════════════ */
-    .next-box {
-      border: 1px solid var(--accent); background: var(--accent-bg);
-      padding: 2.25rem 2.5rem; margin-top: 2.75rem;
-    }
-
-    .next-lbl {
-      font-family: var(--mono); font-size: .58rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 1rem;
-    }
-
-    .next-steps {
-      list-style: none; counter-reset: sc;
-      display: flex; flex-direction: column; gap: .65rem;
-    }
-
-    .next-steps li {
-      counter-increment: sc;
-      display: flex; align-items: flex-start; gap: 1rem;
-      font-family: var(--display); font-size: 1rem; font-weight: 300;
-      color: var(--text); line-height: 1.5;
-    }
-
-    .next-steps li::before {
-      content: counter(sc, decimal-leading-zero);
-      font-family: var(--mono); font-size: .6rem;
-      color: var(--accent); min-width: 1.8rem; padding-top: .3em; flex-shrink: 0;
-    }
-
-    /* ═══════════════════════════════════════════════════════
-       FOOTER
-    ═══════════════════════════════════════════════════════ */
     .footer {
-      padding: 1.75rem 2.5rem;
-      border-top: 1px solid var(--border-lo);
-      display: flex; justify-content: flex-end;
+      margin-top: 1.2rem;
+      padding: 1rem 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
-    .footer-v {
-      font-family: var(--mono); font-size: .6rem;
-      color: var(--text-3); letter-spacing: .1em;
-    }
+    @media (max-width: 760px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
 
-    /* ═══════════════════════════════════════════════════════
-       RESPONSIVE
-    ═══════════════════════════════════════════════════════ */
-    @media (max-width: 720px) {
-      .wrap, .wrap-wide { padding: 0 1.5rem; }
-      .nav, .footer     { padding: 0 1.5rem; }
-      .footer           { padding: 1.5rem; }
-      .spec-grid        { grid-template-columns: repeat(2,1fr); }
-      .mod-grid         { grid-template-columns: 1fr; }
-      .hw-grid          { grid-template-columns: repeat(2,1fr); }
-      .risk-row         { grid-template-columns: 8px 1fr; }
-      .rmit             { display: none; }
-      .roadmap::before  { left: 64px; }
-      .phase            { grid-template-columns: 64px 1fr; }
-      .phase::before    { left: 60.5px; }
-      .hdr-hero         { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
-    }
+      .hero img {
+        width: 88px;
+      }
 
-    @media (max-width: 480px) {
-      .spec-grid { grid-template-columns: 1fr; }
-      .hw-grid   { grid-template-columns: 1fr; }
+      .tags,
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-
-<div class="grain" aria-hidden="true"></div>
-<div class="scan"  aria-hidden="true"></div>
-
-<div class="page">
-
-  <!-- NAV -->
-  <nav class="nav">
-    <div class="nav-brand">
-      <img class="nav-logo" src="F-IV-Logo.png" alt="Fantôme IV" />
-      <span class="nav-name">Fantôme IV</span>
-    </div>
-    <span class="nav-ver">26/04/19.1</span>
-  </nav>
-
-  <!-- HEADER -->
-  <header class="hdr">
-    <div class="wrap">
-
-      <p class="hdr-eyebrow" data-r>
-        Billet de mise à jour &middot; Phase 0 → Phase 1
-      </p>
-
-      <div class="hdr-hero" data-r data-d="1">
-        <img class="hdr-logo" src="F-IV-Logo.png" alt="Logo Fantôme IV" />
-        <div>
-          <h1 class="hdr-title">FANTÔME<span class="hdr-title-accent"> IV</span></h1>
-          <p class="hdr-sub">Les fondations sont posées.</p>
-        </div>
-      </div>
-
-      <div class="hdr-meta" data-r data-d="2">
-        <span class="hdr-date">19 avril 2026 &middot; Spécifications V1</span>
-        <div class="badge-row">
-          <span class="badge badge-g"><span class="dot"></span>Phase 0 terminée</span>
-          <span class="badge badge-a"><span class="dot"></span>Phase 1 en cours</span>
-          <span class="badge">Daisy Seed · C++</span>
-          <span class="badge">4 voix</span>
-          <span class="badge">MIDI In · TRS stéréo</span>
-        </div>
-      </div>
-
-    </div>
-  </header>
-
-  <main>
-
-    <!-- §01 CONTEXTE -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>01 — Contexte</p>
-        <h2 class="s-h" data-r data-d="1">Ce qu'est Fantôme IV.</h2>
-        <div class="s-lead" data-r data-d="2">
-          <p>Fantôme IV est un synthétiseur numérique de bureau, polyphonique, construit autour d'une plateforme DSP embarquée. L'objectif n'est pas de rivaliser avec un instrument commercial, mais de produire quelque chose de jouable, de fiable et de musical — réalisable par une petite équipe, sans compromis sur la qualité sonore.</p>
-          <p>La V1 se concentre sur l'essentiel : synthèse numérique de type analogique, 4 voix de polyphonie, MIDI In, sortie stéréo, modulations expressives, effets intégrés. Tout le reste attend la V2.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- §02 PÉRIMÈTRE -->
-    <section class="s">
-      <div class="wrap-wide">
-        <div class="wrap" style="padding:0">
-          <p class="s-label" data-r>02 — Périmètre V1</p>
-          <h2 class="s-h" data-r data-d="1">Décisions figées pour le démarrage.</h2>
-          <p class="s-lead" data-r data-d="2">Ces paramètres ne seront pas remis en question pendant le développement. Ils définissent le produit cible.</p>
-        </div>
-
-        <div class="spec-grid" data-r data-d="3">
-          <div class="spec-cell">
-            <div class="spec-num">4</div>
-            <div class="spec-lbl">Voix de polyphonie</div>
+  <div class="shell">
+    <header class="hero">
+      <img src="F-IV-Logo.png" alt="Logo Fantôme IV" />
+      <div>
+        <p class="eyebrow">Projet open source</p>
+        <h1>Fantôme IV</h1>
+        <p class="intro">
+          Un synthétiseur numérique polyphonique construit autour d'une Daisy Seed.
+          Le but est de produire un instrument musical, jouable et finissable, avec
+          une base firmware propre et un hardware maîtrisé.
+        </p>
+        <div class="tags">
+          <div class="tag">
+            <strong>Architecture</strong>
+            Daisy Seed + C++
           </div>
-          <div class="spec-cell">
-            <div class="spec-num">2</div>
-            <div class="spec-lbl">Oscillateurs par voix</div>
+          <div class="tag">
+            <strong>Voix</strong>
+            4 voix polyphoniques
           </div>
-          <div class="spec-cell">
-            <div class="spec-num">2</div>
-            <div class="spec-lbl">ADSR par voix</div>
+          <div class="tag">
+            <strong>Contrôle</strong>
+            MIDI In + OLED
           </div>
-          <div class="spec-cell">
-            <div class="spec-num">2</div>
-            <div class="spec-lbl">LFO globaux</div>
-          </div>
-          <div class="spec-cell">
-            <div class="spec-num spec-num-a">S&amp;H</div>
-            <div class="spec-lbl">Sample &amp; Hold filtre</div>
-          </div>
-          <div class="spec-cell">
-            <div class="spec-num">64</div>
-            <div class="spec-lbl">Presets utilisateur min.</div>
-          </div>
-          <div class="spec-cell">
-            <div class="spec-num">8</div>
-            <div class="spec-lbl">Potentiomètres</div>
-          </div>
-          <div class="spec-cell">
-            <div class="spec-num spec-num-a">FX</div>
-            <div class="spec-lbl">Chorus + Reverb stéréo</div>
-          </div>
-          <div class="spec-cell">
-            <div class="spec-num">TRS</div>
-            <div class="spec-lbl">Sortie stéréo 6,35 mm</div>
-          </div>
-        </div>
-
-        <div class="wrap nope-set" style="padding:0" data-r data-d="1">
-          <p class="nope-lbl">Hors scope V1 — reporté en V2</p>
-          <div class="nope-row">
-            <span class="nope-tag">CV/Gate</span>
-            <span class="nope-tag">Arpégiateur</span>
-            <span class="nope-tag">Séquenceur</span>
-            <span class="nope-tag">Delay</span>
-            <span class="nope-tag">Matrice de modulation</span>
-            <span class="nope-tag">Aftertouch</span>
-            <span class="nope-tag">USB host MIDI</span>
-            <span class="nope-tag">Audio In</span>
-            <span class="nope-tag">Multitimbralité</span>
+          <div class="tag">
+            <strong>Effets V1</strong>
+            Chorus, delay, reverb
           </div>
         </div>
       </div>
-    </section>
+    </header>
 
-    <!-- §03 ARCHITECTURE -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>03 — Architecture sonore</p>
-        <h2 class="s-h" data-r data-d="1">Chaîne du signal.</h2>
-        <p class="s-lead" data-r data-d="2">Architecture linéaire et prévisible. Les effets s'appliquent sur le bus global mixé, jamais par voix. Chorus avant reverb, toujours.</p>
-      </div>
+    <main class="grid">
+      <section class="panel">
+        <span class="status">En préparation</span>
+        <h2>L'essentiel</h2>
+        <p>
+          Fantôme IV vise une V1 claire et réaliste : deux oscillateurs par voix,
+          filtre résonant, double enveloppe ADSR, modulations simples, presets,
+          sortie stéréo et interface physique réduite mais efficace.
+        </p>
+      </section>
 
-      <div class="wrap-wide" style="margin-top:2.75rem">
-        <div class="chain-wrap" data-r>
-          <div class="chain">
-            <div class="cn"><div class="cn-t">MIDI In</div><div class="cn-s">DIN 5 broches</div></div>
-            <span class="ca">→</span>
-            <div class="cn"><div class="cn-t">Allocation voix</div><div class="cn-s">oldest steal · 4 voix</div></div>
-            <span class="ca">→</span>
-            <div class="cn"><div class="cn-t">Voix × 4</div><div class="cn-s">OSC A+B · Noise · Filter · VCA</div></div>
-            <span class="ca">→</span>
-            <div class="cn"><div class="cn-t">Mix</div><div class="cn-s">4 voix → stéréo</div></div>
-            <span class="ca">→</span>
-            <div class="cn cn-fx"><div class="cn-t">Chorus</div><div class="cn-s">stéréo global</div></div>
-            <span class="ca">→</span>
-            <div class="cn cn-fx"><div class="cn-t">Reverb</div><div class="cn-s">stéréo global</div></div>
-            <span class="ca">→</span>
-            <div class="cn cn-out"><div class="cn-t">Sortie TRS</div><div class="cn-s">6,35 mm · stéréo</div></div>
-          </div>
-        </div>
+      <section class="panel">
+        <h2>Répartition du projet</h2>
+        <p>
+          L'assemblage physique et l'intégration matérielle se font côté atelier.
+          Le dépôt se concentre sur le firmware, le DSP, le MIDI, l'UI logicielle
+          et l'architecture logicielle du synthé.
+        </p>
+      </section>
 
-        <p class="chain-sub-lbl" data-r>Par voix</p>
+      <section class="panel">
+        <h2>Roadmap courte</h2>
+        <ul>
+          <li>Mettre en place le moteur audio et une voix complète.</li>
+          <li>Étendre à 4 voix avec allocation stable et voice stealing propre.</li>
+          <li>Ajouter modulations, chorus, delay et reverb globaux.</li>
+          <li>Brancher presets, OLED, encodeur, boutons et MIDI complet.</li>
+        </ul>
+      </section>
 
-        <div class="chain-wrap" data-r data-d="1">
-          <div class="chain">
-            <div class="cn"><div class="cn-t">OSC A</div><div class="cn-s">Saw / Sq / Tri</div></div>
-            <span class="ca">+</span>
-            <div class="cn"><div class="cn-t">OSC B</div><div class="cn-s">detune · octave</div></div>
-            <span class="ca">+</span>
-            <div class="cn"><div class="cn-t">Noise</div><div class="cn-s">bruit blanc</div></div>
-            <span class="ca">→</span>
-            <div class="cn"><div class="cn-t">Mixer</div><div class="cn-s">niveaux A / B / N</div></div>
-            <span class="ca">→</span>
-            <div class="cn cn-fx"><div class="cn-t">Low-Pass</div><div class="cn-s">cutoff · reso · env</div></div>
-            <span class="ca">→</span>
-            <div class="cn cn-out"><div class="cn-t">VCA</div><div class="cn-s">ADSR · velocity</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
+      <section class="panel">
+        <h2>Open source</h2>
+        <p>
+          Le firmware et le code du projet sont sous licence MIT.
+          La documentation, les spécifications, le site et les visuels sont
+          sous licence CC BY 4.0.
+        </p>
+      </section>
+    </main>
 
-    <!-- §04 MODULATIONS -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>04 — Modulations</p>
-        <h2 class="s-h" data-r data-d="1">Expression musicale.</h2>
-        <p class="s-lead" data-r data-d="2">Deux LFO dédiés et un Sample &amp; Hold, tous synchronisables à l'horloge MIDI. Simple, efficace, musical — sans matrice complexe avant la V2.</p>
-
-        <div class="mod-grid" data-r data-d="3">
-          <div class="mod-card">
-            <p class="mod-ey">LFO 1</p>
-            <h3 class="mod-tt">LFO Oscillateurs</h3>
-            <ul class="mod-list">
-              <li>Rate</li>
-              <li>Amount</li>
-              <li>Waveform — Sine / Tri / Sq</li>
-              <li>Sync MIDI on/off</li>
-              <li>Destination : pitch</li>
-            </ul>
-          </div>
-          <div class="mod-card">
-            <p class="mod-ey">LFO 2</p>
-            <h3 class="mod-tt">LFO Filtre</h3>
-            <ul class="mod-list">
-              <li>Rate</li>
-              <li>Amount</li>
-              <li>Waveform — Sine / Tri / Sq</li>
-              <li>Sync MIDI on/off</li>
-              <li>Destination : cutoff</li>
-            </ul>
-          </div>
-          <div class="mod-card mod-card-a">
-            <p class="mod-ey">S&amp;H</p>
-            <h3 class="mod-tt">Sample &amp; Hold</h3>
-            <ul class="mod-list">
-              <li>Rate</li>
-              <li>Amount</li>
-              <li>Slew / Smooth</li>
-              <li>Sync MIDI on/off</li>
-              <li>Source : bruit blanc</li>
-              <li>Destination : cutoff</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- §05 AVANCEMENT -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>05 — État d'avancement</p>
-        <h2 class="s-h" data-r data-d="1">Où en sommes-nous.</h2>
-        <p class="s-lead" data-r data-d="2">La Phase 0 est terminée : les spécifications sont validées, le dépôt est prêt. La Phase 1 commence — moteur audio, 4 voix, pas d'interface encore.</p>
-
-        <div class="roadmap" data-r data-d="3">
-
-          <div class="phase ph-done">
-            <div class="phase-marker"><span class="phase-id">Ph.0</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Cadrage</div>
-              <div class="phase-tags">
-                <span class="ptag">Spécifications validées</span>
-                <span class="ptag">Dépôt ouvert</span>
-                <span class="ptag">Arborescence posée</span>
-                <span class="ptag">Conventions définies</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-active">
-            <div class="phase-marker"><span class="phase-id">Ph.1</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Moteur de synthèse nu</div>
-              <div class="phase-tags">
-                <span class="ptag">Init projet Daisy</span>
-                <span class="ptag">1 voix complète</span>
-                <span class="ptag">4 voix + allocation</span>
-                <span class="ptag">Filtre · VCA · Enveloppes</span>
-                <span class="ptag">2 oscillateurs par voix</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-pending">
-            <div class="phase-marker"><span class="phase-id">Ph.2</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Modulations</div>
-              <div class="phase-tags">
-                <span class="ptag">LFO oscillateurs</span>
-                <span class="ptag">LFO filtre</span>
-                <span class="ptag">Sample &amp; Hold</span>
-                <span class="ptag">Pitch Bend / Mod Wheel / Sustain</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-pending">
-            <div class="phase-marker"><span class="phase-id">Ph.3</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Effets</div>
-              <div class="phase-tags">
-                <span class="ptag">Chorus stéréo</span>
-                <span class="ptag">Reverb stéréo</span>
-                <span class="ptag">Gain staging &amp; sortie</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-pending">
-            <div class="phase-marker"><span class="phase-id">Ph.4</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Interface &amp; Presets</div>
-              <div class="phase-tags">
-                <span class="ptag">Écran OLED</span>
-                <span class="ptag">Encodeur + boutons</span>
-                <span class="ptag">Édition par pages</span>
-                <span class="ptag">Save / Load</span>
-                <span class="ptag">Soft takeover</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-pending">
-            <div class="phase-marker"><span class="phase-id">Ph.5</span></div>
-            <div class="phase-body">
-              <div class="phase-name">MIDI complet</div>
-              <div class="phase-tags">
-                <span class="ptag">Program Change</span>
-                <span class="ptag">CC mapping</span>
-                <span class="ptag">MIDI Clock sync</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="phase ph-pending">
-            <div class="phase-marker"><span class="phase-id">Ph.6</span></div>
-            <div class="phase-body">
-              <div class="phase-name">Intégration hardware</div>
-              <div class="phase-tags">
-                <span class="ptag">Tests face avant</span>
-                <span class="ptag">Vérification contrôles</span>
-                <span class="ptag">Validation sortie audio</span>
-                <span class="ptag">Nettoyage UX final</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- §06 HARDWARE -->
-    <section class="s">
-      <div class="wrap-wide">
-        <div class="wrap" style="padding:0">
-          <p class="s-label" data-r>06 — Hardware V1</p>
-          <h2 class="s-h" data-r data-d="1">Composants retenus.</h2>
-          <p class="s-lead" data-r data-d="2">Architecture délibérément minimaliste. Pas de multiplexeur si le nombre de contrôles reste raisonnable. Alimentation audio séparée de la partie numérique.</p>
-        </div>
-
-        <div class="hw-grid" data-r data-d="3">
-          <div class="hw-cell">
-            <div class="hw-chip">Cerveau DSP</div>
-            <div class="hw-name">Daisy Seed</div>
-            <div class="hw-detail">libDaisy · DaisySP · C++<br>Audio stéréo embarqué · ADC natifs</div>
-          </div>
-          <div class="hw-cell">
-            <div class="hw-chip">Affichage</div>
-            <div class="hw-name">OLED 128×64</div>
-            <div class="hw-detail">Édition par 7 pages<br>Preset · paramètre · valeur · page</div>
-          </div>
-          <div class="hw-cell">
-            <div class="hw-chip">Contrôles</div>
-            <div class="hw-name">8 pots · 1 enc · 4 btn</div>
-            <div class="hw-detail">Page − / Page + / Shift / Preset<br>Soft takeover obligatoire</div>
-          </div>
-          <div class="hw-cell">
-            <div class="hw-chip">MIDI</div>
-            <div class="hw-name">DIN 5 broches</div>
-            <div class="hw-detail">Optocoupleur<br>Note · CC · PC · Pitch Bend · Clock</div>
-          </div>
-          <div class="hw-cell">
-            <div class="hw-chip">Audio Out</div>
-            <div class="hw-name">Jack TRS 6,35 mm</div>
-            <div class="hw-detail">Sortie stéréo<br>Étage de sortie dédié · niveau maîtrisé</div>
-          </div>
-          <div class="hw-cell">
-            <div class="hw-chip">Alimentation</div>
-            <div class="hw-name">Audio / numérique séparés</div>
-            <div class="hw-detail">Masse soignée · routage audio<br>Découplage · zéro bruit numérique</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- §07 RISQUES -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>07 — Risques identifiés</p>
-        <h2 class="s-h" data-r data-d="1">Points de vigilance.</h2>
-        <p class="s-lead" data-r data-d="2">Risques techniques et UX à surveiller tout au long du développement V1. Rouge = bloquant si non traité tôt.</p>
-
-        <div class="risk-table" data-r data-d="3">
-          <div class="risk-row">
-            <div class="rdot rdot-h"></div>
-            <span class="rtxt">Charge CPU trop haute avec chorus + reverb + 4 voix</span>
-            <span class="rmit">Mesurer le DSP très tôt</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-h"></div>
-            <span class="rtxt">Reverb trop coûteuse pour la V1</span>
-            <span class="rmit">Commencer sans reverb lourde</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-m"></div>
-            <span class="rtxt">Mauvais gain staging — saturation ou souffle</span>
-            <span class="rmit">Effets sur bus global uniquement</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-m"></div>
-            <span class="rtxt">Sortie TRS mal définie — ligne vs casque</span>
-            <span class="rmit">Fixer avant la PCB</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-m"></div>
-            <span class="rtxt">Potentiomètres sans soft takeover — UX frustrante</span>
-            <span class="rmit">Fixer l'interface physique d'abord</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-l"></div>
-            <span class="rtxt">Synchro MIDI Clock plus délicate que prévu</span>
-            <span class="rmit">Phase 5 dédiée</span>
-          </div>
-          <div class="risk-row">
-            <div class="rdot rdot-l"></div>
-            <span class="rtxt">UI trop chargée pour un OLED 128×64</span>
-            <span class="rmit">Navigation par pages stricte</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- §08 PROCHAINE ÉTAPE -->
-    <section class="s">
-      <div class="wrap">
-        <p class="s-label" data-r>08 — Prochaine étape</p>
-        <h2 class="s-h" data-r data-d="1">Ce qui se passe maintenant.</h2>
-        <p class="s-lead" data-r data-d="2">La Phase 1 démarre. L'objectif est de faire tourner un moteur audio propre — aucune interface, juste du son. On mesure le DSP dès les premiers jours.</p>
-
-        <div class="next-box" data-r data-d="3">
-          <p class="next-lbl">Phase 1 — Actions immédiates</p>
-          <ol class="next-steps">
-            <li>Copier ou recréer les spécifications dans le nouveau dépôt.</li>
-            <li>Initialiser la structure du projet firmware Daisy.</li>
-            <li>Implémenter 1 voix complète — OSC, filtre, VCA, enveloppes.</li>
-            <li>Étendre à 4 voix avec allocation et voice stealing propre.</li>
-            <li>Ajouter les 2 oscillateurs par voix, valider le son.</li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <span class="footer-v">26/04/19.1</span>
-  </footer>
-
-</div>
-
-<script>
-  const els = document.querySelectorAll('[data-r]');
-  const io = new IntersectionObserver(
-    entries => entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-    }),
-    { threshold: 0.08, rootMargin: '0px 0px -36px 0px' }
-  );
-  els.forEach(el => io.observe(el));
-</script>
-
+    <p class="footer">
+      Fantôme IV · page projet simplifiée · voir aussi README, roadmap et specs
+    </p>
+  </div>
 </body>
 </html>
