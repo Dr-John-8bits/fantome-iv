@@ -127,3 +127,45 @@ Impact :
 
 - le schéma ne devra pas être dessiné sans cadre documentaire
 - l'implémentation firmware UI ne devra pas partir sans cadre UX explicite
+
+## D-0008 - Spec MIDI obligatoire
+
+Statut :
+
+- actée
+
+Décision :
+
+- la documentation initiale ne sera pas considérée comme suffisante sans une spec MIDI dédiée
+
+Documents de référence :
+
+- [MIDI-SPEC.md](./MIDI-SPEC.md)
+
+Impact :
+
+- le comportement MIDI reçu doit être figé avant la phase 1
+- la table de CC et les Program Change doivent être documentés avant implémentation
+
+## D-0009 - Interaction encodeur retenue
+
+Statut :
+
+- actée
+
+Décision :
+
+- l'encodeur sert à sélectionner un élément puis à entrer en édition
+- une fois en édition, la valeur change en direct pendant la rotation
+- un nouvel appui sort du mode édition
+- les valeurs ordinaires ne demandent pas de validation supplémentaire
+- la confirmation explicite est réservée aux actions sensibles comme `Save preset` ou `Init patch`
+
+Documents de référence :
+
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+
+Impact :
+
+- l'encodeur ne doit pas se comporter comme un formulaire à valider à chaque étape
+- l'édition des effets, du MIDI et des presets doit rester fluide

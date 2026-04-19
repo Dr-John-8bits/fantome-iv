@@ -38,16 +38,19 @@ Ordre de référence du plus stratégique au plus opérationnel :
 5. [UI-UX-SPEC.md](./UI-UX-SPEC.md)
    Rôle : référence d'interface utilisateur et de comportement de la face avant.
 
-6. [BOM.md](./BOM.md)
+6. [MIDI-SPEC.md](./MIDI-SPEC.md)
+   Rôle : contrat MIDI de la V1.
+
+7. [BOM.md](./BOM.md)
    Rôle : nomenclature matérielle de référence pour le prototype.
 
-7. [ROADMAP.md](./ROADMAP.md)
+8. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-8. [README.md](./README.md)
+9. [README.md](./README.md)
    Rôle : porte d'entrée du dépôt.
 
-9. [LISTE-COURSES.md](./LISTE-COURSES.md)
+10. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance
@@ -68,6 +71,7 @@ La phase 1 firmware ne doit pas démarrer tant que les points suivants ne sont p
 - blocs hardware principaux décrits
 - structure du schéma suffisamment cadrée
 - logique UI/UX suffisamment cadrée
+- contrat MIDI suffisamment cadré
 - priorités d'effets et de modulations
 - logique MIDI
 - stratégie de presets
@@ -85,6 +89,7 @@ On considère la base documentaire comme suffisamment solide quand :
 - la structure du schéma est décrite
 - les interfaces utilisateur et MIDI sont décrites
 - la navigation UI/UX est décrite
+- le comportement MIDI reçu est décrit
 - la BOM couvre le prototype réel
 - les décisions structurantes sont consignées
 

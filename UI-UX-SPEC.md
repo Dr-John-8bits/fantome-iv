@@ -102,6 +102,31 @@ Appui :
 - `Shift / Back` : action secondaire, retour, annulation
 - `Preset / Save / Action` : actions liées aux presets ou à la validation selon contexte
 
+### 3.6 Règle de base de l'encodeur
+
+Le comportement retenu pour la V1 est le suivant :
+
+1. rotation encodeur = sélectionner un paramètre ou une ligne
+2. appui encodeur = entrer dans l'édition de cet élément
+3. rotation encodeur = modifier la valeur en direct
+4. appui encodeur = sortir du mode édition
+5. rotation encodeur = passer au paramètre suivant
+
+Règle importante :
+
+- les changements de valeur ordinaires sont appliqués en direct
+- il n'y a pas de validation supplémentaire pour chaque quantité
+- l'appui ne sert pas à confirmer chaque incrément ou chaque pourcentage
+- la validation explicite supplémentaire est réservée aux actions destructives ou sensibles
+
+Exemple simple :
+
+- je tourne pour sélectionner `Delay Feedback`
+- j'appuie pour éditer
+- je tourne jusqu'à la bonne valeur
+- j'appuie pour sortir de l'édition
+- je tourne pour aller au paramètre suivant
+
 ## 4. Modèle de navigation
 
 ### 4.1 Niveau principal
@@ -125,6 +150,27 @@ Le bouton `Shift / Back` sert à :
 - revenir en arrière
 - accéder aux actions secondaires
 - éviter de surcharger les autres boutons
+
+### 4.4 États d'interaction retenus
+
+L'UI V1 fonctionne avec trois états simples :
+
+1. `Navigation`
+   L'utilisateur se déplace entre pages, lignes et éléments.
+
+2. `Édition`
+   L'utilisateur modifie la valeur de l'élément sélectionné.
+
+3. `Confirmation`
+   L'utilisateur confirme une action sensible.
+
+Actions concernées par `Confirmation` :
+
+- `Save preset`
+- `Load preset` si risque de perte de contexte jugé important
+- `Init patch`
+
+Les paramètres ordinaires n'utilisent pas cet état supplémentaire.
 
 ## 5. Philosophie d'affichage OLED
 
@@ -279,6 +325,23 @@ Pot 8 recommandé :
 
 - `Chorus mix` ou `Delay feedback` selon la sous-section affichée
 
+Comportement recommandé de l'encodeur sur cette page :
+
+- rotation en mode navigation : choisir `Chorus`, `Delay`, `Reverb` ou un paramètre à l'intérieur
+- appui : entrer dans l'élément choisi
+- rotation en mode édition : modifier la valeur en direct
+- appui : revenir au niveau précédent
+
+Exemple pour le delay :
+
+- l'utilisateur sélectionne `Delay`
+- appuie pour entrer dans le bloc
+- tourne pour choisir `Mode`, `Time/Division`, `Feedback`, `Mix`
+- appuie pour éditer le paramètre choisi
+- tourne pour modifier la valeur
+- appuie pour sortir de l'édition
+- tourne pour aller au paramètre suivant
+
 ### 6.7 Page 7 - Système / MIDI / Presets
 
 But :
@@ -383,6 +446,11 @@ L'interface doit permettre :
 - de modifier cutoff, resonance et ADSR ampli immédiatement
 - de changer de page rapidement
 - de retrouver facilement les paramètres avancés
+
+Règle ergonomique :
+
+- on ne doit pas avoir à valider chaque mouvement de valeur comme dans un formulaire
+- l'encodeur sert à entrer/sortir de l'édition, pas à confirmer chaque incrément
 
 ## 12. Gestion des erreurs et cas limites
 
