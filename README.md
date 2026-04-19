@@ -30,7 +30,9 @@ Le projet est désormais figé sur une base matérielle claire :
 ## Contenu du dépôt
 
 - [Fantome-IV-specs.md](./Fantome-IV-specs.md) : spécifications fonctionnelles V1
+- [BOM.md](./BOM.md) : nomenclature matérielle du prototype
 - [ROADMAP.md](./ROADMAP.md) : feuille de route du projet
+- [LISTE-COURSES.md](./LISTE-COURSES.md) : version simple de la liste d'achats
 - [index.html](./index.html) : page web publique du projet
 - `F-IV-Logo.png` / `F-IV-Logo.webp` : identité visuelle
 

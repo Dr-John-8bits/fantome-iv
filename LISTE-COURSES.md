@@ -12,6 +12,8 @@ Cette liste suit la route retenue pour Fantôme IV :
 
 L'idée est d'acheter seulement ce qui sert à notre vrai prototype, sans ouvrir de piste parallèle.
 
+Pour la version détaillée et structurée, voir aussi [BOM.md](./BOM.md).
+
 ## À acheter maintenant
 
 - 1 `Daisy Seed 65MB`
@@ -23,7 +25,7 @@ L'idée est d'acheter seulement ce qui sert à notre vrai prototype, sans ouvrir
 - 4 boutons poussoirs momentané
 - 1 écran `OLED 128x64` I2C ou SPI
 - 1 petit lot de résistances et condensateurs de base
-- 2 jacks audio pour les sorties
+- 1 jack TRS stéréo `6,35 mm` pour la sortie audio
 - 1 connecteur MIDI In
 - 1 optocoupleur pour l'entrée MIDI
 - 1 casque ou enceintes de monitoring
