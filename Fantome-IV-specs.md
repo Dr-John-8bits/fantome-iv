@@ -1,0 +1,800 @@
+# Fantôme IV
+
+Spécifications V1 du projet de synthétiseur numérique polyphonique.
+
+## 1. Vision du projet
+
+Fantôme IV est un synthétiseur numérique de bureau, polyphonique, conçu autour d'une plateforme embarquée DSP.
+
+Objectif produit :
+
+- Construire un instrument jouable, fiable et réalisable par une petite équipe.
+- Obtenir un vrai comportement de polysynth moderne avec une interface physique claire.
+- Garder une architecture simple côté hardware, tout en laissant de la place pour une V2.
+- Se concentrer sur le plaisir de jeu, le son et la stabilité avant d'ajouter trop de fonctions annexes.
+
+Positionnement V1 :
+
+- Synthèse numérique de type analogique
+- 4 voix de polyphonie
+- Sortie stéréo
+- MIDI In
+- Écran OLED et presets
+- Modulations musicales simples et efficaces
+- Effets stéréo intégrés
+
+## 2. Nom du projet
+
+Nom retenu :
+
+- Fantôme IV
+
+## 3. Plateforme recommandée
+
+Plateforme cible recommandée :
+
+- Daisy Seed
+
+Pourquoi :
+
+- DSP audio adapté à un synthé embarqué
+- Audio stéréo embarqué de bonne qualité
+- ADC suffisants pour une interface simple sans multiplexage lourd
+- Écosystème audio plus naturel pour ce type de projet qu'un Arduino classique
+- Suffisamment puissant pour 4 voix + modulations + effets stéréo
+
+Stack logicielle recommandée :
+
+- Langage : C++
+- Bibliothèques : libDaisy + DaisySP
+- Build : toolchain Daisy officielle
+- Option de développement complémentaire : petite application de test desktop pour valider le moteur audio plus vite
+
+## 4. Principes de conception V1
+
+- Garder le CV/Gate hors du scope de la V1
+- Favoriser des contrôles par pages + soft takeover plutôt que trop de potentiomètres
+- Filtre, VCA et enveloppes par voix
+- Effets sur bus global stéréo
+- Priorité au MIDI : l'instrument doit d'abord être excellent en MIDI avant toute extension
+- Architecture modulaire du code pour pouvoir ajouter une V2 sans réécriture massive
+
+## 5. Non-objectifs V1
+
+Hors scope de la V1 :
+
+- CV/Gate
+- Arpégiateur
+- Séquenceur interne complet
+- Delay
+- Matrice de modulation complexe
+- Aftertouch
+- USB host MIDI
+- Audio In
+- Multitimbralité
+
+Ces points restent possibles en V2, mais ne doivent pas ralentir la V1.
+
+## 6. Spécification fonctionnelle V1
+
+### 6.1 Résumé
+
+Fantôme IV V1 doit offrir :
+
+- 4 voix de polyphonie
+- MIDI In
+- Sortie audio stéréo sur jack TRS
+- Écran OLED pour l'édition et la gestion des presets
+- 1 LFO dédié à la modulation des oscillateurs
+- 1 LFO dédié au filtre
+- 1 modulation Sample & Hold pour le filtre, basée sur une source de bruit blanc
+- 1 filtre low-pass résonant par voix
+- 1 VCA par voix
+- 1 ADSR VCA par voix
+- 1 ADSR filtre par voix
+- Chorus stéréo global
+- Reverb stéréo globale
+
+### 6.2 Architecture audio globale
+
+Architecture recommandée :
+
+1. MIDI In
+2. Allocation de voix
+3. Moteur de synthèse par voix
+4. Mix des 4 voix
+5. Chorus stéréo global
+6. Reverb stéréo globale
+7. Sortie stéréo
+
+### 6.3 Architecture par voix
+
+Chaque voix contient :
+
+- 2 oscillateurs numériques
+- 1 générateur de bruit blanc partagé ou dérivé d'une source globale
+- 1 mixeur de sources
+- 1 filtre low-pass résonant
+- 1 VCA
+- 1 enveloppe ADSR pour le VCA
+- 1 enveloppe ADSR pour le filtre
+
+Flux du signal par voix :
+
+`OSC A + OSC B + Noise -> Mixer -> Low-pass -> VCA -> Somme globale`
+
+### 6.4 Oscillateurs
+
+Choix retenu en V1 :
+
+- 2 oscillateurs par voix
+
+Fonctions minimales :
+
+- Accord global
+- Detune entre OSC A et OSC B
+- Réglage de niveau OSC A / OSC B
+- Réglage d'octave ou transposition pour OSC B
+
+Formes d'onde minimales recommandées :
+
+- Saw
+- Square / Pulse
+- Triangle
+
+Fonctions souhaitées mais non indispensables pour démarrer :
+
+- PWM
+- Léger drift optionnel
+
+### 6.5 Polyphonie et allocation de voix
+
+Règles V1 :
+
+- 4 voix maximum
+- Voice stealing propre et prévisible
+- Mode prioritaire : oldest voice steal
+- Gestion correcte des notes relâchées et du sustain
+- Réponse stable en accords et en jeu legato
+
+Fonctions MIDI de base liées au jeu :
+
+- Note On / Note Off
+- Pitch Bend
+- Mod Wheel
+- Sustain Pedal
+- All Notes Off / Panic
+
+Fonctions recommandées si le temps le permet :
+
+- Velocity vers VCA
+- Velocity vers filtre en quantité optionnelle
+
+## 7. Modulations
+
+### 7.1 LFO oscillateurs
+
+Rôle :
+
+- Moduler le pitch des oscillateurs
+
+Paramètres minimum :
+
+- Rate
+- Amount
+- Waveform
+- Sync on/off
+
+Formes d'onde recommandées :
+
+- Sine
+- Triangle
+- Square
+
+Destination V1 :
+
+- Pitch des oscillateurs
+
+### 7.2 LFO filtre
+
+Rôle :
+
+- Moduler le cutoff du filtre
+
+Paramètres minimum :
+
+- Rate
+- Amount
+- Waveform
+- Sync on/off
+
+Formes d'onde recommandées :
+
+- Sine
+- Triangle
+- Square
+
+Destination V1 :
+
+- Cutoff du filtre
+
+### 7.3 Sample & Hold filtre
+
+Rôle :
+
+- Créer une modulation aléatoire par pas pour le cutoff
+
+Source :
+
+- Bruit blanc
+
+Paramètres minimum :
+
+- Rate
+- Amount
+- Sync on/off
+
+Paramètre recommandé :
+
+- Slew / Smooth pour adoucir les marches
+
+Destination V1 :
+
+- Cutoff du filtre
+
+Comportement attendu :
+
+- Free-run possible
+- Synchronisation MIDI Clock souhaitée
+- Résultat musical sans clics
+
+## 8. Filtre
+
+Type retenu pour la V1 :
+
+- Low-pass résonant par voix
+
+Implémentation DSP recommandée :
+
+- State variable filter ou autre low-pass stable et musical
+
+Paramètres minimum :
+
+- Cutoff
+- Resonance
+- Filter Env Amount
+- Filter LFO Amount
+- Sample & Hold Amount
+
+Objectif sonore :
+
+- Filtre "classique" musical
+- Stable à résonance élevée
+- Sans auto-oscillation obligatoire en V1
+
+## 9. Enveloppes
+
+### 9.1 ADSR VCA
+
+Par voix :
+
+- Attack
+- Decay
+- Sustain
+- Release
+
+Rôle :
+
+- Contrôle du volume de la voix
+
+### 9.2 ADSR filtre
+
+Par voix :
+
+- Attack
+- Decay
+- Sustain
+- Release
+
+Rôle :
+
+- Contrôle dynamique du cutoff via une quantité d'enveloppe
+
+Contraintes de qualité :
+
+- Pas de clics
+- Temps courts crédibles pour les attaques rapides
+- Temps longs utilisables musicalement
+
+## 10. VCA
+
+VCA par voix :
+
+- Contrôle par ADSR VCA
+- Possibilité de modulation par velocity en option
+
+Exigences :
+
+- Réponse propre
+- Pas de zipper noise
+- Bonne gestion du niveau global quand 4 voix jouent simultanément
+
+## 11. Effets
+
+### 11.1 Chorus
+
+Type :
+
+- Chorus stéréo global
+
+Paramètres minimum :
+
+- Rate
+- Depth
+- Mix
+
+Objectif :
+
+- Élargir l'image stéréo
+- Donner de l'ampleur sans rendre le son flou par défaut
+
+### 11.2 Reverb
+
+Type :
+
+- Reverb stéréo globale
+
+Paramètres minimum :
+
+- Size ou Time
+- Tone ou Damping
+- Mix
+
+Objectif :
+
+- Reverb musicale, légère à moyenne
+- Utilisable en contexte synthé sans noyer le signal
+
+### 11.3 Ordre des effets
+
+Ordre recommandé :
+
+- Mix des voix -> Chorus -> Reverb -> Sortie
+
+## 12. Sortie stéréo
+
+Exigence utilisateur :
+
+- Sortie audio jack TRS
+
+Spécification V1 :
+
+- 1 sortie stéréo sur jack TRS 6,35 mm
+
+Point hardware à confirmer pendant la conception :
+
+- Mode ligne stéréo
+- ou mode casque stéréo avec ampli casque
+- ou étage pouvant couvrir les deux usages
+
+Recommandation actuelle :
+
+- Prévoir une sortie stéréo propre avec niveau maîtrisé et un vrai étage de sortie
+
+## 13. MIDI
+
+### 13.1 Connectique
+
+Minimum V1 :
+
+- MIDI In physique
+
+Implémentation hardware recommandée :
+
+- DIN 5 broches avec optocoupleur
+
+Option acceptable si désirée plus tard :
+
+- Compatibilité TRS-MIDI via adaptateur ou révision hardware
+
+### 13.2 Messages MIDI supportés
+
+Obligatoires :
+
+- Note On
+- Note Off
+- Control Change
+- Program Change
+- Pitch Bend
+- Mod Wheel
+- Sustain Pedal
+- MIDI Clock
+- Start / Stop / Continue si la synchro est implémentée
+
+### 13.3 Fonctions MIDI utilisateur
+
+- Jouer les 4 voix
+- Charger les presets par Program Change
+- Synchroniser les LFO et le S&H à l'horloge MIDI
+- Utiliser la Mod Wheel comme modulation musicale utile
+
+### 13.4 Mapping MIDI de base recommandé
+
+Proposition initiale :
+
+- CC 1 : Mod Wheel
+- CC 7 : Volume master
+- CC 10 : Pan / width global si implémenté
+- CC 71 : Resonance
+- CC 74 : Filter Cutoff
+
+Mapping additionnel à définir pendant l'implémentation :
+
+- Attack / Decay / Sustain / Release
+- LFO rates
+- FX mix
+- Preset-safe parameters
+
+## 14. Presets
+
+### 14.1 Objectif
+
+Permettre la sauvegarde et le rappel rapide des sons.
+
+### 14.2 Spécification V1
+
+- Sauvegarde locale sur mémoire non volatile
+- Écran de sélection des presets
+- Save / Load depuis l'interface
+- Chargement via Program Change
+
+Capacité recommandée :
+
+- 64 presets utilisateur minimum
+
+### 14.3 Exigences
+
+- Chargement sans comportement destructif
+- Soft takeover des potentiomètres après rappel d'un preset
+- Init patch disponible à tout moment
+- Versionnement simple de la structure preset pour éviter les incompatibilités futures
+
+## 15. Interface utilisateur
+
+### 15.1 Philosophie UI
+
+Objectif :
+
+- Peu de contrôles, mais bien choisis
+- Navigation rapide
+- Utilisable sans devoir mémoriser un menu trop profond
+
+### 15.2 Interface physique recommandée
+
+V1 recommandée :
+
+- 1 écran OLED 128x64
+- 1 encodeur rotatif cliquable
+- 8 potentiomètres
+- 4 boutons
+
+Boutons recommandés :
+
+- Page -
+- Page +
+- Shift / Back
+- Preset / Save
+
+Potentiomètres :
+
+- page-based
+- soft takeover obligatoire après chargement de preset
+
+### 15.3 Pages UI recommandées
+
+Page 1 :
+
+- Oscillateurs
+
+Page 2 :
+
+- Filtre
+
+Page 3 :
+
+- ADSR VCA
+
+Page 4 :
+
+- ADSR filtre
+
+Page 5 :
+
+- LFO / S&H
+
+Page 6 :
+
+- Effets
+
+Page 7 :
+
+- Système / MIDI / Presets
+
+### 15.4 Informations affichées
+
+Minimum :
+
+- Nom ou numéro du preset
+- Nom du paramètre édité
+- Valeur du paramètre
+- Page courante
+- État de synchro si utile
+
+## 16. Paramètres exposés à l'utilisateur
+
+Liste minimale recommandée :
+
+- Osc A waveform
+- Osc A level
+- Osc B waveform
+- Osc B level
+- Osc B detune
+- Osc B octave ou transpose
+- Noise level
+- Filter cutoff
+- Filter resonance
+- Filter env amount
+- Amp ADSR A
+- Amp ADSR D
+- Amp ADSR S
+- Amp ADSR R
+- Filter ADSR A
+- Filter ADSR D
+- Filter ADSR S
+- Filter ADSR R
+- LFO osc rate
+- LFO osc amount
+- LFO osc waveform
+- LFO filter rate
+- LFO filter amount
+- LFO filter waveform
+- S&H rate
+- S&H amount
+- S&H smooth
+- Chorus rate
+- Chorus depth
+- Chorus mix
+- Reverb size
+- Reverb tone
+- Reverb mix
+- Master volume
+
+## 17. Hardware V1 recommandé
+
+### 17.1 Carte principale
+
+- Daisy Seed
+
+### 17.2 Affichage
+
+- OLED 128x64
+
+### 17.3 Contrôles
+
+- 8 potentiomètres
+- 1 encodeur rotatif avec bouton
+- 4 boutons poussoirs
+
+### 17.4 MIDI
+
+- 1 entrée MIDI In DIN 5 broches
+- 1 optocoupleur
+
+### 17.5 Audio
+
+- 1 sortie stéréo jack TRS 6,35 mm
+- étage de sortie adapté à l'usage retenu
+
+### 17.6 Alimentation
+
+V1 prototype :
+
+- Alimentation simple et stable
+
+Recommandation :
+
+- Dissocier autant que possible l'alimentation audio et le bruit numérique
+- Soigner la masse, le routage audio et le découplage
+
+### 17.7 Simplifications hardware retenues
+
+Pour la V1 :
+
+- pas de CV/Gate
+- pas d'audio input
+- pas de multiplexeur obligatoire si le nombre de contrôles reste raisonnable
+
+## 18. Architecture logicielle recommandée
+
+Modules logiciels à prévoir :
+
+- `AudioEngine`
+- `Voice`
+- `Oscillator`
+- `Filter`
+- `Envelope`
+- `Lfo`
+- `SampleHold`
+- `FxChorus`
+- `FxReverb`
+- `PresetManager`
+- `MidiManager`
+- `UiManager`
+- `ParameterStore`
+
+Principes :
+
+- Séparer clairement DSP, UI et hardware
+- Paramètres centralisés
+- Sauvegarde preset basée sur une structure stable
+- Pas de logique écran dans le code audio
+- Pas d'allocation dynamique dans la callback audio
+
+## 19. Performance et contraintes techniques
+
+Le système doit tenir :
+
+- 4 voix
+- 2 oscillateurs par voix
+- 2 enveloppes par voix
+- filtre par voix
+- chorus stéréo
+- reverb stéréo
+- UI réactive
+- MIDI fiable
+
+Contraintes :
+
+- aucune coupure audible en jeu normal
+- aucune latence anormale des contrôles
+- pas de clics majeurs à l'édition
+- charge CPU maîtrisable avec marge de sécurité
+
+## 20. Qualité attendue
+
+Définition d'une "V1 réussie" :
+
+- Instrument stable
+- Son musical
+- 4 notes jouables proprement
+- Presets fiables
+- Interface claire
+- Sortie stéréo exploitable
+- Modulations expressives
+
+## 21. Roadmap de développement
+
+### Phase 0 - Cadrage
+
+- Valider ces spécifications
+- Ouvrir le nouveau dépôt
+- Poser l'arborescence du projet
+- Définir les conventions de nommage et de build
+
+### Phase 1 - Moteur de synthèse nu
+
+- Initialiser le projet Daisy
+- Implémenter 1 voix complète
+- Implémenter 4 voix et l'allocation
+- Ajouter filtre, VCA, enveloppes
+- Ajouter 2 oscillateurs par voix
+
+### Phase 2 - Modulations
+
+- Ajouter LFO oscillateurs
+- Ajouter LFO filtre
+- Ajouter Sample & Hold filtre
+- Ajouter Pitch Bend / Mod Wheel / Sustain
+
+### Phase 3 - Effets
+
+- Intégrer chorus stéréo
+- Intégrer reverb stéréo
+- Stabiliser le gain staging et le niveau de sortie
+
+### Phase 4 - Interface et presets
+
+- Écran OLED
+- Encodeur et boutons
+- Édition des paramètres par pages
+- Sauvegarde / rappel des presets
+- Soft takeover
+
+### Phase 5 - MIDI complet
+
+- Program Change
+- CC mapping
+- MIDI Clock sync pour les LFO et le S&H
+
+### Phase 6 - Intégration hardware
+
+- Tests avec la vraie face avant
+- Vérification des contrôles
+- Validation de la sortie audio
+- Nettoyage UX final
+
+## 22. Risques à surveiller
+
+- Charge CPU trop haute avec chorus + reverb + 4 voix
+- Reverb trop coûteuse pour la V1
+- Mauvais gain staging provoquant saturation ou souffle
+- Sortie TRS mal définie entre usage ligne et casque
+- Potentiomètres page-based sans soft takeover, donc UX frustrante
+- Synchro MIDI Clock plus délicate que prévu
+- UI trop chargée pour un petit OLED
+
+Mitigations :
+
+- Commencer sans reverb lourde si nécessaire
+- Mesurer la charge DSP très tôt
+- Garder les effets sur bus global uniquement
+- Fixer l'interface physique avant la PCB
+
+## 23. Critères d'acceptation V1
+
+Fantôme IV V1 est considérée comme terminée si :
+
+- 4 notes simultanées fonctionnent proprement
+- Les 2 oscillateurs par voix sont stables et accordables
+- Le filtre low-pass est musical et pilotable
+- Les 2 ADSR par voix fonctionnent correctement
+- Les 2 LFO fonctionnent correctement
+- Le Sample & Hold filtre fonctionne avec bruit blanc
+- Chorus et reverb stéréo sont utilisables
+- Les presets peuvent être sauvegardés et rappelés
+- L'écran permet l'édition sans confusion
+- MIDI In fonctionne de manière fiable
+- Program Change et au moins un set de CC utiles fonctionnent
+- La sortie stéréo sur jack TRS est validée
+
+## 24. Évolutions V2 envisagées
+
+- CV In pour cutoff ou pitch mono
+- Gate In
+- Delay
+- Unison
+- Arpégiateur
+- Matrice de modulation
+- Plus de formes d'onde
+- Sortie casque dédiée si la V1 part en simple ligne stéréo
+
+## 25. Décisions gelées pour le démarrage
+
+Décisions à considérer comme figées au début du projet :
+
+- Nom : Fantôme IV
+- Plateforme : Daisy Seed
+- Langage : C++
+- 4 voix
+- MIDI In
+- Sortie stéréo sur jack TRS
+- OLED + presets
+- 2 oscillateurs par voix
+- 1 filtre low-pass résonant par voix
+- 1 VCA par voix
+- 2 ADSR par voix
+- 1 LFO pitch global
+- 1 LFO filtre global
+- 1 Sample & Hold filtre global à partir de bruit blanc
+- Chorus stéréo global
+- Reverb stéréo globale
+- Pas de CV/Gate en V1
+
+## 26. Prochaine étape
+
+Quand le nouveau répertoire sera créé, il faudra :
+
+1. Y copier ou y recréer ce document.
+2. Initialiser la structure du projet firmware.
+3. Commencer par le moteur audio minimal sans interface.
+4. Ajouter l'UI et les presets ensuite.
