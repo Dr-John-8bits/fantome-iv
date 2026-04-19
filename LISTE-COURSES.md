@@ -4,9 +4,10 @@ Cette liste suit la route retenue pour Fantôme IV :
 
 - `Daisy Seed 65MB`
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
-- `4 boutons`
-- `1 écran OLED 128x64`
+- `1 encodeur rotatif cliquable cranté`
+- `4 boutons poussoirs`
+- `1 écran OLED 128x64` `SSD1306` `1,3"`
+- `1 LED MIDI`
 - `MIDI In` physique
 - sortie audio stéréo
 
@@ -25,15 +26,17 @@ Important :
 - 1 câble `micro-USB` de données
 - 1 breadboard ou plaque de prototypage
 - un lot de fils Dupont
-- 8 potentiomètres linéaires `10k`
-- 1 encodeur rotatif avec bouton poussoir
-- 4 boutons poussoirs momentané NO
-- 1 écran `OLED 128x64` `SSD1306` `I2C`
+- 8 potentiomètres linéaires `10k` de panneau
+- 1 encodeur rotatif cranté avec bouton poussoir
+- 4 boutons poussoirs momentané NO de panneau
+- 1 écran `OLED 128x64` `SSD1306` `I2C` `1,3"`
+- 1 LED MIDI
 - 1 petit lot de résistances et condensateurs de base
 - 1 jack TRS stéréo `6,35 mm` pour la sortie audio
 - 1 connecteur MIDI In
 - 1 optocoupleur `H11L1` ou compatible pour l'entrée MIDI
 - 1 résistance `220R`, 1 résistance `270R` et 1 condensateur `100nF` pour le bloc MIDI In de départ
+- 1 résistance de LED adaptée à la signalisation MIDI
 - 1 casque ou enceintes de monitoring
 - 1 clavier MIDI ou contrôleur MIDI que tu as déjà
 
@@ -48,8 +51,9 @@ Pourquoi cette base :
 Pour Fantôme IV V1 lui-même, la cible actuelle est :
 
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
-- `4 boutons`
+- `1 encodeur rotatif cliquable cranté`
+- `4 boutons poussoirs`
+- `1 LED MIDI`
 
 Conseil achat :
 
@@ -62,7 +66,6 @@ Conseil achat :
 Pas besoin de les acheter tout de suite :
 
 - PCB custom
-- façade définitive
 - boîtier
 - knobs définitifs
 - alimentation définitive
@@ -80,8 +83,8 @@ Ce n'est pas obligatoire pour flasher la carte, parce que Daisy peut être progr
 
 - prends un vrai câble USB de données, pas seulement charge
 - prévois un peu de marge sur les potentiomètres et boutons
-- pour l'écran OLED, un module simple et courant est préférable au début
-- ne cherche pas encore la façade ou les knobs définitifs
+- vise directement des composants de panneau si possible
+- pour l'écran OLED, privilégie un `1,3"` lisible
 
 ## Sources officielles utiles
 

@@ -15,7 +15,7 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 - rédiger la spec de schéma
 - rédiger la spec UI/UX
 - rédiger la spec MIDI
-- valider l'interface V1 : 8 potentiomètres, 1 encodeur, 4 boutons, 1 OLED
+- valider l'interface V1 : 8 potentiomètres de panneau, 1 encodeur cranté, 4 boutons poussoirs, 1 OLED 1,3"
 - figer la répartition des contrôles physiques et du menu encodeur
 - figer l'entrée `MIDI DIN 5 broches` comme interface musicale principale
 - préparer l'arborescence firmware

@@ -508,15 +508,17 @@ Objectif :
 - Navigation rapide
 - Utilisable sans devoir mémoriser un menu trop profond
 - Écran lisible et comportement évident en jeu
+- Lisibilité de façade prioritaire sur la compacité extrême
 
 ### 15.2 Interface physique recommandée
 
 V1 recommandée :
 
-- 1 écran OLED 128x64
-- 1 encodeur rotatif cliquable
-- 8 potentiomètres
-- 4 boutons
+- 1 écran OLED `SSD1306` `128x64` `1,3"` en `I2C`
+- 1 encodeur rotatif cliquable cranté
+- 8 potentiomètres de panneau
+- 4 boutons poussoirs de panneau
+- 1 LED MIDI de signalisation
 
 Boutons recommandés :
 
@@ -657,18 +659,20 @@ Liste minimale recommandée :
 
 ### 17.2 Affichage
 
-- OLED 128x64
+- OLED `SSD1306` `128x64` `1,3"` en `I2C`
 
 ### 17.3 Contrôles
 
-- 8 potentiomètres
-- 1 encodeur rotatif avec bouton
-- 4 boutons poussoirs
+- 8 potentiomètres de panneau
+- 1 encodeur rotatif cranté avec bouton
+- 4 boutons poussoirs de panneau
+- priorité mécanique à une façade très lisible
 
 ### 17.4 MIDI
 
 - 1 entrée MIDI In DIN 5 broches
 - 1 optocoupleur
+- 1 LED MIDI de signalisation
 
 ### 17.5 Audio
 
@@ -679,7 +683,8 @@ Liste minimale recommandée :
 
 V1 prototype :
 
-- Alimentation simple et stable
+- Alimentation par USB
+- Câblage simple et stable pour le prototype
 
 Recommandation :
 

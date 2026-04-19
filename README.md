@@ -11,8 +11,9 @@ Le projet est désormais figé sur une base matérielle claire :
 - `Daisy Seed 65MB`
 - `8 potentiomètres`
 - `1 encodeur rotatif cliquable`
-- `4 boutons`
-- `1 écran OLED 128x64`
+- `4 boutons poussoirs de panneau`
+- `1 écran OLED SSD1306 128x64 1,3"`
+- `1 LED MIDI`
 - `MIDI In` physique
 - sortie audio stéréo
 

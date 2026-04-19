@@ -46,17 +46,19 @@ Fantôme IV V1 repose sur :
 - `1 Daisy Seed 65MB`
 - `1 entrée MIDI DIN 5 broches`
 - `1 sortie ligne stéréo sur jack TRS 6,35 mm`
-- `1 écran OLED 128x64` de type `SSD1306`
-- `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
+- `1 écran OLED 128x64` de type `SSD1306` en `1,3"`
+- `8 potentiomètres` de panneau
+- `1 encodeur rotatif cliquable cranté`
 - `4 boutons poussoirs momentané NO`
+- `1 LED MIDI`
 
 Principe général :
 
 - l'USB sert au développement, au flash et au debug
 - le jeu musical normal passe par l'entrée MIDI DIN
 - la sortie audio V1 est une sortie ligne stéréo simple
-- la face avant reste volontairement compacte et lisible
+- la face avant vise un prototype proche de la façade finale
+- la lisibilité passe avant la compacité extrême
 
 ## 2. Vue système
 
@@ -75,6 +77,7 @@ Face avant
     +-- 1 encodeur + switch -> GPIO
     +-- 4 boutons poussoirs -> GPIO
     +-- OLED SSD1306 128x64 -> I2C
+    +-- LED MIDI -> GPIO
 
 Daisy Seed 65MB
     |
@@ -94,11 +97,13 @@ Exigences :
 - entrée `opto-isolée`
 - fonctionnement identique avec ou sans USB branché
 - pas de dépendance à l'USB pour jouer l'instrument
+- indicateur visuel d'activité MIDI souhaité en façade
 
 Décision :
 
 - pas d'USB MIDI requis pour la V1
 - pas de MIDI Out requis pour la V1
+- `1 LED MIDI` de signalisation retenue
 
 ### 3.2 Audio
 
@@ -126,21 +131,23 @@ Interface retenue :
 Usage :
 
 - flash du firmware
-- alimentation de développement si nécessaire
+- alimentation du prototype
 - debug
 
 Décision :
 
 - l'USB n'est pas l'interface musicale du produit
+- l'USB est la source d'alimentation retenue pour le prototype initial
 
 ## 4. Surface de contrôle V1
 
 ### 4.1 Contrôles retenus
 
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
+- `1 encodeur rotatif cliquable cranté`
 - `4 boutons poussoirs momentané NO`
-- `1 OLED 128x64` de type `SSD1306`
+- `1 OLED 128x64` de type `SSD1306` en `1,3"`
+- `1 LED MIDI`
 
 ### 4.2 Répartition retenue
 
@@ -183,6 +190,7 @@ La face avant V1 doit privilégier :
 - la rapidité de jeu
 - les paramètres essentiels toujours accessibles
 - un menu simple pour les paramètres moins fréquents
+- une implantation proche de la façade finale
 
 ## 5. Budget de signaux
 
@@ -205,10 +213,11 @@ Besoin actuel :
 - `2` signaux quadrature encodeur
 - `1` bouton encodeur
 - `4` boutons de face avant
+- `1` LED MIDI
 
 Total minimal :
 
-- `7` entrées / GPIO numériques
+- `8` entrées / GPIO numériques
 
 ### 5.3 Communication et interfaces
 
@@ -240,6 +249,7 @@ Au minimum :
 - optocoupleur de type `H11L1` ou compatible
 - résistances du circuit MIDI
 - découplage local de l'optocoupleur
+- sortie GPIO vers LED MIDI
 - liaison RX vers la Daisy
 
 ### 6.4 Référence de conception
@@ -251,11 +261,13 @@ Référence prototype retenue :
 - optocoupleur de type `H11L1` ou compatible
 - résistances dédiées au MIDI In
 - condensateur de découplage local `100nF`
+- LED MIDI de signalisation en façade
 
 À figer au schéma :
 
 - référence exacte de l'optocoupleur si une alternative au `H11L1` est retenue
 - valeurs exactes des résistances
+- valeur de résistance de la LED MIDI
 - filtrage ou protection complémentaire éventuels
 - broche Daisy retenue pour l'UART MIDI
 
@@ -296,12 +308,13 @@ Exigences :
 - `10k` linéaires recommandés
 - réponse stable
 - montage cohérent avec une future façade
+- format de panneau privilégié pour le prototype
 
 À figer :
 
-- format mécanique
+- référence exacte
 - type d'axe
-- fixation PCB ou panneau
+- diamètre de perçage et fixation panneau
 
 ### 8.2 Encodeur
 
@@ -310,12 +323,14 @@ Exigences :
 - encodeur incrémental
 - bouton poussoir intégré
 - sensation lisible et suffisamment ferme
+- encodeur cranté privilégié
+- format de panneau privilégié
 
 À figer :
 
 - nombre d'impulsions
 - type de filetage
-- empreinte mécanique
+- référence exacte
 
 ### 8.3 Boutons
 
@@ -324,11 +339,12 @@ Exigences :
 - 4 boutons momentané NO
 - sensation claire
 - lecture fiable
+- vrais boutons de panneau privilégiés
 
 À figer :
 
-- format
-- type de montage
+- référence exacte
+- type de montage panneau
 - hauteur compatible avec la future façade
 
 ### 8.4 Écran OLED
@@ -337,12 +353,13 @@ Exigences :
 
 - `128x64`
 - contrôleur `SSD1306`
+- format `1,3"` retenu
 - très lisible
 - pilotable simplement
 
 À figer :
 
-- variante mécanique exacte du module
+- référence exacte du module `1,3"`
 - implantation mécanique
 
 ## 9. Alimentation et stratégie de bruit
@@ -352,6 +369,7 @@ Exigences :
 Au prototype :
 
 - l'USB peut servir au développement
+- l'USB sert aussi à l'alimentation du prototype
 - l'instrument doit rester pensé comme un appareil autonome côté comportement
 
 ### 9.2 Exigences générales
@@ -373,7 +391,7 @@ Le brochage détaillé n'est pas encore figé dans ce document.
 En revanche, les familles de signaux sont déjà verrouillées :
 
 - `ADC x8` pour les potentiomètres
-- `GPIO x7 minimum` pour encodeur + switch + boutons
+- `GPIO x8 minimum` pour encodeur + switch + boutons + LED MIDI
 - `UART RX x1` pour le MIDI DIN
 - `bus OLED x1`
 - `audio out stéréo x2`
@@ -403,8 +421,8 @@ Avant de considérer la base hardware comme totalement verrouillée, il reste à
 - topologie exacte de la sortie audio
 - stratégie d'alimentation finale
 - référence finale de l'optocoupleur si différente du `H11L1`
-- variante mécanique exacte de l'écran OLED
-- conventions mécaniques des potentiomètres, boutons et encodeur
+- référence exacte du module OLED `1,3"`
+- références exactes des potentiomètres, boutons et encodeur de panneau
 
 ## 13. Critère de solidité documentaire hardware
 

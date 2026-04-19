@@ -62,9 +62,10 @@ Elle cherche à être claire et musicale.
 ### 3.1 Contrôles physiques retenus
 
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
+- `1 encodeur rotatif cliquable cranté`
 - `4 boutons poussoirs momentanés`
-- `1 OLED 128x64`
+- `1 OLED 128x64` `SSD1306` `1,3"`
+- `1 LED MIDI` de signalisation
 
 ### 3.2 Contrôles dédiés
 
@@ -106,6 +107,11 @@ Nature des contrôles :
 
 - ce sont `4` boutons poussoirs momentanés
 - ils sont distincts du bouton intégré à l'encodeur
+
+Priorité d'implantation :
+
+- la face avant doit rester très lisible
+- l'espacement et le confort de lecture priment sur la compacité extrême
 
 ### 3.6 Règle de base de l'encodeur
 

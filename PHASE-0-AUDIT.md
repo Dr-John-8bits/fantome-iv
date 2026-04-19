@@ -173,15 +173,15 @@ Documents concernés :
 - topologie exacte de la sortie audio
 - stratégie d'alimentation finale et règles de masse associées
 - référence finale de l'optocoupleur si différente du `H11L1`
-- variante mécanique exacte de l'écran `OLED`
+- référence exacte du module `OLED 1,3"`
 
 ### 2.2 Choix mécaniques
 
 À verrouiller :
 
-- format exact des potentiomètres
-- format exact de l'encodeur
-- format exact des boutons
+- références exactes des potentiomètres de panneau
+- référence exacte de l'encodeur cranté
+- référence exacte des boutons de panneau
 - implantation mécanique de l'écran
 - support mécanique de la Daisy
 

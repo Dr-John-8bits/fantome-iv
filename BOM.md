@@ -6,9 +6,10 @@ Elle est orientée prototype réel autour de la route retenue :
 
 - `Daisy Seed 65MB`
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
+- `1 encodeur rotatif cliquable cranté`
 - `4 boutons poussoirs momentané NO`
-- `1 écran OLED 128x64` de type `SSD1306`
+- `1 écran OLED 128x64` de type `SSD1306` en `1,3"`
+- `1 LED MIDI`
 - `MIDI In` physique
 - sortie audio stéréo
 
@@ -18,7 +19,7 @@ Elle est orientée prototype réel autour de la route retenue :
 - développement firmware sur Mac via USB
 - usage musical normal via MIDI DIN
 - pas de PCB custom dans l'immédiat
-- pas de façade définitive dans l'immédiat
+- prototype pensé proche de la façade finale
 
 ## BOM Prototype - À acheter maintenant
 
@@ -28,15 +29,16 @@ Elle est orientée prototype réel autour de la route retenue :
 | Connexion | Câble USB | `micro-USB` données | 1 | 1 | Indispensable | Sert au développement, au flash et au debug |
 | Proto | Breadboard | format moyen ou grand | 1 | 1 à 2 | Indispensable | Plus confortable si deux plaques |
 | Proto | Fils Dupont | mâle/mâle + mâle/femelle | 1 lot | 1 lot | Indispensable | Pour tout le câblage de bench |
-| Interface | Potentiomètres | `10k` linéaires | 8 | 10 | Indispensable | 8 pour le projet, 2 de marge |
-| Interface | Encodeur rotatif | incrémental + bouton poussoir | 1 | 2 | Indispensable | 1 pour le projet, 1 de secours |
-| Interface | Boutons poussoirs | momentané NO | 4 | 6 | Indispensable | 4 boutons de face avant, hors bouton intégré à l'encodeur |
-| Interface | Écran OLED | `128x64`, `SSD1306`, `I2C` | 1 | 1 à 2 | Indispensable | Module simple 4 broches recommandé pour démarrer |
+| Interface | Potentiomètres | `10k` linéaires, format panneau | 8 | 10 | Indispensable | Prototype proche de la façade finale |
+| Interface | Encodeur rotatif | incrémental, cranté, format panneau, bouton poussoir | 1 | 2 | Indispensable | Navigation plus lisible en menu |
+| Interface | Boutons poussoirs | momentané NO, format panneau | 4 | 6 | Indispensable | 4 boutons de face avant, hors bouton intégré à l'encodeur |
+| Interface | Écran OLED | `128x64`, `SSD1306`, `I2C`, `1,3"` | 1 | 1 à 2 | Indispensable | Lisibilité prioritaire |
 | Audio | Sortie audio | jack TRS stéréo `6,35 mm` | 1 | 1 | Indispensable | Cible produit V1 |
 | MIDI | Connecteur MIDI In | DIN 5 broches femelle | 1 | 1 | Indispensable | Interface musicale principale de la V1 |
 | MIDI | Optocoupleur | `H11L1` ou compatible MIDI In | 1 | 2 | Indispensable | Référence de départ du prototype |
 | MIDI | Résistances MIDI In | `220R`, `270R` | 2 | 2 à 4 | Indispensable | Valeurs de départ à valider au schéma final |
 | MIDI | Condensateur MIDI In | `100nF` | 1 | 2 à 4 | Indispensable | Découplage local de l'optocoupleur |
+| Signalisation | LED MIDI | 3 mm ou 5 mm | 1 | 2 à 4 | Indispensable | Indicateur d'activité MIDI |
 | Composants | Résistances | assortiment de base | 1 lot | 1 lot | Indispensable | Pour MIDI, LED, pull-up, essais |
 | Composants | Condensateurs | assortiment de base | 1 lot | 1 lot | Indispensable | Découplage et essais |
 | Test | Casque ou monitoring | sortie ligne ou casque | 1 | 1 | Indispensable | Pour écouter le proto |
@@ -49,7 +51,6 @@ Elle est orientée prototype réel autour de la route retenue :
 | Debug | ST-Link | `ST-Link V3 Mini` | 1 | 1 | Utile | Pas obligatoire pour flasher, utile pour debug |
 | Proto | Plaque à pastilles | proto soudé plus robuste | 1 | 1 | Utile | Pour éviter une breadboard trop fragile |
 | Interface | Knobs | compatibles avec les axes choisis | 8 | 8 | Utile | Pas indispensable pour démarrer |
-| Signalisation | LED | 3 mm ou 5 mm | 1 | 2 à 4 | Utile | Par exemple pour l'activité MIDI |
 
 ## BOM À figer au schéma final
 
@@ -59,10 +60,11 @@ Ces éléments existeront probablement, mais la référence exacte dépendra du 
 |---|---|---|
 | Circuit MIDI In | DIN 5 + `H11L1` ou compatible + résistances + `100nF` | À figer |
 | Étage de sortie audio | sortie stéréo propre, niveau maîtrisé | À figer |
-| Alimentation finale | hors USB uniquement si nécessaire | À figer |
-| Variante mécanique de l'OLED | `SSD1306 128x64 I2C` | À figer |
-| Type exact de potentiomètres | encombrement, axe, fixation | À figer |
-| Type exact d'encodeur | encombrement, filetage, sensation | À figer |
+| Alimentation finale | prototype via USB, alimentation finale à définir | À figer |
+| Référence exacte de l'OLED | `SSD1306 128x64 I2C 1,3"` | À figer |
+| Référence exacte des potentiomètres | `10k` linéaires, format panneau | À figer |
+| Référence exacte de l'encodeur | cranté, format panneau | À figer |
+| Référence exacte des boutons | momentané NO, format panneau | À figer |
 | Support mécanique de la Daisy | headers, entretoises, support | À figer |
 
 ## À acheter plus tard
@@ -81,8 +83,9 @@ Ces éléments existeront probablement, mais la référence exacte dépendra du 
 Pour Fantôme IV V1, la face avant cible reste :
 
 - `8 potentiomètres`
-- `1 encodeur rotatif cliquable`
-- `4 boutons`
+- `1 encodeur rotatif cliquable cranté`
+- `4 boutons poussoirs`
+- `1 LED MIDI`
 
 ## Références à choisir avec soin
 

@@ -32,10 +32,11 @@ Statut actuel :
 Le schéma V1 doit permettre :
 
 - de jouer Fantôme IV via `MIDI DIN 5 broches`
-- d'afficher l'UI sur `OLED SSD1306 128x64`
+- d'afficher l'UI sur `OLED SSD1306 128x64 1,3"`
 - de lire `8 potentiomètres`
-- de lire `1 encodeur rotatif cliquable`
+- de lire `1 encodeur rotatif cliquable cranté`
 - de lire `4 boutons poussoirs momentané NO`
+- d'afficher une `LED MIDI`
 - de sortir l'audio en `ligne stéréo TRS 6,35 mm`
 - de programmer et débugger la Daisy via `micro-USB`
 
@@ -47,11 +48,12 @@ Le schéma V1 doit comporter au minimum les blocs suivants :
 2. `alimentation et découplage`
 3. `MIDI In DIN 5 broches`
 4. `sortie audio stéréo`
-5. `OLED SSD1306 128x64`
+5. `OLED SSD1306 128x64 1,3"`
 6. `8 potentiomètres`
 7. `1 encodeur + switch`
 8. `4 boutons poussoirs momentané NO`
-9. `headers / points de debug / accès de programmation` si utile
+9. `LED MIDI`
+10. `headers / points de debug / accès de programmation` si utile
 
 ## 3. Bloc Daisy Seed 65MB
 
@@ -117,6 +119,7 @@ Recevoir le MIDI externe comme interface musicale principale.
 - un optocoupleur de type `H11L1` ou compatible
 - les résistances du circuit MIDI In
 - un condensateur de découplage local `100nF`
+- un indicateur `LED MIDI`
 - la liaison vers une entrée UART RX de la Daisy
 
 ### 5.3 Exigences
@@ -129,7 +132,7 @@ Recevoir le MIDI externe comme interface musicale principale.
 
 - référence exacte de l'optocoupleur si une alternative au `H11L1` est retenue
 - valeurs exactes des résistances
-- éventuel indicateur LED MIDI
+- valeur de résistance de la LED MIDI
 - broche UART retenue
 
 ## 6. Bloc sortie audio
@@ -179,10 +182,11 @@ Afficher l'interface utilisateur de Fantôme IV.
 ### 7.4 Décision actuelle
 
 - `I2C` retenu pour simplifier le prototype, sauf blocage matériel majeur découvert plus tard
+- format `1,3"` retenu pour privilégier la lisibilité
 
 ### 7.5 À figer
 
-- variante mécanique exacte du module
+- référence exacte du module `1,3"`
 - pull-up externes si nécessaires
 - brochage Daisy retenu
 
@@ -203,6 +207,7 @@ Lire les `8` contrôles analogiques de la face avant.
 - plage stable `0 -> 3,3 V`
 - lecture simple
 - pas de multiplexeur obligatoire en V1
+- format de panneau privilégié pour le prototype
 
 ### 8.4 Répartition de fonction
 
@@ -232,6 +237,8 @@ Gérer la navigation et l'édition fine.
 - lecture fiable
 - sensation nette
 - rebonds gérables proprement
+- encodeur cranté privilégié
+- format de panneau privilégié
 
 ### 9.4 À figer
 
@@ -249,6 +256,7 @@ Piloter la navigation et les actions de l'interface.
 - `4 boutons` momentané NO
 - câblage GPIO
 - liaison au `GND` si les pull-up internes de la Daisy sont retenus pour le prototype
+- format de panneau privilégié
 
 ### 10.3 Fonctions retenues
 
@@ -261,20 +269,38 @@ Piloter la navigation et les actions de l'interface.
 
 - validation finale des pull-up internes ou externes
 - éventuel filtrage ou anti-rebond matériel
+- référence exacte des boutons de panneau
 
-## 11. Budget de brochage
+## 11. Bloc LED MIDI
+
+### 11.1 Fonction
+
+Afficher l'activité MIDI en façade.
+
+### 11.2 Le schéma doit contenir
+
+- `1 LED MIDI`
+- sa résistance série
+- sa liaison GPIO
+
+### 11.3 Exigences
+
+- comportement simple et lisible
+- utile pour debug et confirmation visuelle de réception MIDI
+
+## 12. Budget de brochage
 
 Le schéma final devra allouer au minimum :
 
 - `8 ADC`
-- `7 GPIO numériques` pour encodeur + switch + boutons
+- `8 GPIO numériques` pour encodeur + switch + boutons + LED MIDI
 - `1 RX UART`
 - `1 bus écran`
 - `2 sorties audio`
 
 Le brochage exact doit être validé avant routage ou proto soudé.
 
-## 12. Conventions de nommage recommandées
+## 13. Conventions de nommage recommandées
 
 Pour garder un schéma lisible, on recommande les noms de nets suivants :
 
@@ -295,7 +321,7 @@ Pour garder un schéma lisible, on recommande les noms de nets suivants :
 - `LINE_OUT_L`
 - `LINE_OUT_R`
 
-## 13. Ce que le schéma ne doit pas contenir en V1
+## 14. Ce que le schéma ne doit pas contenir en V1
 
 - `CV/Gate`
 - `Audio In`
@@ -304,7 +330,7 @@ Pour garder un schéma lisible, on recommande les noms de nets suivants :
 - `sortie casque dédiée`
 - `multiplexeur de potentiomètres` tant que le budget de pins tient
 
-## 14. Checklist de validation du schéma
+## 15. Checklist de validation du schéma
 
 Avant de considérer le schéma comme acceptable, vérifier :
 
@@ -317,7 +343,7 @@ Avant de considérer le schéma comme acceptable, vérifier :
 - les masses et alimentations sont explicitement lisibles
 - les points encore ouverts sont listés
 
-## 15. Gate documentaire
+## 16. Gate documentaire
 
 Le passage à un vrai dessin de schéma détaillé est autorisé quand :
 

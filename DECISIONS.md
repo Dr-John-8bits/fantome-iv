@@ -180,6 +180,7 @@ Décision :
 
 - l'écran de travail retenu pour la V1 est un `OLED 128x64` de type `SSD1306`
 - le bus retenu par défaut pour le prototype est `I2C`
+- le format retenu est `1,3"` pour privilégier la lisibilité
 
 Documents de référence :
 
@@ -203,6 +204,7 @@ Décision :
 - les `4` boutons de face avant sont des boutons poussoirs momentanés `NO`
 - ils sont distincts du bouton poussoir intégré à l'encodeur
 - leurs rôles de base sont `Page -`, `Page +`, `Shift / Back`, `Preset / Save / Action`
+- le prototype vise des boutons de panneau plutôt qu'une interface de bench minimale
 
 Documents de référence :
 
@@ -237,3 +239,88 @@ Impact :
 
 - le champ des achats et du schéma se resserre
 - la référence exacte pourra encore changer si disponibilité ou validation électrique contraires
+
+## D-0013 - Prototype mécanique proche de la façade finale
+
+Statut :
+
+- actée
+
+Décision :
+
+- le prototype matériel doit être pensé proche de la façade finale
+- les potentiomètres sont visés en format panneau
+- la façade doit privilégier la lisibilité avant la compacité extrême
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [BOM.md](./BOM.md)
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+
+Impact :
+
+- la BOM doit viser des composants mécaniquement crédibles pour le produit
+- les choix d'implantation deviennent un vrai sujet de phase 0
+
+## D-0014 - Encodeur cranté retenu
+
+Statut :
+
+- actée
+
+Décision :
+
+- l'encodeur de la V1 doit être cranté
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- navigation plus lisible dans les menus
+- la sensation mécanique doit rester cohérente avec un usage en façade
+
+## D-0015 - LED MIDI retenue
+
+Statut :
+
+- actée
+
+Décision :
+
+- la V1 inclut une `LED MIDI` de signalisation
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- un GPIO supplémentaire doit être prévu
+- le schéma doit intégrer la LED et sa résistance série
+
+## D-0016 - Alimentation prototype via USB
+
+Statut :
+
+- actée
+
+Décision :
+
+- le prototype initial est alimenté par `USB`
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- le démarrage matériel est simplifié
+- la stratégie d'alimentation finale reste un sujet distinct du prototype
