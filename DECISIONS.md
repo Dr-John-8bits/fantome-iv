@@ -107,3 +107,23 @@ Impact :
 
 - le schéma devra rester cohérent avec ce document
 - les changements matériels devront être répercutés dans la documentation
+
+## D-0007 - Spec de schéma et spec UI/UX obligatoires
+
+Statut :
+
+- actée
+
+Décision :
+
+- la documentation initiale ne sera pas considérée comme suffisante sans une spec de schéma et une spec UI/UX
+
+Documents de référence :
+
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+
+Impact :
+
+- le schéma ne devra pas être dessiné sans cadre documentaire
+- l'implémentation firmware UI ne devra pas partir sans cadre UX explicite

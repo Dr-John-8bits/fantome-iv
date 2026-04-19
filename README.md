@@ -33,6 +33,8 @@ Le projet est désormais figé sur une base matérielle claire :
 - [DOCUMENTATION.md](./DOCUMENTATION.md) : règles de vérité documentaire du projet
 - [DECISIONS.md](./DECISIONS.md) : journal des décisions structurantes
 - [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md) : référence hardware de la V1
+- [SCHEMA-SPEC.md](./SCHEMA-SPEC.md) : spec de schéma du prototype
+- [UI-UX-SPEC.md](./UI-UX-SPEC.md) : spec d'interface utilisateur
 - [BOM.md](./BOM.md) : nomenclature matérielle du prototype
 - [ROADMAP.md](./ROADMAP.md) : feuille de route du projet
 - [LISTE-COURSES.md](./LISTE-COURSES.md) : version simple de la liste d'achats
@@ -66,6 +68,8 @@ Le projet est au stade de cadrage :
 - gouvernance documentaire en place
 - décisions structurantes consignées
 - référence hardware de travail en place
+- spec de schéma en place
+- spec UI/UX en place
 - page projet simplifiée
 - base documentaire du dépôt en place
 - route matérielle fixée sur Daisy Seed 65MB
@@ -77,5 +81,6 @@ Solidifier encore la documentation initiale :
 
 - verrouiller les derniers besoins fonctionnels ambigus
 - consolider le niveau de détail de la référence hardware
-- détailler la stratégie MIDI et presets
+- consolider la spec de schéma
+- consolider la spec UI/UX
 - figer le niveau de détail attendu avant la phase 1

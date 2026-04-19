@@ -32,16 +32,22 @@ Ordre de référence du plus stratégique au plus opérationnel :
 3. [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
    Rôle : référence hardware de la V1, blocs physiques et interfaces.
 
-4. [BOM.md](./BOM.md)
+4. [SCHEMA-SPEC.md](./SCHEMA-SPEC.md)
+   Rôle : traduction de la V1 en schéma à dessiner.
+
+5. [UI-UX-SPEC.md](./UI-UX-SPEC.md)
+   Rôle : référence d'interface utilisateur et de comportement de la face avant.
+
+6. [BOM.md](./BOM.md)
    Rôle : nomenclature matérielle de référence pour le prototype.
 
-5. [ROADMAP.md](./ROADMAP.md)
+7. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-6. [README.md](./README.md)
+8. [README.md](./README.md)
    Rôle : porte d'entrée du dépôt.
 
-7. [LISTE-COURSES.md](./LISTE-COURSES.md)
+9. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance
@@ -60,6 +66,8 @@ La phase 1 firmware ne doit pas démarrer tant que les points suivants ne sont p
 - surface de contrôle retenue
 - comportement fonctionnel V1
 - blocs hardware principaux décrits
+- structure du schéma suffisamment cadrée
+- logique UI/UX suffisamment cadrée
 - priorités d'effets et de modulations
 - logique MIDI
 - stratégie de presets
@@ -74,7 +82,9 @@ On considère la base documentaire comme suffisamment solide quand :
 - les ambiguïtés majeures ont disparu
 - le hardware principal est décidé
 - les blocs hardware critiques sont décrits
+- la structure du schéma est décrite
 - les interfaces utilisateur et MIDI sont décrites
+- la navigation UI/UX est décrite
 - la BOM couvre le prototype réel
 - les décisions structurantes sont consignées
 
