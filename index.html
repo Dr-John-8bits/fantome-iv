@@ -8,14 +8,38 @@
   <link rel="icon" type="image/webp" href="F-IV-Logo.webp" />
   <style>
     :root {
+      color-scheme: light dark;
       --bg: #f4efe7;
       --surface: rgba(255, 251, 245, 0.76);
+      --surface-strong: rgba(255, 250, 243, 0.9);
       --line: #d7cdbd;
       --text: #201b17;
       --muted: #65584a;
       --accent: #1d5a49;
       --accent-soft: #dcebe4;
       --shadow: 0 20px 60px rgba(32, 27, 23, 0.08);
+      --hero-glow: rgba(29, 90, 73, 0.18);
+      --bg-top: rgba(29, 90, 73, 0.1);
+      --bg-bottom: rgba(167, 120, 43, 0.12);
+      --bg-gradient-top: #f8f3eb;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1114;
+        --surface: rgba(23, 27, 31, 0.78);
+        --surface-strong: rgba(28, 33, 38, 0.92);
+        --line: #2b353c;
+        --text: #eef2f2;
+        --muted: #aab6b1;
+        --accent: #7ad1b3;
+        --accent-soft: rgba(122, 209, 179, 0.16);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+        --hero-glow: rgba(122, 209, 179, 0.18);
+        --bg-top: rgba(67, 145, 120, 0.18);
+        --bg-bottom: rgba(115, 85, 35, 0.16);
+        --bg-gradient-top: #12161a;
+      }
     }
 
     * {
@@ -32,9 +56,9 @@
       font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(29, 90, 73, 0.1), transparent 34%),
-        radial-gradient(circle at bottom right, rgba(167, 120, 43, 0.12), transparent 28%),
-        linear-gradient(180deg, #f8f3eb 0%, var(--bg) 100%);
+        radial-gradient(circle at top left, var(--bg-top), transparent 34%),
+        radial-gradient(circle at bottom right, var(--bg-bottom), transparent 28%),
+        linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg) 100%);
       line-height: 1.6;
     }
 
@@ -52,7 +76,7 @@
     .hero,
     .panel {
       background: var(--surface);
-      border: 1px solid rgba(215, 205, 189, 0.9);
+      border: 1px solid var(--line);
       border-radius: 24px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
@@ -69,7 +93,7 @@
 
     .hero img {
       width: 100%;
-      filter: drop-shadow(0 20px 30px rgba(29, 90, 73, 0.18));
+      filter: drop-shadow(0 20px 30px var(--hero-glow));
     }
 
     .eyebrow {
@@ -117,7 +141,7 @@
 
     .tag {
       padding: 0.9rem 1rem;
-      background: rgba(255, 250, 243, 0.9);
+      background: var(--surface-strong);
       border: 1px solid var(--line);
       border-radius: 16px;
       font-family: "SFMono-Regular", "Menlo", "Monaco", "Andale Mono", monospace;
