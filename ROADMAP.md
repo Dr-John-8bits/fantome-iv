@@ -7,6 +7,8 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 - finaliser les specs V1
 - fixer la licence du dépôt
 - poser le README, la roadmap et la page projet
+- figer la base matérielle sur Daisy Seed 65MB
+- valider l'interface V1 : 8 potentiomètres, 1 encodeur, 4 boutons, 1 OLED
 - préparer l'arborescence firmware
 
 ## Phase 1 - Moteur audio

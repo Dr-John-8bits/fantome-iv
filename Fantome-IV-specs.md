@@ -31,9 +31,9 @@ Nom retenu :
 
 ## 3. Plateforme recommandée
 
-Plateforme cible recommandée :
+Plateforme cible retenue :
 
-- Daisy Seed
+- Daisy Seed 65MB
 
 Pourquoi :
 
@@ -43,12 +43,12 @@ Pourquoi :
 - Écosystème audio plus naturel pour ce type de projet qu'un Arduino classique
 - Suffisamment puissant pour 4 voix + modulations + effets stéréo
 
-Stack logicielle recommandée :
+Stack logicielle retenue :
 
 - Langage : C++
 - Bibliothèques : libDaisy + DaisySP
 - Build : toolchain Daisy officielle
-- Option de développement complémentaire : petite application de test desktop pour valider le moteur audio plus vite
+- Complément de développement possible si utile : petite application de test desktop pour valider le moteur audio plus vite
 
 ## 4. Principes de conception V1
 
@@ -411,7 +411,7 @@ Implémentation hardware recommandée :
 
 - DIN 5 broches avec optocoupleur
 
-Option acceptable si désirée plus tard :
+Extension acceptable plus tard :
 
 - Compatibilité TRS-MIDI via adaptateur ou révision hardware
 

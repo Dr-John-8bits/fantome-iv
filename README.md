@@ -4,6 +4,18 @@ Fantôme IV est un projet de synthétiseur numérique polyphonique construit aut
 
 L'objectif est de réaliser une V1 solide, jouable et finissable : 4 voix, MIDI In, sortie stéréo, OLED, presets, modulations musicales simples et effets globaux utiles.
 
+## Direction retenue
+
+Le projet est désormais figé sur une base matérielle claire :
+
+- `Daisy Seed 65MB`
+- `8 potentiomètres`
+- `1 encodeur rotatif cliquable`
+- `4 boutons`
+- `1 écran OLED 128x64`
+- `MIDI In` physique
+- sortie audio stéréo
+
 ## Vision
 
 - 4 voix de polyphonie
@@ -38,6 +50,7 @@ Le projet est au stade de cadrage :
 - specs V1 rédigées
 - page projet simplifiée
 - base documentaire du dépôt en place
+- route matérielle fixée sur Daisy Seed 65MB
 - architecture firmware à démarrer
 
 ## Prochaine étape
