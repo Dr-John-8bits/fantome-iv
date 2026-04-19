@@ -87,3 +87,23 @@ Décision :
 Impact :
 
 - si une simplification DSP est nécessaire, la reverb est la première candidate à être allégée
+
+## D-0006 - Référence hardware obligatoire
+
+Statut :
+
+- actée
+
+Décision :
+
+- un document hardware de référence fait partie de la source de vérité du projet
+
+Documents de référence :
+
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+- [BOM.md](./BOM.md)
+
+Impact :
+
+- le schéma devra rester cohérent avec ce document
+- les changements matériels devront être répercutés dans la documentation

@@ -11,6 +11,7 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 - fixer la licence du dépôt
 - poser le README, la roadmap et la page projet
 - figer la base matérielle sur Daisy Seed 65MB
+- rédiger la référence hardware du projet
 - valider l'interface V1 : 8 potentiomètres, 1 encodeur, 4 boutons, 1 OLED
 - figer la répartition des contrôles physiques et du menu encodeur
 - figer l'entrée `MIDI DIN 5 broches` comme interface musicale principale
@@ -21,6 +22,7 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 La phase 1 ne démarre pas tant que :
 
 - les specs V1 ne sont pas suffisamment stables
+- la référence hardware n'est pas assez précise
 - la BOM n'est pas exploitable
 - les décisions structurantes ne sont pas écrites
 - le MIDI, l'interface et les presets ne sont pas suffisamment décrits

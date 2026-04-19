@@ -32,6 +32,7 @@ Le projet est désormais figé sur une base matérielle claire :
 - [Fantome-IV-specs.md](./Fantome-IV-specs.md) : spécifications fonctionnelles V1
 - [DOCUMENTATION.md](./DOCUMENTATION.md) : règles de vérité documentaire du projet
 - [DECISIONS.md](./DECISIONS.md) : journal des décisions structurantes
+- [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md) : référence hardware de la V1
 - [BOM.md](./BOM.md) : nomenclature matérielle du prototype
 - [ROADMAP.md](./ROADMAP.md) : feuille de route du projet
 - [LISTE-COURSES.md](./LISTE-COURSES.md) : version simple de la liste d'achats
@@ -64,6 +65,7 @@ Le projet est au stade de cadrage :
 - specs V1 rédigées
 - gouvernance documentaire en place
 - décisions structurantes consignées
+- référence hardware de travail en place
 - page projet simplifiée
 - base documentaire du dépôt en place
 - route matérielle fixée sur Daisy Seed 65MB
@@ -74,6 +76,6 @@ Le projet est au stade de cadrage :
 Solidifier encore la documentation initiale :
 
 - verrouiller les derniers besoins fonctionnels ambigus
-- compléter la documentation hardware de référence
+- consolider le niveau de détail de la référence hardware
 - détailler la stratégie MIDI et presets
 - figer le niveau de détail attendu avant la phase 1

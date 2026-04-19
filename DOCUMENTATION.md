@@ -29,16 +29,19 @@ Ordre de référence du plus stratégique au plus opérationnel :
 2. [DECISIONS.md](./DECISIONS.md)
    Rôle : journal des décisions structurantes prises pendant le projet.
 
-3. [BOM.md](./BOM.md)
+3. [HARDWARE-REFERENCE.md](./HARDWARE-REFERENCE.md)
+   Rôle : référence hardware de la V1, blocs physiques et interfaces.
+
+4. [BOM.md](./BOM.md)
    Rôle : nomenclature matérielle de référence pour le prototype.
 
-4. [ROADMAP.md](./ROADMAP.md)
+5. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-5. [README.md](./README.md)
+6. [README.md](./README.md)
    Rôle : porte d'entrée du dépôt.
 
-6. [LISTE-COURSES.md](./LISTE-COURSES.md)
+7. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance
@@ -56,6 +59,7 @@ La phase 1 firmware ne doit pas démarrer tant que les points suivants ne sont p
 - architecture matérielle retenue
 - surface de contrôle retenue
 - comportement fonctionnel V1
+- blocs hardware principaux décrits
 - priorités d'effets et de modulations
 - logique MIDI
 - stratégie de presets
@@ -69,6 +73,7 @@ On considère la base documentaire comme suffisamment solide quand :
 - les fonctions V1 sont figées à un niveau exploitable
 - les ambiguïtés majeures ont disparu
 - le hardware principal est décidé
+- les blocs hardware critiques sont décrits
 - les interfaces utilisateur et MIDI sont décrites
 - la BOM couvre le prototype réel
 - les décisions structurantes sont consignées

@@ -81,7 +81,7 @@ Ces points restent possibles en V2, mais ne doivent pas ralentir la V1.
 Fantôme IV V1 doit offrir :
 
 - 4 voix de polyphonie
-- MIDI In
+- MIDI In DIN 5 broches
 - Sortie audio stéréo sur jack TRS
 - Écran OLED pour l'édition et la gestion des presets
 - 1 LFO dédié à la modulation des oscillateurs
@@ -90,7 +90,7 @@ Fantôme IV V1 doit offrir :
 - 1 filtre low-pass résonant par voix
 - 1 VCA par voix
 - 1 ADSR VCA par voix
-- 1 ADSR filtre par voix
+- 1 AR filtre par voix
 - Chorus stéréo global
 - Delay stéréo global
 - Reverb stéréo globale
