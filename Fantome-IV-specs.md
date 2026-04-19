@@ -118,7 +118,7 @@ Chaque voix contient :
 - 1 filtre low-pass résonant
 - 1 VCA
 - 1 enveloppe ADSR pour le VCA
-- 1 enveloppe ADSR pour le filtre
+- 1 enveloppe AR pour le filtre
 
 Flux du signal par voix :
 
@@ -133,20 +133,20 @@ Choix retenu en V1 :
 Fonctions minimales :
 
 - Accord global
-- Detune entre OSC A et OSC B
+- Sélection de forme d'onde indépendante pour OSC A et OSC B
 - Réglage de niveau OSC A / OSC B
-- Réglage d'octave ou transposition pour OSC B
+- Réglage d'octave ou transposition pour OSC A et OSC B
+- Fine tune pour OSC A et OSC B
+- Synchronisation d'oscillateur
+- PWM sur forme carrée / pulse
 
 Formes d'onde minimales recommandées :
 
-- Saw
-- Square / Pulse
+- Sine
 - Triangle
-
-Fonctions souhaitées mais non indispensables pour démarrer :
-
-- PWM
-- Léger drift optionnel
+- Square / Pulse
+- Saw
+- Noise
 
 ### 6.5 Polyphonie et allocation de voix
 
@@ -155,6 +155,8 @@ Règles V1 :
 - 4 voix maximum
 - Voice stealing propre et prévisible
 - Mode prioritaire : oldest voice steal
+- Modes de jeu : Poly, Mono, Unison
+- Comportement legato en mode Mono et Unison
 - Gestion correcte des notes relâchées et du sustain
 - Réponse stable en accords et en jeu legato
 
@@ -185,12 +187,15 @@ Paramètres minimum :
 - Amount
 - Waveform
 - Sync on/off
+- Mode Free / Clock
+- Divisions de tempo en mode Clock
 
 Formes d'onde recommandées :
 
 - Sine
 - Triangle
 - Square
+- Random si le coût et l'interface restent simples
 
 Destination V1 :
 
@@ -208,6 +213,8 @@ Paramètres minimum :
 - Amount
 - Waveform
 - Sync on/off
+- Mode Free / Clock
+- Divisions de tempo en mode Clock
 
 Formes d'onde recommandées :
 
@@ -234,6 +241,8 @@ Paramètres minimum :
 - Rate
 - Amount
 - Sync on/off
+- Mode Free / Clock
+- Divisions de tempo en mode Clock
 
 Paramètre recommandé :
 
@@ -288,13 +297,11 @@ Rôle :
 
 - Contrôle du volume de la voix
 
-### 9.2 ADSR filtre
+### 9.2 AR filtre
 
 Par voix :
 
 - Attack
-- Decay
-- Sustain
 - Release
 
 Rôle :
@@ -327,6 +334,7 @@ Exigences :
 Type :
 
 - Chorus stéréo global
+- Effet prioritaire de la V1
 
 Paramètres minimum :
 
@@ -347,9 +355,11 @@ Type :
 
 Paramètres minimum :
 
-- Time
+- Time en mode Free
+- Division en mode Clock
 - Feedback
 - Mix
+- Mode Free / Sync MIDI
 
 Objectif :
 
@@ -361,6 +371,7 @@ Objectif :
 Type :
 
 - Reverb stéréo globale
+- Effet le moins prioritaire des trois pour la V1
 
 Paramètres minimum :
 
@@ -389,15 +400,9 @@ Spécification V1 :
 
 - 1 sortie stéréo sur jack TRS 6,35 mm
 
-Point hardware à confirmer pendant la conception :
-
-- Mode ligne stéréo
-- ou mode casque stéréo avec ampli casque
-- ou étage pouvant couvrir les deux usages
-
 Recommandation actuelle :
 
-- Prévoir une sortie stéréo propre avec niveau maîtrisé et un vrai étage de sortie
+- Prévoir une sortie ligne stéréo simple, propre et avec niveau maîtrisé
 
 ## 13. MIDI
 
@@ -432,9 +437,11 @@ Obligatoires :
 ### 13.3 Fonctions MIDI utilisateur
 
 - Jouer les 4 voix
+- Choisir le canal MIDI dans l'interface
 - Charger les presets par Program Change
-- Synchroniser les LFO et le S&H à l'horloge MIDI
+- Synchroniser les LFO, le S&H et le delay à l'horloge MIDI
 - Utiliser la Mod Wheel comme modulation musicale utile
+- Pitch bend avec plage de 2 demi-tons
 
 ### 13.4 Mapping MIDI de base recommandé
 
@@ -468,13 +475,14 @@ Permettre la sauvegarde et le rappel rapide des sons.
 
 Capacité recommandée :
 
-- 64 presets utilisateur minimum
+- 4 presets utilisateur
 
 ### 14.3 Exigences
 
 - Chargement sans comportement destructif
 - Soft takeover des potentiomètres après rappel d'un preset
 - Init patch disponible à tout moment
+- Rappel du dernier preset au démarrage recommandé
 - Versionnement simple de la structure preset pour éviter les incompatibilités futures
 
 ## 15. Interface utilisateur
@@ -486,6 +494,7 @@ Objectif :
 - Peu de contrôles, mais bien choisis
 - Navigation rapide
 - Utilisable sans devoir mémoriser un menu trop profond
+- Écran lisible et comportement évident en jeu
 
 ### 15.2 Interface physique recommandée
 
@@ -505,7 +514,8 @@ Boutons recommandés :
 
 Potentiomètres :
 
-- page-based
+- 7 contrôles dédiés
+- 1 contrôle contextuel selon la page
 - soft takeover obligatoire après chargement de preset
 
 ### 15.3 Pages UI recommandées
@@ -524,7 +534,7 @@ Page 3 :
 
 Page 4 :
 
-- ADSR filtre
+- AR filtre
 
 Page 5 :
 
@@ -546,18 +556,49 @@ Minimum :
 - Nom du paramètre édité
 - Valeur du paramètre
 - Page courante
+- Canal MIDI courant
 - État de synchro si utile
+
+### 15.5 Répartition de contrôle retenue
+
+Proposition retenue pour la V1 :
+
+- Pot 1 : Master volume
+- Pot 2 : Filter cutoff
+- Pot 3 : Filter resonance
+- Pot 4 : Amp Attack
+- Pot 5 : Amp Decay
+- Pot 6 : Amp Sustain
+- Pot 7 : Amp Release
+- Pot 8 : paramètre contextuel principal de la page courante
+
+Rôle de l'encodeur :
+
+- naviguer dans la page
+- sélectionner le paramètre à éditer
+- ajuster les valeurs de menu : waveform, tuning, sync, type d'effet, canal MIDI, preset
+
+Rôle des boutons :
+
+- Page -
+- Page +
+- Shift / Back
+- Preset / Save / Action
 
 ## 16. Paramètres exposés à l'utilisateur
 
 Liste minimale recommandée :
 
 - Osc A waveform
+- Osc A octave ou transpose
+- Osc A fine tune
 - Osc A level
 - Osc B waveform
-- Osc B level
-- Osc B detune
 - Osc B octave ou transpose
+- Osc B fine tune
+- Osc B level
+- Osc sync on/off
+- PWM amount
 - Noise level
 - Filter cutoff
 - Filter resonance
@@ -566,23 +607,28 @@ Liste minimale recommandée :
 - Amp ADSR D
 - Amp ADSR S
 - Amp ADSR R
-- Filter ADSR A
-- Filter ADSR D
-- Filter ADSR S
-- Filter ADSR R
+- Filter AR A
+- Filter AR R
 - LFO osc rate
 - LFO osc amount
 - LFO osc waveform
+- LFO osc mode free/clock
+- LFO osc division
 - LFO filter rate
 - LFO filter amount
 - LFO filter waveform
+- LFO filter mode free/clock
+- LFO filter division
 - S&H rate
 - S&H amount
 - S&H smooth
+- S&H mode free/clock
+- S&H division
 - Chorus rate
 - Chorus depth
 - Chorus mix
 - Delay time
+- Delay sync division
 - Delay feedback
 - Delay mix
 - Reverb size
@@ -717,6 +763,7 @@ Définition d'une "V1 réussie" :
 - Ajouter LFO oscillateurs
 - Ajouter LFO filtre
 - Ajouter Sample & Hold filtre
+- Ajouter modes Free / Clock et divisions rythmiques
 - Ajouter Pitch Bend / Mod Wheel / Sustain
 
 ### Phase 3 - Effets
@@ -737,8 +784,9 @@ Définition d'une "V1 réussie" :
 ### Phase 5 - MIDI complet
 
 - Program Change
+- sélection du canal MIDI dans l'interface
 - CC mapping
-- MIDI Clock sync pour les LFO et le S&H
+- MIDI Clock sync pour les LFO, le S&H et le delay
 
 ### Phase 6 - Intégration hardware
 
@@ -753,8 +801,8 @@ Définition d'une "V1 réussie" :
 - Reverb trop coûteuse pour la V1
 - Delay mal dosé ou trop envahissant dans le mix global
 - Mauvais gain staging provoquant saturation ou souffle
-- Sortie TRS mal définie entre usage ligne et casque
-- Potentiomètres page-based sans soft takeover, donc UX frustrante
+- Sortie ligne stéréo insuffisamment dimensionnée
+- Répartition des contrôles physiques peu naturelle en jeu
 - Synchro MIDI Clock plus délicate que prévu
 - UI trop chargée pour un petit OLED
 
@@ -773,13 +821,14 @@ Fantôme IV V1 est considérée comme terminée si :
 - 4 notes simultanées fonctionnent proprement
 - Les 2 oscillateurs par voix sont stables et accordables
 - Le filtre low-pass est musical et pilotable
-- Les 2 ADSR par voix fonctionnent correctement
+- L'ADSR VCA et l'AR filtre par voix fonctionnent correctement
 - Les 2 LFO fonctionnent correctement
 - Le Sample & Hold filtre fonctionne avec bruit blanc
 - Chorus, delay et reverb stéréo sont utilisables
 - Les presets peuvent être sauvegardés et rappelés
 - L'écran permet l'édition sans confusion
 - MIDI In fonctionne de manière fiable
+- Le canal MIDI est sélectionnable depuis l'interface
 - Program Change et au moins un set de CC utiles fonctionnent
 - La sortie stéréo sur jack TRS est validée
 
@@ -787,7 +836,6 @@ Fantôme IV V1 est considérée comme terminée si :
 
 - CV In pour cutoff ou pitch mono
 - Gate In
-- Unison
 - Arpégiateur
 - Matrice de modulation
 - Plus de formes d'onde
@@ -807,13 +855,16 @@ Décisions à considérer comme figées au début du projet :
 - 2 oscillateurs par voix
 - 1 filtre low-pass résonant par voix
 - 1 VCA par voix
-- 2 ADSR par voix
+- 1 ADSR VCA par voix
+- 1 AR filtre par voix
 - 1 LFO pitch global
 - 1 LFO filtre global
 - 1 Sample & Hold filtre global à partir de bruit blanc
 - Chorus stéréo global
 - Delay stéréo global
 - Reverb stéréo globale
+- 4 presets utilisateur
+- Canal MIDI sélectionnable
 - Pas de CV/Gate en V1
 
 ## 26. Prochaine étape

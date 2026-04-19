@@ -5,10 +5,12 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 ## Phase 0 - Base du projet
 
 - finaliser les specs V1
+- figer les besoins fonctionnels V1
 - fixer la licence du dépôt
 - poser le README, la roadmap et la page projet
 - figer la base matérielle sur Daisy Seed 65MB
 - valider l'interface V1 : 8 potentiomètres, 1 encodeur, 4 boutons, 1 OLED
+- figer la répartition des contrôles physiques et du menu encodeur
 - préparer l'arborescence firmware
 
 ## Phase 1 - Moteur audio
@@ -22,7 +24,9 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 
 - passer à 4 voix
 - ajouter allocation de voix et voice stealing
+- ajouter les modes mono, unison et legato
 - intégrer LFO pitch, LFO filtre et Sample & Hold
+- ajouter modes Free / Clock et divisions rythmiques
 - ajouter Pitch Bend, Mod Wheel et sustain
 
 ## Phase 3 - Effets
@@ -43,8 +47,9 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 ## Phase 5 - MIDI complet
 
 - Program Change
+- sélection du canal MIDI dans l'interface
 - mapping CC principal
-- synchro MIDI Clock pour les modulations et le delay si nécessaire
+- synchro MIDI Clock pour les modulations et le delay
 
 ## Phase 6 - Intégration hardware
 
