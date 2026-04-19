@@ -36,6 +36,7 @@ Le projet est désormais figé sur une base matérielle claire :
 - [SCHEMA-SPEC.md](./SCHEMA-SPEC.md) : spec de schéma du prototype
 - [UI-UX-SPEC.md](./UI-UX-SPEC.md) : spec d'interface utilisateur
 - [MIDI-SPEC.md](./MIDI-SPEC.md) : spec MIDI de la V1
+- [PHASE-0-AUDIT.md](./PHASE-0-AUDIT.md) : audit d'avancement de la phase 0 documentaire
 - [BOM.md](./BOM.md) : nomenclature matérielle du prototype
 - [ROADMAP.md](./ROADMAP.md) : feuille de route du projet
 - [LISTE-COURSES.md](./LISTE-COURSES.md) : version simple de la liste d'achats
@@ -72,6 +73,7 @@ Le projet est au stade de cadrage :
 - spec de schéma en place
 - spec UI/UX en place
 - spec MIDI en place
+- audit de phase 0 en place
 - page projet simplifiée
 - base documentaire du dépôt en place
 - route matérielle fixée sur Daisy Seed 65MB
