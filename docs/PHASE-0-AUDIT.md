@@ -8,7 +8,7 @@ Il sert à répondre simplement à la question :
 
 - où en est la base documentaire du projet
 - ce qui est déjà solide
-- ce qui reste à verrouiller avant la phase 1 firmware
+- ce qui reste à verrouiller avant l'intégration hardware complète
 
 ## Verdict global
 
@@ -16,15 +16,17 @@ La phase 0 est bien avancée.
 
 La base documentaire est désormais cohérente, exploitable et déjà très supérieure à un simple brouillon de projet.
 
-En revanche, la phase 0 n'est pas encore complètement close.
+En revanche, la phase 0 n'est pas encore complètement close côté hardware.
 
-Le verrou principal n'est plus le produit ou l'UX.
+Le verrou principal n'est plus le produit, l'UX ni le socle logiciel.
 
 Le verrou principal est maintenant le niveau de précision hardware de fin de cadrage :
 
 - stratégie d'alimentation autonome au-delà du prototype USB
 - implantation mécanique finale détaillée
 - derniers choix mécaniques et électriques à figer
+
+En parallèle, la base documentaire est désormais assez solide pour ouvrir une phase `1A` logicielle `soft-first` sur Mac.
 
 ## 1. Ce qui est solide
 
@@ -173,6 +175,26 @@ Documents concernés :
 - [LICENSE-CONTENT.md](../LICENSE-CONTENT.md)
 - [index.html](../index.html)
 
+### 1.8 Base logicielle soft-first
+
+État :
+
+- ouverte
+
+Acquis :
+
+- architecture logicielle de référence écrite
+- arborescence `firmware/` posée
+- cœur portable en `C++` posé
+- cible desktop simple en place
+- premiers tests locaux en place
+
+Documents concernés :
+
+- [SOFTWARE-ARCHITECTURE.md](./SOFTWARE-ARCHITECTURE.md)
+- [ROADMAP.md](./ROADMAP.md)
+- [README.md](../README.md)
+
 ## 2. Ce qui reste à verrouiller
 
 ### 2.1 Hardware détaillé
@@ -212,16 +234,16 @@ Les risques restants sont surtout des risques de translation vers le vrai hardwa
 
 ## 4. Recommandation
 
-La bonne suite n'est plus de définir le socle électronique.
+La bonne suite n'est plus d'attendre le hardware avant tout travail.
 
-La bonne suite est maintenant de terminer le verrouillage documentaire sur :
+La bonne suite est maintenant double :
 
-1. alimentation autonome finale et règles de masse/châssis associées
-2. conventions mécaniques de façade
-3. support et montage de la Daisy
-4. détail visuel final de quelques écrans UI
+1. continuer le cœur logiciel portable
+2. terminer le verrouillage documentaire hardware restant
+3. alimenter les tests avec les règles MIDI et UI déjà figées
+4. préparer ensuite l'intégration Daisy sur une base saine
 
-Une fois ces points consolidés, la phase 0 pourra être considérée comme suffisamment solide pour ouvrir la phase 1 dans de bonnes conditions.
+La fermeture complète de la phase 0 dépend encore de quelques points hardware, mais elle ne bloque plus le démarrage du socle logiciel.
 
 ## 5. Conclusion
 
@@ -235,8 +257,8 @@ Le projet a déjà :
 - un contrat MIDI crédible
 - une gouvernance documentaire saine
 
-La phase 0 est donc avancée, mais pas encore soldée.
+La phase 0 est donc avancée, mais pas encore soldée côté hardware.
 
-Le passage en phase 1 ne dépend plus d'un manque de cadrage MIDI, audio ou brochage.
+Le passage en phase 1A logicielle ne dépend plus d'un manque de cadrage MIDI, audio ou brochage.
 
-Il dépend surtout de la fermeture des derniers points d'intégration mécanique et d'alimentation.
+L'ouverture de la future intégration hardware dépend surtout de la fermeture des derniers points mécaniques et d'alimentation.

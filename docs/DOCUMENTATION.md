@@ -17,7 +17,8 @@ Cela veut dire :
 - une décision produit importante doit être écrite dans la documentation
 - une décision hardware importante doit être écrite dans la documentation
 - une décision firmware importante doit être écrite dans la documentation
-- la phase 1 ne démarre pas tant que la documentation initiale n'est pas jugée assez solide
+- la phase 1A logicielle ne démarre pas tant que la documentation initiale n'est pas jugée assez solide
+- l'intégration Daisy ne doit pas aspirer la logique métier hors du cœur portable
 
 ## Hiérarchie des documents
 
@@ -59,16 +60,19 @@ Ordre de référence du plus stratégique au plus opérationnel :
 12. [MIDI-SPEC.md](./MIDI-SPEC.md)
    Rôle : contrat MIDI de la V1.
 
-13. [BOM.md](./BOM.md)
+13. [SOFTWARE-ARCHITECTURE.md](./SOFTWARE-ARCHITECTURE.md)
+   Rôle : stratégie logicielle `soft-first`, séparation `core / desktop / Daisy`.
+
+14. [BOM.md](./BOM.md)
    Rôle : nomenclature matérielle de référence pour le prototype.
 
-14. [ROADMAP.md](./ROADMAP.md)
+15. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-15. [README.md](../README.md)
+16. [README.md](../README.md)
    Rôle : porte d'entrée du dépôt.
 
-16. [LISTE-COURSES.md](./LISTE-COURSES.md)
+17. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance
@@ -79,9 +83,9 @@ Ordre de référence du plus stratégique au plus opérationnel :
 - si une décision structurante est prise, elle doit aussi être ajoutée à `DECISIONS.md`
 - si un point reste incertain, il doit être marqué explicitement comme `à figer`
 
-## Contenu minimal à documenter avant la phase 1
+## Contenu minimal à documenter avant la phase 1A logicielle
 
-La phase 1 firmware ne doit pas démarrer tant que les points suivants ne sont pas suffisamment stabilisés :
+La phase 1A logicielle ne doit pas démarrer tant que les points suivants ne sont pas suffisamment stabilisés :
 
 - architecture matérielle retenue
 - surface de contrôle retenue
@@ -99,6 +103,7 @@ La phase 1 firmware ne doit pas démarrer tant que les points suivants ne sont p
 - priorités d'effets et de modulations
 - logique MIDI
 - stratégie de presets
+- architecture logicielle de référence
 - nomenclature matérielle initiale
 - gouvernance de la documentation
 
@@ -120,6 +125,7 @@ On considère la base documentaire comme suffisamment solide quand :
 - les interfaces utilisateur et MIDI sont décrites
 - la navigation UI/UX est décrite
 - le comportement MIDI reçu est décrit
+- l'architecture logicielle est cadrée
 - la BOM couvre le prototype réel
 - les décisions structurantes sont consignées
 
@@ -146,3 +152,9 @@ Le bon travail est :
 - structurer
 - figer
 - écrire
+
+Une fois ce seuil atteint, le bon travail devient aussi :
+
+- coder le cœur portable
+- tester localement sur Mac
+- préparer l'intégration Daisy sans la précipiter

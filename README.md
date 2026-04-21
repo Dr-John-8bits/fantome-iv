@@ -27,6 +27,7 @@ Le projet est désormais figé sur une base matérielle claire :
 - chorus, delay et reverb globaux
 - interface OLED + encodeur + boutons + potentiomètres
 - firmware en C++ sur Daisy Seed
+- développement `soft-first` sur Mac avant achat du hardware
 
 ## Contenu du dépôt
 
@@ -43,16 +44,19 @@ Le projet est désormais figé sur une base matérielle claire :
 - [docs/SCHEMA-SPEC.md](./docs/SCHEMA-SPEC.md) : spec de schéma du prototype
 - [docs/UI-UX-SPEC.md](./docs/UI-UX-SPEC.md) : spec d'interface utilisateur
 - [docs/MIDI-SPEC.md](./docs/MIDI-SPEC.md) : spec MIDI de la V1
+- [docs/SOFTWARE-ARCHITECTURE.md](./docs/SOFTWARE-ARCHITECTURE.md) : stratégie logicielle portable et cible Daisy
 - [docs/PHASE-0-AUDIT.md](./docs/PHASE-0-AUDIT.md) : audit d'avancement de la phase 0 documentaire
 - [docs/BOM.md](./docs/BOM.md) : nomenclature matérielle du prototype
 - [docs/ROADMAP.md](./docs/ROADMAP.md) : feuille de route du projet
 - [docs/LISTE-COURSES.md](./docs/LISTE-COURSES.md) : version simple de la liste d'achats
+- [firmware/README.md](./firmware/README.md) : point d'entrée de la base firmware/logicielle
 - [index.html](./index.html) : page web publique du projet
 - `assets/branding/` : identité visuelle
 
 ## Arborescence
 
 - `docs/` : toute la source de vérité documentaire
+- `firmware/` : base logicielle portable du projet
 - `assets/branding/` : logos et identité visuelle
 - `index.html` : page publique simple du projet
 - `LICENSE` / `LICENSE-CONTENT.md` : licences du dépôt
@@ -63,7 +67,8 @@ Le projet suit désormais une règle simple :
 
 - la documentation est la source de vérité
 - les décisions importantes doivent être écrites
-- la phase 1 firmware ne démarre pas tant que la documentation initiale n'est pas assez solide
+- le cœur logiciel portable peut avancer sur Mac avant le hardware final
+- l'intégration Daisy réelle vient ensuite
 
 Voir aussi [docs/DOCUMENTATION.md](./docs/DOCUMENTATION.md).
 
@@ -78,7 +83,7 @@ Le but est explicite : donner le maximum de liberté de réutilisation, sans obl
 
 ## Statut
 
-Le projet est au stade de cadrage :
+Le projet est maintenant au stade `documentation solide + phase 1A logicielle ouverte` :
 
 - specs V1 rédigées
 - gouvernance documentaire en place
@@ -97,12 +102,17 @@ Le projet est au stade de cadrage :
 - page projet simplifiée
 - base documentaire du dépôt en place
 - route matérielle fixée sur Daisy Seed 65MB
-- phase 1 firmware volontairement en attente de consolidation documentaire
+- architecture logicielle `soft-first` documentée
+- arborescence `firmware/` posée
+- cœur logiciel portable en place
+- cible desktop de smoke test en place
+- premiers tests locaux en place
 
 ## Prochaine étape
 
-Solidifier encore la documentation initiale :
+Faire grandir le cœur logiciel avant achat du hardware :
 
-- dessiner le schéma V1 à partir des documents désormais figés
-- finaliser les derniers détails UI et mécaniques encore ouverts
-- cadrer l'alimentation autonome future au-delà du prototype USB
+- enrichir le moteur portable : paramètres, DSP, états UI et presets
+- ajouter progressivement oscillateurs, enveloppes, filtre et modulations
+- garder la doc et les tests alignés avec l'implémentation
+- préparer ensuite l'intégration Daisy quand le socle logiciel sera assez mûr

@@ -26,9 +26,9 @@ Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du
 - figer l'entrée `MIDI DIN 5 broches` comme interface musicale principale
 - préparer l'arborescence firmware
 
-## Gate avant phase 1
+## Gate avant phase 1A logicielle
 
-La phase 1 ne démarre pas tant que :
+La phase 1A logicielle ne démarre pas tant que :
 
 - les specs V1 ne sont pas suffisamment stables
 - la référence hardware n'est pas assez précise
@@ -38,16 +38,33 @@ La phase 1 ne démarre pas tant que :
 - la BOM n'est pas exploitable
 - les décisions structurantes ne sont pas écrites
 - le MIDI, l'interface et les presets ne sont pas suffisamment décrits
+
+## Gate avant phase 6 - Intégration Daisy et hardware
+
+L'intégration Daisy et hardware ne démarre pas tant que :
+
 - la stratégie d'alimentation autonome future n'est pas encore cadrée
 - l'implantation mécanique finale n'est pas encore figée
 - le support mécanique de la Daisy n'est pas encore cadré
+- le cœur logiciel portable n'est pas assez mature
 
-## Phase 1 - Moteur audio
+## Phase 1A - Socle logiciel portable
 
-- initialiser le projet Daisy
-- faire tourner une voix complète
+- poser l'arborescence `firmware/`
+- implémenter le modèle de patch V1
+- implémenter la banque de `4` presets
+- implémenter le moteur MIDI de base
+- implémenter l'allocation de voix
+- créer une cible desktop simple
+- écrire les premiers tests locaux
+
+## Phase 1B - DSP de base
+
+- implémenter une première voix complète dans le cœur portable
 - valider oscillateurs, filtre, VCA et enveloppes
-- mesurer tôt la charge DSP
+- viser des oscillateurs propres dès le départ
+- viser un filtre musical plutôt que clinique
+- préparer des mesures de coût DSP le plus tôt possible
 
 ## Phase 2 - Polyphonie et modulation
 
@@ -63,6 +80,8 @@ La phase 1 ne démarre pas tant que :
 - intégrer chorus global
 - intégrer delay global
 - intégrer reverb globale
+- viser un chorus large et clairement audible
+- garder une reverb discrète et utile
 - stabiliser niveaux, headroom et mix
 
 ## Phase 4 - Interface et presets
@@ -80,8 +99,9 @@ La phase 1 ne démarre pas tant que :
 - mapping CC principal
 - synchro MIDI Clock pour les modulations et le delay
 
-## Phase 6 - Intégration hardware
+## Phase 6 - Intégration Daisy et hardware
 
+- brancher la cible `libDaisy`
 - tester avec la vraie face avant
 - valider les contrôles
 - valider la sortie stéréo

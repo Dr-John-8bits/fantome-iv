@@ -48,7 +48,8 @@ Stack logicielle retenue :
 - Langage : C++
 - Bibliothèques : libDaisy + DaisySP
 - Build : toolchain Daisy officielle
-- Complément de développement possible si utile : petite application de test desktop pour valider le moteur audio plus vite
+- Architecture logicielle : cœur portable + cible Daisy + cible desktop de test
+- Complément de développement retenu : petite cible desktop pour valider vite la logique et le moteur avant l'achat du hardware
 
 ## 4. Principes de conception V1
 
@@ -58,6 +59,16 @@ Stack logicielle retenue :
 - Effets sur bus global stéréo
 - Priorité au MIDI : l'instrument doit d'abord être excellent en MIDI avant toute extension
 - Architecture modulaire du code pour pouvoir ajouter une V2 sans réécriture massive
+
+## 4.1 Direction sonore V1
+
+La direction sonore retenue pour la V1 est la suivante :
+
+- oscillateurs : rendu propre et stable
+- filtre : caractère musical avant neutralité clinique
+- chorus : large et audible
+- reverb : discrète et lisible
+- presets de départ : `4` presets d'usine
 
 ## 5. Non-objectifs V1
 
@@ -770,13 +781,22 @@ Définition d'une "V1 réussie" :
 - Poser l'arborescence du projet
 - Définir les conventions de nommage et de build
 
-### Phase 1 - Moteur de synthèse nu
+### Phase 1A - Socle logiciel portable
 
-- Initialiser le projet Daisy
+- Poser le cœur logiciel portable
+- Implémenter le modèle de patch
+- Implémenter la banque de `4` presets d'usine
+- Implémenter le moteur MIDI
+- Implémenter l'allocation de voix
+- Ajouter une cible desktop de test
+
+### Phase 1B - Moteur de synthèse nu
+
 - Implémenter 1 voix complète
-- Implémenter 4 voix et l'allocation
-- Ajouter filtre, VCA, enveloppes
 - Ajouter 2 oscillateurs par voix
+- Viser des oscillateurs propres dès la première base
+- Ajouter filtre, VCA, enveloppes
+- Implémenter 4 voix et l'allocation complète
 
 ### Phase 2 - Modulations
 
@@ -830,6 +850,8 @@ Mitigations :
 
 - Commencer sans reverb lourde si nécessaire
 - Garder un delay global simple en V1
+- Garder la reverb discrète
+- Privilégier un chorus ample plutôt qu'une accumulation d'effets
 - Mesurer la charge DSP très tôt
 - Garder les effets sur bus global uniquement
 - Fixer l'interface physique avant la PCB

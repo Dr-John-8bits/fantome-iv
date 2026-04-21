@@ -11,7 +11,7 @@ Statut :
 Décision :
 
 - la documentation est la source de vérité du projet
-- la phase 1 ne démarre pas tant que la documentation initiale n'est pas assez solide
+- la phase 1A logicielle ne démarre pas tant que la documentation initiale n'est pas assez solide
 
 Documents de référence :
 
@@ -498,3 +498,53 @@ Impact :
 
 - la façade reste lisible et maintenable
 - le schéma et le câblage peuvent viser une intégration réaliste
+
+## D-0024 - Architecture logicielle soft-first retenue
+
+Statut :
+
+- actée
+
+Décision :
+
+- le développement firmware démarre par un cœur logiciel portable
+- ce cœur doit être compilable et testable sur Mac sans `libDaisy`
+- l'intégration `Daisy Seed` doit vivre dans une cible séparée
+- une cible desktop simple fait partie du socle de travail
+
+Documents de référence :
+
+- [SOFTWARE-ARCHITECTURE.md](./SOFTWARE-ARCHITECTURE.md)
+- [ROADMAP.md](./ROADMAP.md)
+- [Fantome-IV-specs.md](./Fantome-IV-specs.md)
+
+Impact :
+
+- le projet peut avancer fortement avant achat du hardware
+- la logique MIDI, presets et allocation de voix doit vivre dans le cœur portable
+- la future couche `Daisy` doit rester fine
+
+## D-0025 - Direction sonore V1 retenue
+
+Statut :
+
+- actée
+
+Décision :
+
+- les oscillateurs V1 doivent viser un rendu propre
+- le filtre V1 doit viser un caractère musical
+- le chorus V1 doit être large et audible
+- la reverb V1 doit rester discrète
+- la base logicielle doit partir sur `4` presets d'usine
+
+Documents de référence :
+
+- [Fantome-IV-specs.md](./Fantome-IV-specs.md)
+- [SOFTWARE-ARCHITECTURE.md](./SOFTWARE-ARCHITECTURE.md)
+- [ROADMAP.md](./ROADMAP.md)
+
+Impact :
+
+- les choix DSP ne devront pas dériver vers un rendu trop clinique ou trop chargé
+- le travail logiciel initial doit inclure une banque de presets de départ
