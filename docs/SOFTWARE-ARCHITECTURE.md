@@ -114,6 +114,7 @@ On peut avancer immédiatement sur :
 - scan logiciel `raw -> cooked` des contrôles pour préparer le comportement matériel réel
 - première implémentation DSP portable
 - rendu audio bloc par bloc avec métriques de sortie et calibration globale
+- validation de cohérence sur plusieurs tailles de blocs audio
 - tests de cohérence
 
 ## 4. Ce qui attendra le hardware
@@ -193,7 +194,8 @@ La base logicielle porte déjà :
 - une première abstraction hardware pour boutons, encodeur, potards et file MIDI
 - un scanner portable qui transforme des lectures brutes en événements contrôlés
 - un rendu audio portable bloc par bloc avec suivi de peak / clip
-- une première cible `Daisy` mince compilable en mode stub, avec app et plateforme séparées
+- une première cible `Daisy` mince compilable en mode stub, avec app, plateforme et périphériques séparés
+- un parser `MIDI UART` portable côté stub et un stub `ADC` capable de recevoir des valeurs brutes
 
 Ce n'est pas encore la qualité sonore finale.
 

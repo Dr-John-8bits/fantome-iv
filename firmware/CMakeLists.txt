@@ -50,6 +50,7 @@ add_executable(
   fantome_tests
   tests/test_main.cpp
   targets/daisy/DaisyApp.cpp
+  targets/daisy/DaisyPeripherals.cpp
   targets/daisy/DaisyPlatformStub.cpp
 )
 
@@ -63,6 +64,7 @@ target_include_directories(
 add_executable(
   fantome_daisy_stub
   targets/daisy/DaisyApp.cpp
+  targets/daisy/DaisyPeripherals.cpp
   targets/daisy/DaisyPlatformStub.cpp
   targets/daisy/main.cpp
 )

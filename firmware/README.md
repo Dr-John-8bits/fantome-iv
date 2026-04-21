@@ -32,6 +32,7 @@ On sépare volontairement le code en trois couches :
 - `chorus` stéréo global portable avec mix plus cohérent
 - `reverb` stéréo globale portable avec headroom plus propre
 - gain staging global de travail et soft clipping de sortie
+- calibration de rendu vérifiée sur plusieurs tailles de blocs audio
 - état UI portable
 - paramètres éditables par pages
 - `soft takeover` portable pour les `8` potentiomètres
@@ -47,6 +48,9 @@ On sépare volontairement le code en trois couches :
 - logique d'entrées/sorties hardware abstraites
 - scanner matériel portable `raw -> cooked` pour préparer le scan réel des contrôles
 - rendu audio portable bloc par bloc avec métriques de sortie
+- slots utilisateur de départ plus différenciés musicalement
+- parser `MIDI UART` portable de flux d'octets côté stub Daisy
+- stub `ADC` capable d'accepter des échantillons de potentiomètres bruts
 - première cible `targets/daisy/` très mince avec stub compilable
 
 ## Ce que cette base ne fait pas encore

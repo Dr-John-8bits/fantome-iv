@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "DaisyPlatform.h"
 
 namespace fantome {
@@ -9,18 +7,24 @@ namespace fantome {
 class DaisyPlatformStub final : public DaisyPlatform {
  public:
   void Init() override;
-  float SampleRate() const override;
-  bool Poll(RawHardwareInputFrame& input) override;
-  void Present(const HardwareOutputFrame& output) override;
+  DaisyAudioConfig AudioConfig() const override;
+  DaisyControlAdc& Adc() override;
+  DaisyMidiUart& MidiUart() override;
+  DaisyOledDisplay& Oled() override;
+  void PresentIndicators(const HardwareOutputFrame& output) override;
 
-  void QueueInput(const RawHardwareInputFrame& input);
-
+  void SetAudioConfig(const DaisyAudioConfig& config);
   const HardwareOutputFrame& LastOutput() const;
+  DaisyControlAdcStub& AdcStub();
+  DaisyMidiUartStub& MidiStub();
+  DaisyOledDisplayStub& OledStub();
 
  private:
-  float sample_rate_ = 48000.0f;
+  DaisyAudioConfig audio_config_ {};
   HardwareOutputFrame last_output_ {};
-  std::vector<RawHardwareInputFrame> pending_inputs_ {};
+  DaisyControlAdcStub adc_ {};
+  DaisyMidiUartStub midi_uart_ {};
+  DaisyOledDisplayStub oled_ {};
 };
 
 }  // namespace fantome

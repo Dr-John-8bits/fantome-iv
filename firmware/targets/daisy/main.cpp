@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "DaisyApp.h"
+#include "DaisyPeripherals.h"
 #include "DaisyPlatformStub.h"
 
 #if __has_include("daisy_seed.h")
@@ -15,26 +16,62 @@ class LibDaisyPlatform final : public DaisyPlatform {
   {
     seed_.Configure();
     seed_.Init();
+    audio_.sample_rate = seed_.AudioSampleRate();
+    audio_.block_size = 48;
+    adc_.Init();
+    midi_uart_.Init();
+    oled_.Init();
   }
 
-  float SampleRate() const override
+  DaisyAudioConfig AudioConfig() const override
   {
-    return seed_.AudioSampleRate();
+    return audio_;
   }
 
-  bool Poll(RawHardwareInputFrame& input) override
+  DaisyControlAdc& Adc() override
   {
-    input.ClearTransient();
-    return false;
+    return adc_;
   }
 
-  void Present(const HardwareOutputFrame& output) override
+  DaisyMidiUart& MidiUart() override
+  {
+    return midi_uart_;
+  }
+
+  DaisyOledDisplay& Oled() override
+  {
+    return oled_;
+  }
+
+  void PresentIndicators(const HardwareOutputFrame& output) override
   {
     last_output_ = output;
   }
 
  private:
+  class NullAdc final : public DaisyControlAdc {
+   public:
+    void Init() override {}
+    bool Poll(RawHardwareInputFrame&) override { return false; }
+  };
+
+  class NullMidiUart final : public DaisyMidiUart {
+   public:
+    void Init() override {}
+    bool Drain(RawHardwareInputFrame&) override { return false; }
+  };
+
+  class NullOled final : public DaisyOledDisplay {
+   public:
+    void Init() override {}
+    void Present(const OledTextFrame&) override {}
+  };
+
   daisy::DaisySeed seed_ {};
+  DaisyAudioConfig audio_ {};
+  NullAdc adc_ {};
+  NullMidiUart midi_uart_ {};
+  NullOled oled_ {};
   HardwareOutputFrame last_output_ {};
 };
 
@@ -66,10 +103,11 @@ int main()
   fantome::DaisyApp app(platform);
   app.BootStandalone();
   fantome::RawHardwareInputFrame raw_input;
-  raw_input.PushMidi(fantome::MidiMessage::NoteOn(1, 60, 110));
   raw_input.pot_available[1] = true;
   raw_input.pots[1] = 0.66f;
-  platform.QueueInput(raw_input);
+  platform.AdcStub().QueueFrame(raw_input);
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::NoteOn(1, 60, 110));
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::ControlChange(1, 74, 84));
   app.TickControlFrame(0.02f);
 
   std::vector<float> left(512, 0.0f);
@@ -79,6 +117,7 @@ int main()
   std::cout << "audio_blocks=" << platform.LastOutput().audio_block_count
             << " peak=" << platform.LastOutput().output_peak
             << " clip=" << (platform.LastOutput().output_clip ? "yes" : "no")
+            << " oled_present=" << platform.OledStub().PresentCount()
             << '\n';
   app.TickControlFrame(1.6f);
 

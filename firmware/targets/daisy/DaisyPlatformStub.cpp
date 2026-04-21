@@ -4,39 +4,68 @@ namespace fantome {
 
 void DaisyPlatformStub::Init()
 {
-  sample_rate_ = 48000.0f;
-}
-
-float DaisyPlatformStub::SampleRate() const
-{
-  return sample_rate_;
-}
-
-bool DaisyPlatformStub::Poll(RawHardwareInputFrame& input)
-{
-  if (pending_inputs_.empty()) {
-    input.ClearTransient();
-    return false;
+  if (audio_config_.sample_rate <= 0.0f) {
+    audio_config_.sample_rate = 48000.0f;
   }
-
-  input = pending_inputs_.front();
-  pending_inputs_.erase(pending_inputs_.begin());
-  return true;
+  if (audio_config_.block_size == 0) {
+    audio_config_.block_size = 48;
+  }
+  adc_.Init();
+  midi_uart_.Init();
+  oled_.Init();
+  last_output_ = HardwareOutputFrame {};
 }
 
-void DaisyPlatformStub::Present(const HardwareOutputFrame& output)
+DaisyAudioConfig DaisyPlatformStub::AudioConfig() const
+{
+  return audio_config_;
+}
+
+DaisyControlAdc& DaisyPlatformStub::Adc()
+{
+  return adc_;
+}
+
+DaisyMidiUart& DaisyPlatformStub::MidiUart()
+{
+  return midi_uart_;
+}
+
+DaisyOledDisplay& DaisyPlatformStub::Oled()
+{
+  return oled_;
+}
+
+void DaisyPlatformStub::PresentIndicators(const HardwareOutputFrame& output)
 {
   last_output_ = output;
+  last_output_.oled = oled_.LastFrame();
 }
 
-void DaisyPlatformStub::QueueInput(const RawHardwareInputFrame& input)
+void DaisyPlatformStub::SetAudioConfig(const DaisyAudioConfig& config)
 {
-  pending_inputs_.push_back(input);
+  audio_config_.sample_rate = config.sample_rate;
+  audio_config_.block_size = config.block_size;
 }
 
 const HardwareOutputFrame& DaisyPlatformStub::LastOutput() const
 {
   return last_output_;
+}
+
+DaisyControlAdcStub& DaisyPlatformStub::AdcStub()
+{
+  return adc_;
+}
+
+DaisyMidiUartStub& DaisyPlatformStub::MidiStub()
+{
+  return midi_uart_;
+}
+
+DaisyOledDisplayStub& DaisyPlatformStub::OledStub()
+{
+  return oled_;
 }
 
 }  // namespace fantome

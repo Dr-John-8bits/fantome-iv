@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -63,6 +64,28 @@ float MaxAbsSample(const std::vector<float>& left, const std::vector<float>& rig
     max_value = std::max(max_value, std::fabs(right[index]));
   }
   return max_value;
+}
+
+float RenderPlanEnergy(
+  fantome::FantomeEngine engine,
+  const std::vector<std::size_t>& block_plan)
+{
+  const auto max_block = *std::max_element(block_plan.begin(), block_plan.end());
+  std::vector<float> left(max_block, 0.0f);
+  std::vector<float> right(max_block, 0.0f);
+  float total_energy = 0.0f;
+
+  for (const auto frames : block_plan) {
+    std::fill(left.begin(), left.end(), 0.0f);
+    std::fill(right.begin(), right.end(), 0.0f);
+    engine.Render(left.data(), right.data(), frames);
+
+    for (std::size_t index = 0; index < frames; ++index) {
+      total_energy += (left[index] * left[index]) + (right[index] * right[index]);
+    }
+  }
+
+  return total_energy;
 }
 
 void TestOldestVoiceSteal()
@@ -465,6 +488,65 @@ void TestAggressiveEffectsStayBounded()
          "aggressive effect settings should still produce finite audio");
   Expect(MaxAbsSample(left, right) <= 1.0f,
          "aggressive effect settings should remain bounded by the output soft clip");
+}
+
+void TestRenderRemainsConsistentAcrossBlockSizes()
+{
+  fantome::FantomeEngine base_engine;
+  base_engine.SetSampleRate(48000.0f);
+  base_engine.CurrentPatchMutable() = fantome::MakeDefaultUserPresetBank()[0];
+  base_engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  base_engine.CurrentPatchMutable().delay.mix = 0.18f;
+  base_engine.CurrentPatchMutable().reverb.mix = 0.16f;
+  base_engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 104));
+
+  const auto uniform_energy = RenderPlanEnergy(
+    base_engine,
+    std::vector<std::size_t>(64, 64));
+  const auto tiny_blocks_energy = RenderPlanEnergy(
+    base_engine,
+    std::vector<std::size_t>(256, 16));
+  const auto mixed_blocks_energy = RenderPlanEnergy(
+    base_engine,
+    std::vector<std::size_t> {
+      23, 71, 19, 128, 64, 7, 257, 33, 41, 51, 89, 241, 73, 11, 71, 286,
+      17, 95, 63, 127, 255, 31, 49, 113, 197, 83, 29, 401, 257, 311, 263, 340});
+
+  Expect(uniform_energy > 0.001f,
+         "reference block plan should produce audible energy");
+  Expect(std::fabs(tiny_blocks_energy - uniform_energy) / uniform_energy < 0.12f,
+         "render energy should stay reasonably stable across very small blocks");
+  Expect(std::fabs(mixed_blocks_energy - uniform_energy) / uniform_energy < 0.20f,
+         "render energy should stay reasonably stable across irregular block plans");
+}
+
+void TestRealisticMidiScenarioStaysFinite()
+{
+  fantome::FantomeEngine engine;
+  engine.SetSampleRate(48000.0f);
+  engine.CurrentPatchMutable() = fantome::MakeDefaultUserPresetBank()[3];
+  engine.HandleMidi(fantome::MidiMessage::Start());
+  for (int index = 0; index < 48; ++index) {
+    engine.HandleMidi(fantome::MidiMessage::Clock());
+  }
+
+  engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 112));
+  engine.HandleMidi(fantome::MidiMessage::ControlChange(1, 1, 72));
+  engine.HandleMidi(fantome::MidiMessage::PitchBend(1, 4096));
+  engine.HandleMidi(fantome::MidiMessage::ControlChange(1, 64, 127));
+  engine.HandleMidi(fantome::MidiMessage::NoteOff(1, 60));
+  engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 67, 104));
+  engine.HandleMidi(fantome::MidiMessage::ControlChange(1, 74, 92));
+  engine.HandleMidi(fantome::MidiMessage::ControlChange(1, 64, 0));
+
+  const auto energy = RenderPlanEnergy(
+    engine,
+    std::vector<std::size_t> {64, 64, 32, 96, 48, 48, 128, 64, 32, 16, 16, 128});
+
+  Expect(std::isfinite(energy) && energy > 0.0001f,
+         "a realistic mixed MIDI performance scenario should keep the engine finite and audible");
+  Expect(HasActiveNote(engine, 67),
+         "the second played note should remain active after the scenario");
 }
 
 void TestUiEncoderEditsFilterCutoff()
@@ -965,15 +1047,18 @@ void TestDaisyStubAppBridgesQueuedInputAndAudio()
   app.BootStandalone();
 
   fantome::RawHardwareInputFrame raw;
-  raw.PushMidi(fantome::MidiMessage::NoteOn(1, 60, 110));
   raw.pot_available[1] = true;
   raw.pots[1] = 0.42f;
-  platform.QueueInput(raw);
+  platform.AdcStub().QueueFrame(raw);
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::NoteOn(1, 60, 110));
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::ControlChange(1, 74, 80));
 
   Expect(app.TickControlFrame(0.01f),
          "daisy app should consume queued stub input");
   Expect(platform.LastOutput().midi_activity,
          "queued MIDI should light the runtime MIDI activity state");
+  Expect(platform.OledStub().PresentCount() >= 1,
+         "daisy app should present OLED frames through the dedicated OLED stub");
 
   std::vector<float> left(1024, 0.0f);
   std::vector<float> right(1024, 0.0f);
@@ -984,6 +1069,75 @@ void TestDaisyStubAppBridgesQueuedInputAndAudio()
          "daisy stub app should render audible audio through the runtime");
   Expect(platform.LastOutput().audio_block_count == 1,
          "daisy stub app should surface rendered audio block metrics");
+  Expect(platform.OledStub().LastFrame().ToDebugString().find("FANTOME IV") != std::string::npos ||
+           platform.OledStub().LastFrame().ToDebugString().find("Ghost Pad") != std::string::npos,
+         "daisy app should route OLED content through the dedicated display stub");
+}
+
+void TestDaisyMidiUartStubParsesByteStream()
+{
+  fantome::DaisyMidiUartStub midi_stub;
+  midi_stub.Init();
+
+  midi_stub.QueueBytes({
+    0x90, 0x3C, 0x64,
+    0xB0, 0x4A, 0x50,
+    0xE0, 0x00, 0x60,
+    0xF8,
+    0x80, 0x3C, 0x40,
+  });
+
+  fantome::RawHardwareInputFrame raw;
+  Expect(midi_stub.Drain(raw),
+         "MIDI UART stub should parse queued bytes into MIDI messages");
+  Expect(raw.midi_message_count == 5,
+         "byte-stream parser should emit channel voice and realtime MIDI messages");
+  Expect(raw.midi_messages[0].type == fantome::MidiMessageType::NoteOn,
+         "parsed byte stream should begin with note on");
+  Expect(raw.midi_messages[1].type == fantome::MidiMessageType::ControlChange,
+         "parsed byte stream should include control change");
+  Expect(raw.midi_messages[2].type == fantome::MidiMessageType::PitchBend,
+         "parsed byte stream should include pitch bend");
+  Expect(raw.midi_messages[3].type == fantome::MidiMessageType::Clock,
+         "parsed byte stream should include realtime clock");
+  Expect(raw.midi_messages[4].type == fantome::MidiMessageType::NoteOff,
+         "parsed byte stream should end with note off");
+}
+
+void TestDaisyAdcStubAcceptsRawPotSamples()
+{
+  fantome::DaisyPlatformStub platform;
+  fantome::DaisyApp app(platform);
+  app.BootStandalone();
+
+  platform.AdcStub().QueuePotRawSample(1, 3072);
+  Expect(app.TickControlFrame(0.01f),
+         "ADC stub should convert queued raw pot samples into a control frame");
+  Expect(app.Runtime().Engine().CurrentPatch().filter.cutoff > 0.6f,
+         "raw ADC pot sample should reach the mapped cutoff parameter");
+}
+
+void TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals()
+{
+  fantome::DaisyPlatformStub platform;
+  platform.SetAudioConfig(fantome::DaisyAudioConfig {44100.0f, 96});
+  fantome::DaisyApp app(platform);
+  const auto boot = app.BootStandalone();
+
+  Expect(boot.standalone,
+         "daisy stub should still boot standalone with a custom audio config");
+  Expect(std::fabs(app.Runtime().Engine().SampleRate() - 44100.0f) < 0.001f,
+         "custom stub audio config should feed the runtime sample rate");
+
+  fantome::RawHardwareInputFrame control_frame;
+  control_frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::PageNext)] = true;
+  platform.AdcStub().QueueFrame(control_frame);
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::NoteOn(1, 64, 100));
+
+  Expect(app.TickControlFrame(0.01f),
+         "separate ADC and MIDI stubs should both contribute to a control tick");
+  Expect(platform.OledStub().PresentCount() >= 1,
+         "OLED stub should receive presented frames when the app ticks");
 }
 
 void TestSessionManagerStartsFreshWhenNoSessionFile()
@@ -1148,6 +1302,8 @@ int main()
     TestOscillatorSyncChangesRenderedSignal();
     TestUnisonIsWiderThanMono();
     TestAggressiveEffectsStayBounded();
+    TestRenderRemainsConsistentAcrossBlockSizes();
+    TestRealisticMidiScenarioStaysFinite();
     TestUiEncoderEditsFilterCutoff();
     TestSoftTakeoverBlocksUntilPickup();
     TestPresetPersistenceRoundTrip();
@@ -1166,6 +1322,9 @@ int main()
     TestFirmwareRuntimeRenderAudioBlockTracksMeter();
     TestFirmwareRuntimeUiSaveAndReloadSessionActions();
     TestDaisyStubAppBridgesQueuedInputAndAudio();
+    TestDaisyMidiUartStubParsesByteStream();
+    TestDaisyAdcStubAcceptsRawPotSamples();
+    TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

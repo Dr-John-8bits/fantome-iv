@@ -128,6 +128,9 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - rendu audio bloc par bloc avec métriques de sortie en place
 - première cible `targets/daisy/` mince compilable en place
 - adaptation Daisy en stub séparant tick de contrôle et rendu audio en place
+- interfaces/stubs séparés pour `ADC`, `OLED` et `MIDI UART` en place
+- parser de flux d'octets MIDI côté stub en place
+- calibration de cohérence sur tailles de blocs audio variables en place
 - audit global projet exécuté et validé
 
 ## Prochaine étape
