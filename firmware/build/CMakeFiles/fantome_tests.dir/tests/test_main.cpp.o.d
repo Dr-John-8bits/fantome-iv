@@ -829,6 +829,7 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path_iterator.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/u8path.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/FantomeEngine.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/Effects.h \
@@ -837,4 +838,9 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/MidiTypes.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SynthVoice.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/VoiceAllocator.h \
-  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/UiState.h
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/OledView.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/UiState.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/PortableInput.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionManager.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionPersistence.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/StartupDisplay.h

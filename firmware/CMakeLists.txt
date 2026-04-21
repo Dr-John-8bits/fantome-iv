@@ -11,7 +11,13 @@ add_library(
   core/src/Effects.cpp
   core/src/FantomeEngine.cpp
   core/src/Modulation.cpp
+  core/src/OledView.cpp
+  core/src/PatchSerialization.cpp
+  core/src/PortableInput.cpp
   core/src/PresetPersistence.cpp
+  core/src/SessionManager.cpp
+  core/src/SessionPersistence.cpp
+  core/src/StartupDisplay.cpp
   core/src/SynthVoice.cpp
   core/src/UiState.cpp
   core/src/VoiceAllocator.cpp

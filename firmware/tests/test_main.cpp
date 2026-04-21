@@ -1,11 +1,17 @@
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 #include "fantome/FantomeEngine.h"
+#include "fantome/OledView.h"
+#include "fantome/PortableInput.h"
+#include "fantome/SessionManager.h"
+#include "fantome/SessionPersistence.h"
+#include "fantome/StartupDisplay.h"
 #include "fantome/UiState.h"
 
 namespace {
@@ -400,6 +406,318 @@ void TestPresetPersistenceRoundTrip()
   std::filesystem::remove(preset_path);
 }
 
+void TestOledRendererShowsPresetAndSelection()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  ui.Reset(engine);
+
+  const auto frame = oled.Render(ui, engine);
+  const auto debug = frame.ToDebugString();
+
+  Expect(debug.find("Ghost Pad") != std::string::npos,
+         "oled view should show the active preset name");
+  Expect(debug.find("Oscillators") != std::string::npos,
+         "oled view should show the current page label");
+  Expect(debug.find(">Osc A Wave") != std::string::npos,
+         "oled view should highlight the selected parameter");
+  Expect(debug.find("Saw") != std::string::npos,
+         "oled view should show the formatted parameter value");
+}
+
+void TestOledRendererShowsStartupSplash()
+{
+  fantome::OledTextRenderer oled;
+  const auto frame = oled.RenderStartupSplash();
+  const auto debug = frame.ToDebugString();
+
+  Expect(debug.find("FANTOME IV") != std::string::npos,
+         "startup splash should show the synth name");
+  Expect(debug.find("by Dr. John.") != std::string::npos,
+         "startup splash should show the author line");
+}
+
+void TestOledRendererShowsPickupState()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  ui.Reset(engine);
+
+  ui.MovePot(1, 0.20f, engine);
+  engine.CurrentPatchMutable().filter.cutoff = 0.85f;
+  ui.NotifyPresetLoaded(engine);
+
+  const auto frame = oled.Render(ui, engine);
+  const auto debug = frame.ToDebugString();
+
+  Expect(debug.find("Pickup") != std::string::npos,
+         "oled view should expose soft takeover pickup state");
+}
+
+void TestOledRendererShowsConfirmationState()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  ui.Reset(engine);
+
+  for (int index = 0; index < 6; ++index) {
+    ui.NextPage(engine);
+  }
+  ui.RotateEncoder(5, engine);
+  ui.PressEncoder(engine);
+
+  const auto frame = oled.Render(ui, engine);
+  const auto debug = frame.ToDebugString();
+
+  Expect(debug.find("CONF") != std::string::npos,
+         "oled view should show confirmation mode for sensitive actions");
+  Expect(debug.find("Save Preset") != std::string::npos,
+         "oled view should show the selected action label");
+  Expect(debug.find("Enc=ok") != std::string::npos,
+         "oled view should show confirmation guidance");
+}
+
+void TestPortableSessionPersistenceRoundTrip()
+{
+  const auto session_path = std::filesystem::temp_directory_path() / "fantome_iv_session_test.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FantomeEngine source_engine;
+  fantome::UiState source_ui;
+  fantome::PortableInputSurface input;
+  source_ui.Reset(source_engine);
+
+  source_engine.CurrentPatchMutable().name = "Session Drift";
+  source_engine.CurrentPatchMutable().filter.cutoff = 0.61f;
+  source_engine.SavePreset(2);
+  source_engine.CurrentPatchMutable().filter.cutoff = 0.29f;
+  source_engine.CurrentPatchMutable().delay.feedback = 0.82f;
+  source_engine.SetClockTempoBpm(98.0f);
+
+  for (int index = 0; index < 5; ++index) {
+    input.PressPageNext(source_engine, source_ui);
+  }
+  input.TurnEncoder(5, source_engine, source_ui);
+  input.MovePot(7, 0.12f, source_engine, source_ui);
+  source_engine.CurrentPatchMutable().delay.feedback = 0.82f;
+  source_ui.NotifyPresetLoaded(source_engine);
+
+  const fantome::PortableSessionState state {
+    source_engine.ExportSessionState(),
+    source_ui.ExportSessionState(),
+  };
+
+  Expect(fantome::SessionPersistence::Save(session_path.string(), state),
+         "portable session should save to disk");
+
+  fantome::PortableSessionState loaded_state;
+  Expect(fantome::SessionPersistence::Load(session_path.string(), loaded_state),
+         "portable session should load from disk");
+
+  fantome::FantomeEngine restored_engine;
+  fantome::UiState restored_ui;
+  fantome::OledTextRenderer oled;
+  Expect(restored_engine.RestoreSessionState(loaded_state.engine),
+         "engine session state should restore");
+  restored_ui.RestoreSessionState(loaded_state.ui, restored_engine);
+
+  Expect(restored_engine.CurrentPresetSlot() == 2,
+         "session should restore the active preset slot");
+  Expect(std::fabs(restored_engine.CurrentPatch().filter.cutoff - 0.29f) < 0.0001f,
+         "session should restore the current unsaved patch state");
+  Expect(std::fabs(restored_engine.PresetBank()[2].filter.cutoff - 0.61f) < 0.0001f,
+         "session should preserve the stored preset bank independently");
+  Expect(std::fabs(restored_engine.Transport().tempo_bpm - 98.0f) < 0.0001f,
+         "session should restore the working clock tempo");
+  Expect(restored_ui.CurrentPage() == fantome::UiPage::Effects,
+         "session should restore the current UI page");
+  Expect(restored_ui.SelectedItemIndex() == 5,
+         "session should restore the selected UI item");
+  Expect(!restored_ui.Pots()[7].captured,
+         "session should restore soft takeover state for the context pot");
+
+  const auto debug = oled.Render(restored_ui, restored_engine).ToDebugString();
+  Expect(debug.find("Pickup") != std::string::npos,
+         "restored session should expose pickup state on the OLED");
+
+  std::filesystem::remove(session_path);
+}
+
+void TestPortableInputSurfaceCanNavigateAndEdit()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::PortableInputSurface input;
+  ui.Reset(engine);
+
+  Expect(input.Apply(fantome::ControlEvent::PageNext(), engine, ui),
+         "page-next event should be accepted");
+  Expect(ui.CurrentPage() == fantome::UiPage::Filter,
+         "portable input should navigate to the next page");
+
+  const auto before = engine.CurrentPatch().filter.cutoff;
+  input.Apply(fantome::ControlEvent::EncoderPress(), engine, ui);
+  input.Apply(fantome::ControlEvent::EncoderTurn(4), engine, ui);
+  input.Apply(fantome::ControlEvent::EncoderPress(), engine, ui);
+
+  Expect(engine.CurrentPatch().filter.cutoff > before,
+         "portable input should edit the selected parameter through the encoder");
+
+  Expect(input.Apply(fantome::ControlEvent::PotMove(1, 0.18f), engine, ui),
+         "pot move event should be accepted");
+  Expect(std::fabs(engine.CurrentPatch().filter.cutoff - 0.18f) < 0.02f,
+         "portable input should route pot movement to the mapped parameter");
+  Expect(std::fabs(input.PotPositions()[1] - 0.18f) < 0.0001f,
+         "portable input should retain the last simulated pot position");
+  Expect(input.EncoderPosition() == 4,
+         "portable input should track cumulative encoder motion");
+}
+
+void TestSessionManagerStartsFreshWhenNoSessionFile()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_session_manager_missing.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::SessionManager manager;
+
+  const auto result = manager.Boot(session_path.string(), engine, ui);
+
+  Expect(result.mode == fantome::SessionBootMode::FreshStart,
+         "session manager should start fresh when no session file exists");
+  Expect(!result.session_file_present,
+         "missing session file should be reported as absent");
+  Expect(engine.CurrentPatch().name == "Ghost Pad",
+         "fresh boot should start from the factory first patch");
+}
+
+void TestSessionManagerShutdownAndRestoreRoundTrip()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_session_manager_roundtrip.txt";
+  std::filesystem::remove(session_path);
+
+  {
+    fantome::FantomeEngine engine;
+    fantome::UiState ui;
+    fantome::PortableInputSurface input;
+    fantome::SessionManager manager;
+
+    const auto boot = manager.Boot(session_path.string(), engine, ui);
+    Expect(boot.mode == fantome::SessionBootMode::FreshStart,
+           "first boot should start a fresh session");
+
+    engine.CurrentPatchMutable().name = "Manager Session";
+    engine.CurrentPatchMutable().filter.cutoff = 0.57f;
+    engine.CurrentPatchMutable().delay.feedback = 0.63f;
+    engine.SetClockTempoBpm(104.0f);
+    input.PressPageNext(engine, ui);
+    input.PressPageNext(engine, ui);
+    input.TurnEncoder(2, engine, ui);
+    Expect(manager.SaveCheckpoint(engine, ui),
+           "session manager should support explicit checkpoint saves");
+    Expect(manager.Shutdown(engine, ui),
+           "session manager should save the session on shutdown");
+  }
+
+  {
+    fantome::FantomeEngine restored_engine;
+    fantome::UiState restored_ui;
+    fantome::SessionManager manager;
+
+    const auto boot = manager.Boot(session_path.string(), restored_engine, restored_ui);
+    Expect(boot.mode == fantome::SessionBootMode::RestoredFromDisk,
+           "session manager should restore a saved session on boot");
+    Expect(boot.restored,
+           "restored boot should report a restored session");
+    Expect(std::fabs(restored_engine.CurrentPatch().filter.cutoff - 0.57f) < 0.0001f,
+           "restored session should recover the patch state");
+    Expect(std::fabs(restored_engine.CurrentPatch().delay.feedback - 0.63f) < 0.0001f,
+           "restored session should recover effect settings");
+    Expect(std::fabs(restored_engine.Transport().tempo_bpm - 104.0f) < 0.0001f,
+           "restored session should recover the working tempo");
+    Expect(restored_ui.CurrentPage() == fantome::UiPage::AmpEnvelope,
+           "restored session should recover the current UI page");
+    Expect(restored_ui.SelectedItemIndex() == 2,
+           "restored session should recover encoder selection");
+  }
+
+  std::filesystem::remove(session_path);
+}
+
+void TestSessionManagerFallsBackWhenSessionIsCorrupt()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_session_manager_corrupt.txt";
+  {
+    std::ofstream output(session_path);
+    output << "NOT_A_VALID_SESSION\n";
+  }
+
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::SessionManager manager;
+
+  const auto result = manager.Boot(session_path.string(), engine, ui);
+
+  Expect(result.mode == fantome::SessionBootMode::FallbackFreshStart,
+         "corrupt session files should fall back to a fresh session");
+  Expect(result.session_file_present,
+         "corrupt boot should still report that a session file existed");
+  Expect(manager.State().last_error == "session restore failed",
+         "session manager should retain the restore failure reason");
+
+  std::filesystem::remove(session_path);
+}
+
+void TestStartupDisplayShowsSplashThenMainScreen()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  fantome::StartupDisplayController startup(1.5f);
+  ui.Reset(engine);
+
+  const auto splash_debug = startup.Render(oled, ui, engine).ToDebugString();
+  Expect(startup.ShowingSplash(),
+         "startup display should begin on the splash screen");
+  Expect(splash_debug.find("FANTOME IV") != std::string::npos,
+         "startup display should render the splash text while active");
+
+  startup.Advance(1.6f);
+
+  const auto main_debug = startup.Render(oled, ui, engine).ToDebugString();
+  Expect(!startup.ShowingSplash(),
+         "startup display should leave the splash after the configured duration");
+  Expect(main_debug.find("Ghost Pad") != std::string::npos,
+         "startup display should fall through to the main OLED screen afterward");
+}
+
+void TestStartupDisplayResetRearmsSplash()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  fantome::StartupDisplayController startup(1.5f);
+  ui.Reset(engine);
+
+  startup.Advance(2.0f);
+  Expect(!startup.ShowingSplash(),
+         "startup display should be past the splash before reset");
+
+  startup.Reset();
+  const auto debug = startup.Render(oled, ui, engine).ToDebugString();
+  Expect(startup.ShowingSplash(),
+         "startup reset should rearm the splash screen");
+  Expect(debug.find("by Dr. John.") != std::string::npos,
+         "startup reset should make the splash visible again");
+}
+
 }  // namespace
 
 int main()
@@ -420,6 +738,17 @@ int main()
     TestUiEncoderEditsFilterCutoff();
     TestSoftTakeoverBlocksUntilPickup();
     TestPresetPersistenceRoundTrip();
+    TestOledRendererShowsStartupSplash();
+    TestOledRendererShowsPresetAndSelection();
+    TestOledRendererShowsPickupState();
+    TestOledRendererShowsConfirmationState();
+    TestPortableSessionPersistenceRoundTrip();
+    TestPortableInputSurfaceCanNavigateAndEdit();
+    TestSessionManagerStartsFreshWhenNoSessionFile();
+    TestSessionManagerShutdownAndRestoreRoundTrip();
+    TestSessionManagerFallsBackWhenSessionIsCorrupt();
+    TestStartupDisplayShowsSplashThenMainScreen();
+    TestStartupDisplayResetRearmsSplash();
   } catch (const std::exception& exception) {
     std::cerr << "Test failure: " << exception.what() << '\n';
     return 1;

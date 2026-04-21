@@ -93,6 +93,46 @@ struct PotTakeoverState {
   ParameterId parameter = ParameterId::MasterVolume;
 };
 
+struct PotSessionState {
+  bool captured = true;
+  bool has_physical_value = false;
+  float physical_value = 0.0f;
+};
+
+struct UiSessionState {
+  UiPage current_page = UiPage::Oscillators;
+  UiInteractionState interaction_state = UiInteractionState::Navigation;
+  std::size_t selected_item_index = 0;
+  std::size_t preset_target_slot = 0;
+  UiAction pending_action = UiAction::None;
+  std::array<PotSessionState, 8> pots {};
+};
+
+struct UiDisplayItem {
+  std::string label;
+  std::string value;
+  bool selected = false;
+  bool is_action = false;
+};
+
+struct UiDisplayModel {
+  static constexpr std::size_t kMaxItems = 11;
+
+  std::string preset_name;
+  std::size_t active_preset_slot = 0;
+  std::size_t target_preset_slot = 0;
+  std::string page_label;
+  UiInteractionState interaction_state = UiInteractionState::Navigation;
+  std::array<UiDisplayItem, kMaxItems> items {};
+  std::size_t item_count = 0;
+  std::string selected_label;
+  std::string selected_value;
+  std::string context_pot_label;
+  bool context_pot_needs_pickup = false;
+  bool any_pot_needs_pickup = false;
+  std::string status_text;
+};
+
 class UiState {
  public:
   UiState();
@@ -115,6 +155,9 @@ class UiState {
   const std::array<PotTakeoverState, 8>& Pots() const;
   std::string CurrentPageLabel() const;
   std::string SelectedItemLabel() const;
+  UiDisplayModel BuildDisplayModel(const FantomeEngine& engine) const;
+  UiSessionState ExportSessionState() const;
+  void RestoreSessionState(const UiSessionState& state, const FantomeEngine& engine);
 
  private:
   static constexpr std::size_t kPotCount = 8;
@@ -132,6 +175,11 @@ class UiState {
     PotTakeoverState& pot_state,
     float target_value,
     float new_physical_value) const;
+  std::string FormatParameterValue(
+    ParameterId parameter,
+    const FantomeEngine& engine) const;
+  std::string FormatItemValue(const UiItem& item, const FantomeEngine& engine) const;
+  std::string BuildStatusText(const FantomeEngine& engine) const;
   float ParameterNormalized(ParameterId parameter, const FantomeEngine& engine) const;
   void SetParameterFromNormalized(
     ParameterId parameter,

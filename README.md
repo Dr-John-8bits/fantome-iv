@@ -114,6 +114,12 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - couche `UI state` portable en place
 - `soft takeover` portable en place
 - persistance portable de la banque de `4` presets en place
+- représentation portable de l'écran OLED page par page en place
+- écran de démarrage OLED portable en place
+- durée portable de splash screen en place avec retour automatique vers l'écran principal
+- persistance portable de session en place
+- session manager portable explicite en place pour le cycle de démarrage et d'arrêt
+- couche d'input portable en place pour simuler encodeur, boutons et potentiomètres
 
 ## Prochaine étape
 
@@ -122,7 +128,7 @@ Faire grandir le cœur logiciel avant achat du hardware :
 - enrichir le moteur portable : paramètres, DSP, états UI et presets
 - raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
 - raffiner les effets déjà en place
-- commencer à structurer l'état UI et la future persistance de presets
-- brancher plus tard cet état UI portable à l'OLED, à l'encodeur et aux potentiomètres réels
+- faire grandir l'état UI, l'écran portable et la future persistance de session
+- brancher plus tard cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
 - garder la doc et les tests alignés avec l'implémentation
 - préparer ensuite l'intégration Daisy quand le socle logiciel sera assez mûr

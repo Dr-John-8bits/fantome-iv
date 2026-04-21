@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 #include <string>
 
 namespace fantome {
@@ -207,6 +209,135 @@ ParameterId DefaultContextParameter(UiPage page)
   return ParameterId::MasterVolume;
 }
 
+std::string WaveformLabel(Waveform waveform)
+{
+  switch (waveform) {
+    case Waveform::Sine:
+      return "Sine";
+    case Waveform::Triangle:
+      return "Tri";
+    case Waveform::Square:
+      return "Square";
+    case Waveform::Saw:
+      return "Saw";
+    case Waveform::Noise:
+      return "Noise";
+  }
+
+  return "Unknown";
+}
+
+std::string SyncModeLabel(SyncMode mode)
+{
+  switch (mode) {
+    case SyncMode::Free:
+      return "Free";
+    case SyncMode::MidiClock:
+      return "Clock";
+  }
+
+  return "Unknown";
+}
+
+std::string DivisionLabel(int division_index)
+{
+  static constexpr std::array<const char*, 5> kLabels {
+    "1/1",
+    "1/2",
+    "1/4",
+    "1/8",
+    "1/16",
+  };
+
+  return kLabels[static_cast<std::size_t>(std::clamp(division_index, 0, 4))];
+}
+
+std::string PlayModeLabel(PlayMode mode)
+{
+  switch (mode) {
+    case PlayMode::Poly:
+      return "Poly";
+    case PlayMode::Mono:
+      return "Mono";
+    case PlayMode::Unison:
+      return "Unison";
+  }
+
+  return "Unknown";
+}
+
+std::string BoolLabel(bool enabled)
+{
+  return enabled ? "On" : "Off";
+}
+
+std::string PercentLabel(float normalized)
+{
+  return std::to_string(static_cast<int>(std::round(Clamp01(normalized) * 100.0f))) + "%";
+}
+
+std::string TimeLabel(float seconds)
+{
+  std::ostringstream stream;
+  if (seconds < 1.0f) {
+    stream << static_cast<int>(std::round(seconds * 1000.0f)) << "ms";
+  } else {
+    stream << std::fixed << std::setprecision(seconds < 10.0f ? 2 : 1) << seconds << "s";
+  }
+  return stream.str();
+}
+
+std::string RateLabel(float hz)
+{
+  std::ostringstream stream;
+  stream << std::fixed << std::setprecision(hz < 1.0f ? 2 : 1) << hz << "Hz";
+  return stream.str();
+}
+
+std::string MillisecondsLabel(float milliseconds)
+{
+  std::ostringstream stream;
+  if (milliseconds < 1000.0f) {
+    stream << static_cast<int>(std::round(milliseconds)) << "ms";
+  } else {
+    stream << std::fixed << std::setprecision(2) << (milliseconds / 1000.0f) << "s";
+  }
+  return stream.str();
+}
+
+std::string OctaveLabel(int octave)
+{
+  std::ostringstream stream;
+  if (octave > 0) {
+    stream << '+';
+  }
+  stream << octave << "oct";
+  return stream.str();
+}
+
+std::string FineTuneLabel(float cents)
+{
+  const auto rounded = static_cast<int>(std::round(cents));
+  std::ostringstream stream;
+  if (rounded > 0) {
+    stream << '+';
+  }
+  stream << rounded << "ct";
+  return stream.str();
+}
+
+std::string PresetSlotLabel(std::size_t slot)
+{
+  return "P" + std::to_string(slot + 1);
+}
+
+std::string TempoLabel(float bpm)
+{
+  std::ostringstream stream;
+  stream << std::fixed << std::setprecision(0) << bpm << "bpm";
+  return stream.str();
+}
+
 }  // namespace
 
 UiState::UiState() = default;
@@ -379,6 +510,96 @@ std::string UiState::SelectedItemLabel() const
   return CurrentItem().label;
 }
 
+UiDisplayModel UiState::BuildDisplayModel(const FantomeEngine& engine) const
+{
+  UiDisplayModel model;
+  model.preset_name = engine.CurrentPatch().name;
+  model.active_preset_slot = engine.CurrentPresetSlot();
+  model.target_preset_slot = preset_target_slot_;
+  model.page_label = CurrentPageLabel();
+  model.interaction_state = interaction_state_;
+  model.item_count = CurrentPageItemCount();
+  model.selected_label = CurrentItem().label;
+  model.selected_value = FormatItemValue(CurrentItem(), engine);
+  model.context_pot_label = ContextPotItem().label;
+  model.context_pot_needs_pickup = !pots_[7].captured;
+  model.any_pot_needs_pickup = std::any_of(
+    pots_.begin(),
+    pots_.end(),
+    [](const PotTakeoverState& pot) {
+      return !pot.captured;
+    });
+  model.status_text = BuildStatusText(engine);
+
+  for (std::size_t index = 0; index < model.item_count; ++index) {
+    const auto& item = ItemForPage(current_page_, index);
+    auto& display_item = model.items[index];
+    display_item.label = item.label;
+    display_item.value = FormatItemValue(item, engine);
+    display_item.selected = index == selected_item_index_;
+    display_item.is_action = !item.is_parameter;
+  }
+
+  return model;
+}
+
+UiSessionState UiState::ExportSessionState() const
+{
+  UiSessionState state;
+  state.current_page = current_page_;
+  state.interaction_state = interaction_state_;
+  state.selected_item_index = selected_item_index_;
+  state.preset_target_slot = preset_target_slot_;
+  state.pending_action = pending_action_;
+
+  for (std::size_t index = 0; index < pots_.size(); ++index) {
+    state.pots[index].captured = pots_[index].captured;
+    state.pots[index].has_physical_value = pots_[index].has_physical_value;
+    state.pots[index].physical_value = pots_[index].physical_value;
+  }
+
+  return state;
+}
+
+void UiState::RestoreSessionState(const UiSessionState& state, const FantomeEngine& engine)
+{
+  current_page_ = state.current_page;
+  interaction_state_ = state.interaction_state;
+  selected_item_index_ = state.selected_item_index;
+  preset_target_slot_ = std::min(state.preset_target_slot, kPresetCount - 1);
+  pending_action_ = state.pending_action;
+
+  ClampSelection();
+  AssignFixedPots();
+  AssignContextPot();
+
+  for (std::size_t index = 0; index < pots_.size(); ++index) {
+    pots_[index].captured = state.pots[index].captured;
+    pots_[index].has_physical_value = state.pots[index].has_physical_value;
+    pots_[index].physical_value = Clamp01(state.pots[index].physical_value);
+  }
+
+  const auto& item = CurrentItem();
+  if (interaction_state_ == UiInteractionState::Editing && !item.is_parameter) {
+    interaction_state_ = UiInteractionState::Navigation;
+  }
+
+  if (interaction_state_ == UiInteractionState::Confirmation) {
+    if (item.is_parameter) {
+      interaction_state_ = UiInteractionState::Navigation;
+      pending_action_ = UiAction::None;
+    } else {
+      pending_action_ = item.action;
+    }
+  } else if (item.is_parameter) {
+    pending_action_ = UiAction::None;
+  }
+
+  if (preset_target_slot_ >= engine.PresetBank().size()) {
+    preset_target_slot_ = engine.CurrentPresetSlot();
+  }
+}
+
 const UiItem& UiState::CurrentItem() const
 {
   return ItemForPage(current_page_, selected_item_index_);
@@ -493,6 +714,173 @@ bool UiState::TryCapturePot(
     (previous >= target_value && new_physical_value <= target_value);
 
   return crossed_target || std::fabs(new_physical_value - target_value) <= kSoftTakeoverThreshold;
+}
+
+std::string UiState::FormatParameterValue(
+  ParameterId parameter,
+  const FantomeEngine& engine) const
+{
+  const auto& patch = engine.CurrentPatch();
+
+  switch (parameter) {
+    case ParameterId::MasterVolume:
+      return PercentLabel(patch.master_volume);
+    case ParameterId::FilterCutoff:
+      return PercentLabel(patch.filter.cutoff);
+    case ParameterId::FilterResonance:
+      return PercentLabel(patch.filter.resonance);
+    case ParameterId::AmpAttack:
+      return TimeLabel(patch.amp_env.attack_s);
+    case ParameterId::AmpDecay:
+      return TimeLabel(patch.amp_env.decay_s);
+    case ParameterId::AmpSustain:
+      return PercentLabel(patch.amp_env.sustain);
+    case ParameterId::AmpRelease:
+      return TimeLabel(patch.amp_env.release_s);
+    case ParameterId::OscAWaveform:
+      return WaveformLabel(patch.osc_a.waveform);
+    case ParameterId::OscAOctave:
+      return OctaveLabel(patch.osc_a.octave);
+    case ParameterId::OscAFineTune:
+      return FineTuneLabel(patch.osc_a.fine_tune_cents);
+    case ParameterId::OscALevel:
+      return PercentLabel(patch.osc_a.level);
+    case ParameterId::OscBWaveform:
+      return WaveformLabel(patch.osc_b.waveform);
+    case ParameterId::OscBOctave:
+      return OctaveLabel(patch.osc_b.octave);
+    case ParameterId::OscBFineTune:
+      return FineTuneLabel(patch.osc_b.fine_tune_cents);
+    case ParameterId::OscBLevel:
+      return PercentLabel(patch.osc_b.level);
+    case ParameterId::OscSync:
+      return BoolLabel(patch.osc_a.sync_enabled || patch.osc_b.sync_enabled);
+    case ParameterId::PwmAmount:
+      return PercentLabel(0.5f * (patch.osc_a.pwm + patch.osc_b.pwm));
+    case ParameterId::NoiseLevel:
+      return PercentLabel(patch.noise_level);
+    case ParameterId::FilterEnvAmount:
+      return PercentLabel(patch.filter.env_amount);
+    case ParameterId::FilterLfoAmount:
+      return PercentLabel(std::max(patch.filter.lfo_amount, patch.filter_lfo.amount));
+    case ParameterId::FilterSampleHoldAmount:
+      return PercentLabel(
+        std::max(patch.filter.sample_hold_amount, patch.filter_sample_hold.amount));
+    case ParameterId::FilterAttack:
+      return TimeLabel(patch.filter_env.attack_s);
+    case ParameterId::FilterRelease:
+      return TimeLabel(patch.filter_env.release_s);
+    case ParameterId::OscLfoWaveform:
+      return WaveformLabel(patch.osc_lfo.waveform);
+    case ParameterId::OscLfoMode:
+      return SyncModeLabel(patch.osc_lfo.sync_mode);
+    case ParameterId::OscLfoRateOrDivision:
+      return patch.osc_lfo.sync_mode == SyncMode::MidiClock
+               ? DivisionLabel(patch.osc_lfo.division_index)
+               : RateLabel(patch.osc_lfo.rate_hz);
+    case ParameterId::OscLfoAmount:
+      return PercentLabel(patch.osc_lfo.amount);
+    case ParameterId::FilterLfoWaveform:
+      return WaveformLabel(patch.filter_lfo.waveform);
+    case ParameterId::FilterLfoMode:
+      return SyncModeLabel(patch.filter_lfo.sync_mode);
+    case ParameterId::FilterLfoRateOrDivision:
+      return patch.filter_lfo.sync_mode == SyncMode::MidiClock
+               ? DivisionLabel(patch.filter_lfo.division_index)
+               : RateLabel(patch.filter_lfo.rate_hz);
+    case ParameterId::ShMode:
+      return SyncModeLabel(patch.filter_sample_hold.sync_mode);
+    case ParameterId::ShRateOrDivision:
+      return patch.filter_sample_hold.sync_mode == SyncMode::MidiClock
+               ? DivisionLabel(patch.filter_sample_hold.division_index)
+               : RateLabel(patch.filter_sample_hold.rate_hz);
+    case ParameterId::ShAmount:
+      return PercentLabel(
+        std::max(patch.filter_sample_hold.amount, patch.filter.sample_hold_amount));
+    case ParameterId::ChorusRate:
+      return RateLabel(patch.chorus.rate_hz);
+    case ParameterId::ChorusDepth:
+      return PercentLabel(patch.chorus.depth);
+    case ParameterId::ChorusMix:
+      return PercentLabel(patch.chorus.mix);
+    case ParameterId::DelayMode:
+      return SyncModeLabel(patch.delay.sync_mode);
+    case ParameterId::DelayTimeOrDivision:
+      return patch.delay.sync_mode == SyncMode::MidiClock
+               ? DivisionLabel(patch.delay.division_index)
+               : MillisecondsLabel(patch.delay.time_ms);
+    case ParameterId::DelayFeedback:
+      return PercentLabel(patch.delay.feedback);
+    case ParameterId::DelayMix:
+      return PercentLabel(patch.delay.mix);
+    case ParameterId::ReverbMix:
+      return PercentLabel(patch.reverb.mix);
+    case ParameterId::MidiChannel:
+      return "Ch " + std::to_string(patch.midi_channel);
+    case ParameterId::PlayMode:
+      return PlayModeLabel(patch.play_mode);
+    case ParameterId::Legato:
+      return BoolLabel(patch.legato_enabled);
+    case ParameterId::PresetSlot:
+      return PresetSlotLabel(preset_target_slot_);
+  }
+
+  return "";
+}
+
+std::string UiState::FormatItemValue(const UiItem& item, const FantomeEngine& engine) const
+{
+  if (item.is_parameter) {
+    return FormatParameterValue(item.parameter, engine);
+  }
+
+  switch (item.action) {
+    case UiAction::LoadPreset:
+    case UiAction::SavePreset:
+      return PresetSlotLabel(preset_target_slot_) + " " +
+             engine.PresetBank()[preset_target_slot_].name;
+    case UiAction::InitPatch:
+      return "Reset";
+    case UiAction::None:
+      break;
+  }
+
+  return "";
+}
+
+std::string UiState::BuildStatusText(const FantomeEngine& engine) const
+{
+  const auto& patch = engine.CurrentPatch();
+
+  switch (current_page_) {
+    case UiPage::System:
+      return "MIDI " + std::to_string(patch.midi_channel) + " " +
+             PlayModeLabel(patch.play_mode);
+    case UiPage::Modulation:
+      if (patch.osc_lfo.sync_mode == SyncMode::MidiClock ||
+          patch.filter_lfo.sync_mode == SyncMode::MidiClock ||
+          patch.filter_sample_hold.sync_mode == SyncMode::MidiClock) {
+        return engine.Transport().running
+                 ? "Clock " + TempoLabel(engine.Transport().tempo_bpm)
+                 : "Clock idle";
+      }
+      break;
+    case UiPage::Effects:
+      if (patch.delay.sync_mode == SyncMode::MidiClock) {
+        return engine.Transport().running
+                 ? "Delay " + DivisionLabel(patch.delay.division_index) + " " +
+                     TempoLabel(engine.Transport().tempo_bpm)
+                 : "Delay clock idle";
+      }
+      break;
+    case UiPage::Oscillators:
+    case UiPage::Filter:
+    case UiPage::AmpEnvelope:
+    case UiPage::FilterEnvelope:
+      break;
+  }
+
+  return "K8 " + std::string(ContextPotItem().label);
 }
 
 float UiState::ParameterNormalized(ParameterId parameter, const FantomeEngine& engine) const

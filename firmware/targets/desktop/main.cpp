@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <numeric>
@@ -5,6 +6,11 @@
 #include <vector>
 
 #include "fantome/FantomeEngine.h"
+#include "fantome/OledView.h"
+#include "fantome/PortableInput.h"
+#include "fantome/SessionManager.h"
+#include "fantome/StartupDisplay.h"
+#include "fantome/UiState.h"
 
 namespace {
 
@@ -40,10 +46,21 @@ void PrintVoices(const fantome::FantomeEngine& engine)
 
 int main()
 {
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_desktop_smoke_session.txt";
   fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  fantome::PortableInputSurface input;
+  fantome::SessionManager session_manager;
+  fantome::StartupDisplayController startup_display;
   engine.SetSampleRate(48000.0f);
+  const auto boot = session_manager.Boot(session_path.string(), engine, ui);
 
   std::cout << "Fantome IV desktop smoke\n";
+  std::cout << "startup (t=0.0s):\n"
+            << startup_display.Render(oled, ui, engine).ToDebugString() << '\n';
+  std::cout << "session: " << boot.message << '\n';
   std::cout << "patch: " << engine.CurrentPatch().name
             << " | mode: " << PlayModeToString(engine.CurrentPatch().play_mode)
             << " | midi ch: " << static_cast<int>(engine.CurrentPatch().midi_channel)
@@ -62,6 +79,11 @@ int main()
   for (int index = 0; index < 24; ++index) {
     engine.HandleMidi(fantome::MidiMessage::Clock());
   }
+
+  input.PressPageNext(engine, ui);
+  input.PressEncoder(engine, ui);
+  input.TurnEncoder(2, engine, ui);
+  input.MovePot(2, 0.38f, engine, ui);
 
   std::cout << std::fixed << std::setprecision(2);
   std::cout << "cutoff=" << engine.CurrentPatch().filter.cutoff
@@ -88,5 +110,16 @@ int main()
     });
 
   std::cout << "render_energy=" << energy << '\n';
+  startup_display.Advance(1.6f);
+  std::cout << "startup_active="
+            << (startup_display.ShowingSplash() ? "yes" : "no")
+            << " elapsed=" << startup_display.ElapsedSeconds()
+            << " splash_dur=" << startup_display.SplashDurationSeconds() << '\n';
+  std::cout << "input: encoder=" << input.EncoderPosition()
+            << " pot2=" << input.PotPositions()[2] << '\n';
+  std::cout << "oled:\n" << startup_display.Render(oled, ui, engine).ToDebugString() << '\n';
+  const auto shutdown_saved = session_manager.Shutdown(engine, ui);
+  std::cout << "shutdown_saved=" << (shutdown_saved ? "yes" : "no") << '\n';
+  std::filesystem::remove(session_path);
   return 0;
 }

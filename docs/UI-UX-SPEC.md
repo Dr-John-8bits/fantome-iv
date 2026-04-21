@@ -210,6 +210,21 @@ Ordre de lecture privilégié :
 - abréviations cohérentes
 - hiérarchie visuelle stable
 
+### 5.3 Écran de démarrage
+
+Au démarrage, l'écran doit pouvoir afficher un splash screen simple sur deux lignes :
+
+- `FANTOME IV`
+- `by Dr. John.`
+
+Cet écran de démarrage reste volontairement sobre et lisible.
+
+Comportement retenu pour la base portable :
+
+- affichage temporaire au boot
+- durée cible de départ : `1,5 s`
+- bascule automatique ensuite vers l'écran principal
+
 ## 6. Pages retenues
 
 ### 6.1 Page 1 - Oscillateurs

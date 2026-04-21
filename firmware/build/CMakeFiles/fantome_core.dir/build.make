@@ -114,10 +114,52 @@ CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/Modulation.cpp" -o CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.s
 
+CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/OledView.cpp
+CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/OledView.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/OledView.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/OledView.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/OledView.cpp" > CMakeFiles/fantome_core.dir/core/src/OledView.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/OledView.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/OledView.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/OledView.cpp" -o CMakeFiles/fantome_core.dir/core/src/OledView.cpp.s
+
+CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/PatchSerialization.cpp
+CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PatchSerialization.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PatchSerialization.cpp" > CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PatchSerialization.cpp" -o CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.s
+
+CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/PortableInput.cpp
+CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PortableInput.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PortableInput.cpp" > CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PortableInput.cpp" -o CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.s
+
 CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o: CMakeFiles/fantome_core.dir/flags.make
 CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/PresetPersistence.cpp
 CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PresetPersistence.cpp"
 
 CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.i: cmake_force
@@ -128,10 +170,52 @@ CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/PresetPersistence.cpp" -o CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.s
 
+CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/SessionManager.cpp
+CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionManager.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionManager.cpp" > CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionManager.cpp" -o CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.s
+
+CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/SessionPersistence.cpp
+CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionPersistence.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionPersistence.cpp" > CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SessionPersistence.cpp" -o CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.s
+
+CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o: CMakeFiles/fantome_core.dir/flags.make
+CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/StartupDisplay.cpp
+CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/StartupDisplay.cpp"
+
+CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/StartupDisplay.cpp" > CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.i
+
+CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/StartupDisplay.cpp" -o CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.s
+
 CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o: CMakeFiles/fantome_core.dir/flags.make
 CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/SynthVoice.cpp
 CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/SynthVoice.cpp"
 
 CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.i: cmake_force
@@ -145,7 +229,7 @@ CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.s: cmake_force
 CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o: CMakeFiles/fantome_core.dir/flags.make
 CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/UiState.cpp
 CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/UiState.cpp"
 
 CMakeFiles/fantome_core.dir/core/src/UiState.cpp.i: cmake_force
@@ -159,7 +243,7 @@ CMakeFiles/fantome_core.dir/core/src/UiState.cpp.s: cmake_force
 CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o: CMakeFiles/fantome_core.dir/flags.make
 CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o: /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/src/VoiceAllocator.cpp
 CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o: CMakeFiles/fantome_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o -MF CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o.d -o CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o -c "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/src/VoiceAllocator.cpp"
 
 CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.i: cmake_force
@@ -175,7 +259,13 @@ fantome_core_OBJECTS = \
 "CMakeFiles/fantome_core.dir/core/src/Effects.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/FantomeEngine.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o" \
+"CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o" \
 "CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o"
@@ -186,13 +276,19 @@ fantome_core_EXTERNAL_OBJECTS =
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/Effects.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/FantomeEngine.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o
+libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o
 libfantome_core.a: CMakeFiles/fantome_core.dir/build.make
 libfantome_core.a: CMakeFiles/fantome_core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libfantome_core.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX static library libfantome_core.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/fantome_core.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fantome_core.dir/link.txt --verbose=$(VERBOSE)
 

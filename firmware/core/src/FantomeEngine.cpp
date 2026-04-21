@@ -243,6 +243,34 @@ std::size_t FantomeEngine::CurrentPresetSlot() const
   return active_preset_slot_;
 }
 
+EngineSessionState FantomeEngine::ExportSessionState() const
+{
+  return EngineSessionState {
+    patch_,
+    preset_bank_,
+    active_preset_slot_,
+    transport_.tempo_bpm,
+  };
+}
+
+bool FantomeEngine::RestoreSessionState(const EngineSessionState& state)
+{
+  if (state.active_preset_slot >= preset_bank_.size()) {
+    return false;
+  }
+
+  preset_bank_ = state.preset_bank;
+  patch_ = state.current_patch;
+  active_preset_slot_ = state.active_preset_slot;
+  transport_ = TransportState {};
+  transport_.tempo_bpm = std::clamp(state.tempo_bpm, 30.0f, 300.0f);
+  allocator_.AllNotesOff();
+  allocator_snapshot_ = allocator_.Voices();
+  performance_ = PerformanceState {};
+  ResetDspVoices();
+  return true;
+}
+
 bool FantomeEngine::MatchesCurrentChannel(const MidiMessage& message) const
 {
   return message.channel == patch_.midi_channel;

@@ -26,6 +26,13 @@ struct PerformanceState {
   bool sustain = false;
 };
 
+struct EngineSessionState {
+  Patch current_patch {};
+  std::array<Patch, kPresetCount> preset_bank {};
+  std::size_t active_preset_slot = 0;
+  float tempo_bpm = 120.0f;
+};
+
 class FantomeEngine {
  public:
   FantomeEngine();
@@ -50,6 +57,8 @@ class FantomeEngine {
   const ModulationFrame& LastModulationFrame() const;
   float SampleRate() const;
   std::size_t CurrentPresetSlot() const;
+  EngineSessionState ExportSessionState() const;
+  bool RestoreSessionState(const EngineSessionState& state);
 
  private:
   bool MatchesCurrentChannel(const MidiMessage& message) const;

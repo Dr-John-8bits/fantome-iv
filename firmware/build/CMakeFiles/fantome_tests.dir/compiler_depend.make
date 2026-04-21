@@ -643,6 +643,7 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/exception \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/format \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip \
@@ -836,7 +837,11 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/FantomeEngine.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/MidiTypes.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/Modulation.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/OledView.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/Patch.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/PortableInput.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionManager.h \
+  /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionPersistence.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SynthVoice.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/UiState.h \
   /Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/VoiceAllocator.h
@@ -1088,6 +1093,8 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:
 
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/streambuf.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/format:
@@ -1312,6 +1319,8 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/make_const_lvalue_ref.h:
 
+/Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/OledView.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_polymorphic.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_nothrow_destructible.h:
@@ -1413,6 +1422,8 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/add_pointer.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_convertible.h:
+
+/Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/PortableInput.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/add_cv_quals.h:
 
@@ -2342,6 +2353,8 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/fill.h:
 
+/Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionPersistence.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/_types/_blksize_t.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:
@@ -2445,6 +2458,8 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o: /Users/jdebaeck/Documents/De
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/operations.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h:
+
+/Users/jdebaeck/Documents/Développements/Fantôme\ 4/firmware/core/include/fantome/SessionManager.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/_types/_int64_t.h:
 

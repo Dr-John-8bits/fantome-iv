@@ -644,6 +644,7 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/exception
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/filesystem
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/format
+ /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip
@@ -837,7 +838,11 @@ CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/FantomeEngine.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/MidiTypes.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/Modulation.h
+ /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/OledView.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/Patch.h
+ /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/PortableInput.h
+ /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/SessionManager.h
+ /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/SessionPersistence.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/SynthVoice.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/UiState.h
  /Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/core/include/fantome/VoiceAllocator.h

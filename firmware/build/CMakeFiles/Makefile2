@@ -91,12 +91,12 @@ clean: CMakeFiles/fantome_tests.dir/clean
 CMakeFiles/fantome_core.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8 "Built target fantome_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target fantome_core"
 .PHONY : CMakeFiles/fantome_core.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fantome_core.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 8
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fantome_core.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 0
 .PHONY : CMakeFiles/fantome_core.dir/rule
@@ -108,7 +108,7 @@ fantome_core: CMakeFiles/fantome_core.dir/rule
 # codegen rule for target.
 CMakeFiles/fantome_core.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8 "Finished codegen for target fantome_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Finished codegen for target fantome_core"
 .PHONY : CMakeFiles/fantome_core.dir/codegen
 
 # clean rule for target.
@@ -123,12 +123,12 @@ CMakeFiles/fantome_core.dir/clean:
 CMakeFiles/fantome_desktop_smoke.dir/all: CMakeFiles/fantome_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_desktop_smoke.dir/build.make CMakeFiles/fantome_desktop_smoke.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_desktop_smoke.dir/build.make CMakeFiles/fantome_desktop_smoke.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=9,10 "Built target fantome_desktop_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=15,16 "Built target fantome_desktop_smoke"
 .PHONY : CMakeFiles/fantome_desktop_smoke.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fantome_desktop_smoke.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 10
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fantome_desktop_smoke.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 0
 .PHONY : CMakeFiles/fantome_desktop_smoke.dir/rule
@@ -140,7 +140,7 @@ fantome_desktop_smoke: CMakeFiles/fantome_desktop_smoke.dir/rule
 # codegen rule for target.
 CMakeFiles/fantome_desktop_smoke.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_desktop_smoke.dir/build.make CMakeFiles/fantome_desktop_smoke.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=9,10 "Finished codegen for target fantome_desktop_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=15,16 "Finished codegen for target fantome_desktop_smoke"
 .PHONY : CMakeFiles/fantome_desktop_smoke.dir/codegen
 
 # clean rule for target.
@@ -155,12 +155,12 @@ CMakeFiles/fantome_desktop_smoke.dir/clean:
 CMakeFiles/fantome_tests.dir/all: CMakeFiles/fantome_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_tests.dir/build.make CMakeFiles/fantome_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_tests.dir/build.make CMakeFiles/fantome_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=11,12 "Built target fantome_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=17,18 "Built target fantome_tests"
 .PHONY : CMakeFiles/fantome_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fantome_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 10
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fantome_tests.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" 0
 .PHONY : CMakeFiles/fantome_tests.dir/rule
@@ -172,7 +172,7 @@ fantome_tests: CMakeFiles/fantome_tests.dir/rule
 # codegen rule for target.
 CMakeFiles/fantome_tests.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_tests.dir/build.make CMakeFiles/fantome_tests.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=11,12 "Finished codegen for target fantome_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/jdebaeck/Documents/Développements/Fantôme 4/firmware/build/CMakeFiles" --progress-num=17,18 "Finished codegen for target fantome_tests"
 .PHONY : CMakeFiles/fantome_tests.dir/codegen
 
 # clean rule for target.

@@ -101,6 +101,11 @@ On peut avancer immédiatement sur :
 - allocation de voix
 - comportement des modes de jeu
 - structure UI d'état
+- représentation portable de l'écran OLED
+- splash screen portable avec durée d'affichage contrôlée
+- persistance portable de session
+- cycle de session portable explicite `Boot / Checkpoint / Shutdown`
+- simulation logicielle des contrôles physiques
 - première implémentation DSP portable
 - tests de cohérence
 
@@ -169,6 +174,11 @@ La base logicielle porte déjà :
 - un état UI portable par pages
 - une logique de `soft takeover` portable
 - une persistance portable de la banque de presets
+- une représentation portable de l'écran OLED page par page
+- un contrôleur portable de splash screen au démarrage
+- une persistance portable de session
+- un session manager portable explicite pour le cycle de démarrage et d'arrêt
+- une façade d'input portable pour simuler encodeur, boutons et potentiomètres
 
 Ce n'est pas encore la qualité sonore finale.
 

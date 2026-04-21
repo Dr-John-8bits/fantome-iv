@@ -227,6 +227,78 @@ core/src/Modulation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.s
 .PHONY : core/src/Modulation.cpp.s
 
+core/src/OledView.o: core/src/OledView.cpp.o
+.PHONY : core/src/OledView.o
+
+# target to build an object file
+core/src/OledView.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/OledView.cpp.o
+.PHONY : core/src/OledView.cpp.o
+
+core/src/OledView.i: core/src/OledView.cpp.i
+.PHONY : core/src/OledView.i
+
+# target to preprocess a source file
+core/src/OledView.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/OledView.cpp.i
+.PHONY : core/src/OledView.cpp.i
+
+core/src/OledView.s: core/src/OledView.cpp.s
+.PHONY : core/src/OledView.s
+
+# target to generate assembly for a file
+core/src/OledView.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/OledView.cpp.s
+.PHONY : core/src/OledView.cpp.s
+
+core/src/PatchSerialization.o: core/src/PatchSerialization.cpp.o
+.PHONY : core/src/PatchSerialization.o
+
+# target to build an object file
+core/src/PatchSerialization.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.o
+.PHONY : core/src/PatchSerialization.cpp.o
+
+core/src/PatchSerialization.i: core/src/PatchSerialization.cpp.i
+.PHONY : core/src/PatchSerialization.i
+
+# target to preprocess a source file
+core/src/PatchSerialization.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.i
+.PHONY : core/src/PatchSerialization.cpp.i
+
+core/src/PatchSerialization.s: core/src/PatchSerialization.cpp.s
+.PHONY : core/src/PatchSerialization.s
+
+# target to generate assembly for a file
+core/src/PatchSerialization.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PatchSerialization.cpp.s
+.PHONY : core/src/PatchSerialization.cpp.s
+
+core/src/PortableInput.o: core/src/PortableInput.cpp.o
+.PHONY : core/src/PortableInput.o
+
+# target to build an object file
+core/src/PortableInput.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.o
+.PHONY : core/src/PortableInput.cpp.o
+
+core/src/PortableInput.i: core/src/PortableInput.cpp.i
+.PHONY : core/src/PortableInput.i
+
+# target to preprocess a source file
+core/src/PortableInput.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.i
+.PHONY : core/src/PortableInput.cpp.i
+
+core/src/PortableInput.s: core/src/PortableInput.cpp.s
+.PHONY : core/src/PortableInput.s
+
+# target to generate assembly for a file
+core/src/PortableInput.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PortableInput.cpp.s
+.PHONY : core/src/PortableInput.cpp.s
+
 core/src/PresetPersistence.o: core/src/PresetPersistence.cpp.o
 .PHONY : core/src/PresetPersistence.o
 
@@ -250,6 +322,78 @@ core/src/PresetPersistence.s: core/src/PresetPersistence.cpp.s
 core/src/PresetPersistence.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.s
 .PHONY : core/src/PresetPersistence.cpp.s
+
+core/src/SessionManager.o: core/src/SessionManager.cpp.o
+.PHONY : core/src/SessionManager.o
+
+# target to build an object file
+core/src/SessionManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.o
+.PHONY : core/src/SessionManager.cpp.o
+
+core/src/SessionManager.i: core/src/SessionManager.cpp.i
+.PHONY : core/src/SessionManager.i
+
+# target to preprocess a source file
+core/src/SessionManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.i
+.PHONY : core/src/SessionManager.cpp.i
+
+core/src/SessionManager.s: core/src/SessionManager.cpp.s
+.PHONY : core/src/SessionManager.s
+
+# target to generate assembly for a file
+core/src/SessionManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionManager.cpp.s
+.PHONY : core/src/SessionManager.cpp.s
+
+core/src/SessionPersistence.o: core/src/SessionPersistence.cpp.o
+.PHONY : core/src/SessionPersistence.o
+
+# target to build an object file
+core/src/SessionPersistence.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.o
+.PHONY : core/src/SessionPersistence.cpp.o
+
+core/src/SessionPersistence.i: core/src/SessionPersistence.cpp.i
+.PHONY : core/src/SessionPersistence.i
+
+# target to preprocess a source file
+core/src/SessionPersistence.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.i
+.PHONY : core/src/SessionPersistence.cpp.i
+
+core/src/SessionPersistence.s: core/src/SessionPersistence.cpp.s
+.PHONY : core/src/SessionPersistence.s
+
+# target to generate assembly for a file
+core/src/SessionPersistence.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/SessionPersistence.cpp.s
+.PHONY : core/src/SessionPersistence.cpp.s
+
+core/src/StartupDisplay.o: core/src/StartupDisplay.cpp.o
+.PHONY : core/src/StartupDisplay.o
+
+# target to build an object file
+core/src/StartupDisplay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.o
+.PHONY : core/src/StartupDisplay.cpp.o
+
+core/src/StartupDisplay.i: core/src/StartupDisplay.cpp.i
+.PHONY : core/src/StartupDisplay.i
+
+# target to preprocess a source file
+core/src/StartupDisplay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.i
+.PHONY : core/src/StartupDisplay.cpp.i
+
+core/src/StartupDisplay.s: core/src/StartupDisplay.cpp.s
+.PHONY : core/src/StartupDisplay.s
+
+# target to generate assembly for a file
+core/src/StartupDisplay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fantome_core.dir/build.make CMakeFiles/fantome_core.dir/core/src/StartupDisplay.cpp.s
+.PHONY : core/src/StartupDisplay.cpp.s
 
 core/src/SynthVoice.o: core/src/SynthVoice.cpp.o
 .PHONY : core/src/SynthVoice.o
@@ -391,9 +535,27 @@ help:
 	@echo "... core/src/Modulation.o"
 	@echo "... core/src/Modulation.i"
 	@echo "... core/src/Modulation.s"
+	@echo "... core/src/OledView.o"
+	@echo "... core/src/OledView.i"
+	@echo "... core/src/OledView.s"
+	@echo "... core/src/PatchSerialization.o"
+	@echo "... core/src/PatchSerialization.i"
+	@echo "... core/src/PatchSerialization.s"
+	@echo "... core/src/PortableInput.o"
+	@echo "... core/src/PortableInput.i"
+	@echo "... core/src/PortableInput.s"
 	@echo "... core/src/PresetPersistence.o"
 	@echo "... core/src/PresetPersistence.i"
 	@echo "... core/src/PresetPersistence.s"
+	@echo "... core/src/SessionManager.o"
+	@echo "... core/src/SessionManager.i"
+	@echo "... core/src/SessionManager.s"
+	@echo "... core/src/SessionPersistence.o"
+	@echo "... core/src/SessionPersistence.i"
+	@echo "... core/src/SessionPersistence.s"
+	@echo "... core/src/StartupDisplay.o"
+	@echo "... core/src/StartupDisplay.i"
+	@echo "... core/src/StartupDisplay.s"
 	@echo "... core/src/SynthVoice.o"
 	@echo "... core/src/SynthVoice.i"
 	@echo "... core/src/SynthVoice.s"
