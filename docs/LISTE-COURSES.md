@@ -13,9 +13,11 @@ Cette liste suit la route retenue pour Fantôme IV :
 
 L'idée est d'acheter seulement ce qui sert à notre vrai prototype, sans ouvrir de piste parallèle.
 
-Pour la version détaillée et structurée, voir aussi [BOM.md](./BOM.md).
+Pour la version détaillée, exacte et référencée, voir [BOM.md](./BOM.md).
 
 Pour les références exactes retenues, voir aussi [COMPONENT-REFERENCES.md](./COMPONENT-REFERENCES.md).
+
+Pour l'ordre de lecture et de montage, voir aussi [INSTALLATION-MATERIEL.md](./INSTALLATION-MATERIEL.md).
 
 Important :
 
@@ -26,17 +28,17 @@ Important :
 
 - 1 `Daisy Seed 65MB`
 - 1 câble `micro-USB` de données
-- 1 breadboard ou plaque de prototypage
+- 1 ou 2 breadboards
 - un lot de fils Dupont
-- 8 potentiomètres `Alpha RD901F-40-15F-B10K-00DL1`
-- 1 encodeur `Bourns PEC11R-4225F-S0024`
-- 4 boutons poussoirs de panneau `APEM IPR3FAD7/1`
-- 1 écran `BuyDisplay ER-OLEDM013-1W-I2C`
+- 10 potentiomètres `Alpha RD901F-40-15F-B10K-00DL1`
+- 2 encodeurs `Bourns PEC11R-4225F-S0024`
+- 6 boutons poussoirs de panneau `APEM IPR3FAD7/1`
+- 1 à 2 écrans `BuyDisplay ER-OLEDM013-1W-I2C`
 - 1 LED MIDI
 - 1 petit lot de résistances et condensateurs de base
 - 1 jack `Switchcraft 155`
 - 1 connecteur MIDI In `Switchcraft 57GB5FX`
-- 1 optocoupleur `onsemi H11L1M`
+- 2 optocoupleurs `onsemi H11L1M`
 - 1 résistance `220R`, 1 résistance `1k`, 1 diode `1N4148` et 1 condensateur `100nF` pour le bloc MIDI In
 - 1 résistance `1k` pour la LED MIDI
 - 1 casque ou enceintes de monitoring
@@ -87,6 +89,11 @@ Ce n'est pas obligatoire pour flasher la carte, parce que Daisy peut être progr
 - prévois un peu de marge sur les potentiomètres et boutons
 - vise directement des composants de panneau si possible
 - pour l'écran OLED, vise directement la référence retenue pour éviter les modules `1,3"` ambigus
+
+## Références de travail
+
+- [BOM.md](./BOM.md)
+- [INSTALLATION-MATERIEL.md](./INSTALLATION-MATERIEL.md)
 
 ## Sources officielles utiles
 

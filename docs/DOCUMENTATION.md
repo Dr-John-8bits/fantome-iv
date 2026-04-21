@@ -64,15 +64,18 @@ Ordre de référence du plus stratégique au plus opérationnel :
    Rôle : stratégie logicielle `soft-first`, séparation `core / desktop / Daisy`.
 
 14. [BOM.md](./BOM.md)
-   Rôle : nomenclature matérielle de référence pour le prototype.
+   Rôle : BOM finale d'achat et référence de commande du prototype.
 
-15. [ROADMAP.md](./ROADMAP.md)
+15. [INSTALLATION-MATERIEL.md](./INSTALLATION-MATERIEL.md)
+   Rôle : ordre de lecture et ordre d'assemblage physique.
+
+16. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-16. [README.md](../README.md)
+17. [README.md](../README.md)
    Rôle : porte d'entrée du dépôt.
 
-17. [LISTE-COURSES.md](./LISTE-COURSES.md)
+18. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance

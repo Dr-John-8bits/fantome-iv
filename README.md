@@ -47,7 +47,8 @@ Le projet est désormais figé sur une base matérielle claire :
 - [docs/SOFTWARE-ARCHITECTURE.md](./docs/SOFTWARE-ARCHITECTURE.md) : stratégie logicielle portable et cible Daisy
 - [docs/PHASE-0-AUDIT.md](./docs/PHASE-0-AUDIT.md) : audit d'avancement de la phase 0 documentaire
 - [docs/PROJECT-AUDIT.md](./docs/PROJECT-AUDIT.md) : audit global du projet au `21 avril 2026`
-- [docs/BOM.md](./docs/BOM.md) : nomenclature matérielle du prototype
+- [docs/BOM.md](./docs/BOM.md) : BOM finale d'achat du prototype
+- [docs/INSTALLATION-MATERIEL.md](./docs/INSTALLATION-MATERIEL.md) : ordre de lecture et montage matériel pas à pas
 - [docs/ROADMAP.md](./docs/ROADMAP.md) : feuille de route du projet
 - [docs/LISTE-COURSES.md](./docs/LISTE-COURSES.md) : version simple de la liste d'achats
 - [firmware/README.md](./firmware/README.md) : point d'entrée de la base firmware/logicielle
@@ -135,18 +136,17 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - pinmap cible Daisy figée aussi en code côté `targets/daisy/`
 - boot cible Daisy désormais pensé depuis la plateforme et son store de session
 - adaptation audio interleavée de la cible Daisy en place
+- BOM finale d'achat prête
+- guide d'installation matériel prêt
 - audit global projet exécuté et validé
 
 ## Prochaine étape
 
-Faire grandir le cœur logiciel avant achat du hardware :
+Le projet est maintenant au seuil où l'achat du matériel est justifié.
 
-- enrichir le moteur portable : paramètres, DSP, états UI et presets
-- raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
-- raffiner les effets déjà en place
-- préparer la première vraie cible `targets/daisy/`
-- épaissir progressivement la couture runtime entre cœur portable et hardware
-- brancher ensuite les drivers et callbacks `libDaisy` réels sur cette couture déjà figée
-- brancher ensuite cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
-- garder la doc et les tests alignés avec l'implémentation
-- intégrer enfin le hardware réel quand le socle logiciel sera assez mûr
+La suite logique devient :
+
+- commander le matériel selon [docs/BOM.md](./docs/BOM.md)
+- suivre [docs/INSTALLATION-MATERIEL.md](./docs/INSTALLATION-MATERIEL.md)
+- valider la `Daisy Seed` seule, puis l'audio, puis les contrôles, puis l'OLED, puis le MIDI DIN
+- brancher ensuite les drivers et callbacks `libDaisy` réels sur le prototype

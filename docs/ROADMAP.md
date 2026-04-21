@@ -9,7 +9,8 @@ Au `21 avril 2026` :
 - la phase 0 documentaire est largement solide
 - la phase 1A logicielle est concrètement ouverte et déjà très avancée
 - le cœur portable, l'UI portable, la persistance et le smoke test existent
-- la prochaine marche logique est désormais la maturité DSP puis l'épaississement progressif de la cible `Daisy`
+- la BOM finale et le guide d'installation matériel sont prêts
+- la prochaine marche logique est maintenant l'achat puis le bring-up matériel réel
 
 ## Phase 0 - Base du projet
 
@@ -56,6 +57,10 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - l'implantation mécanique finale n'est pas encore figée
 - le support mécanique de la Daisy n'est pas encore cadré
 - le cœur logiciel portable n'est pas assez mature
+
+État :
+
+- gate levée
 
 ## Phase 1A - Socle logiciel portable
 
@@ -119,8 +124,16 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 
 ## Phase 6 - Intégration Daisy et hardware
 
+- acheter le matériel selon la BOM finale
+- réceptionner et contrôler les références
+- valider la `Daisy Seed` seule au bootloader
 - brancher la cible `libDaisy`
 - brancher le runtime portable abstrait au vrai scan hardware
+- brancher l'audio stéréo
+- brancher d'abord un seul potard, puis les `8`
+- brancher encodeur, boutons et LED MIDI
+- brancher l'OLED
+- brancher enfin le MIDI In DIN
 - tester avec la vraie face avant
 - valider les contrôles
 - valider la sortie stéréo
@@ -130,10 +143,10 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 
 À court terme :
 
-- raffiner la qualité sonore des oscillateurs et du filtre
-- stabiliser niveaux et effets
-- démarrer `targets/daisy/`
-- garder les tests et la doc alignés
+- acheter le matériel selon la BOM finale
+- suivre l'ordre d'installation matériel documenté
+- valider la `Daisy Seed` seule
+- commencer le bring-up réel par blocs
 
 ## Cap du projet
 

@@ -261,36 +261,35 @@
 
     <main class="grid">
       <section class="panel">
-        <span class="status">Audit global validé</span>
+        <span class="status">BOM finale prête</span>
         <h2>L'essentiel</h2>
         <p>
           Fantôme IV a maintenant une base documentaire solide et un vrai socle
           firmware portable déjà testé sur Mac. La V1 reste cadrée autour d'une
           Daisy Seed, de 4 voix, d'un MIDI DIN, d'un OLED et d'une interface
-          simple mais musicale.
+          simple mais musicale. Le projet a maintenant atteint le seuil où
+          l'achat du matériel est pertinent.
         </p>
       </section>
 
       <section class="panel">
         <h2>Actualité</h2>
         <p>
-          Le socle portable a continué de mûrir. Les oscillateurs, le filtre,
-          les modes mono/unison et la chaîne d'effets ont été raffinés, et le
-          workflow preset assume maintenant `4` slots utilisateur
-          sauvegardables avec affichage d'état modifié sur l'OLED simulé. Une
-          première couche runtime unifiée et une cible `Daisy` minimale
-          compilable existent maintenant aussi. Le hardware réel n'est pas
-          encore branché, mais le firmware avance déjà sérieusement sur Mac.
+          La couture Daisy a été poussée au maximum sans carte réelle :
+          pinmap figée en code, boot cible préparé, session store côté cible,
+          adaptation audio interleavée, stubs `ADC`, `OLED` et `MIDI UART`
+          cohérents avec le hardware prévu. La BOM finale d'achat et le guide
+          d'installation matériel sont maintenant prêts.
         </p>
       </section>
 
       <section class="panel">
         <h2>Roadmap courte</h2>
         <ul>
-          <li>Raffiner la qualité DSP des oscillateurs et du filtre.</li>
-          <li>Stabiliser les niveaux, la dynamique et les effets globaux.</li>
-          <li>Démarrer la première cible `Daisy` propre.</li>
-          <li>Brancher ensuite l'OLED, le MIDI DIN et les contrôles réels.</li>
+          <li>Commander le matériel selon la BOM finale.</li>
+          <li>Valider la Daisy Seed seule en USB et bootloader.</li>
+          <li>Câbler l'audio, puis les contrôles, puis l'OLED, puis le MIDI DIN.</li>
+          <li>Brancher ensuite le runtime Fantôme IV sur le vrai hardware.</li>
         </ul>
       </section>
 
