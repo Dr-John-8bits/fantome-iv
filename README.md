@@ -46,6 +46,7 @@ Le projet est désormais figé sur une base matérielle claire :
 - [docs/MIDI-SPEC.md](./docs/MIDI-SPEC.md) : spec MIDI de la V1
 - [docs/SOFTWARE-ARCHITECTURE.md](./docs/SOFTWARE-ARCHITECTURE.md) : stratégie logicielle portable et cible Daisy
 - [docs/PHASE-0-AUDIT.md](./docs/PHASE-0-AUDIT.md) : audit d'avancement de la phase 0 documentaire
+- [docs/PROJECT-AUDIT.md](./docs/PROJECT-AUDIT.md) : audit global du projet au `21 avril 2026`
 - [docs/BOM.md](./docs/BOM.md) : nomenclature matérielle du prototype
 - [docs/ROADMAP.md](./docs/ROADMAP.md) : feuille de route du projet
 - [docs/LISTE-COURSES.md](./docs/LISTE-COURSES.md) : version simple de la liste d'achats
@@ -121,6 +122,7 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - persistance portable de session en place
 - session manager portable explicite en place pour le cycle de démarrage et d'arrêt
 - couche d'input portable en place pour simuler encodeur, boutons et potentiomètres
+- audit global projet exécuté et validé
 
 ## Prochaine étape
 
@@ -129,7 +131,7 @@ Faire grandir le cœur logiciel avant achat du hardware :
 - enrichir le moteur portable : paramètres, DSP, états UI et presets
 - raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
 - raffiner les effets déjà en place
-- faire grandir l'état UI, l'écran portable et la future persistance de session
-- brancher plus tard cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
+- préparer la première vraie cible `targets/daisy/`
+- brancher ensuite cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
 - garder la doc et les tests alignés avec l'implémentation
-- préparer ensuite l'intégration Daisy quand le socle logiciel sera assez mûr
+- intégrer enfin le hardware réel quand le socle logiciel sera assez mûr

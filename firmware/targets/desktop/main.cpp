@@ -114,7 +114,8 @@ int main()
       return (l * l) + (r * r);
     });
 
-  std::cout << "render_energy=" << energy << '\n';
+  std::cout << "render_energy=" << std::setprecision(6) << energy << '\n';
+  std::cout << std::setprecision(2);
   startup_display.Advance(1.6f);
   std::cout << "startup_active="
             << (startup_display.ShowingSplash() ? "yes" : "no")

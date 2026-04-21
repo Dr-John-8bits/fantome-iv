@@ -9,6 +9,8 @@ namespace fantome {
 namespace {
 
 constexpr float kPi = 3.14159265358979323846f;
+constexpr std::array<float, kVoiceCount> kUnisonDetuneCents {-11.0f, -3.5f, 3.5f, 11.0f};
+constexpr std::array<float, kVoiceCount> kVoicePhaseOffsets {0.0f, 0.19f, 0.41f, 0.67f};
 
 float Clamp01(float value)
 {
@@ -26,6 +28,12 @@ float MapCutoffNormToHz(float normalized, float sample_rate)
   const auto max_cutoff = sample_rate * 0.45f;
   const auto clamped = Clamp01(normalized);
   return kMinCutoff * std::pow(max_cutoff / kMinCutoff, clamped);
+}
+
+float TimeCoefficient(float time_s, float sample_rate)
+{
+  const auto safe_time = std::max(time_s, 0.0005f);
+  return 1.0f - std::exp(-1.0f / (safe_time * sample_rate));
 }
 
 float PolyBlep(float phase, float phase_increment)
@@ -52,6 +60,11 @@ float PolyBlep(float phase, float phase_increment)
 void SynthVoice::SetSampleRate(float sample_rate)
 {
   sample_rate_ = std::clamp(sample_rate, 8000.0f, 192000.0f);
+}
+
+void SynthVoice::SetVoiceIndex(std::size_t voice_index)
+{
+  voice_index_ = voice_index % kVoiceCount;
 }
 
 void SynthVoice::Reset()
@@ -81,8 +94,8 @@ void SynthVoice::Start(std::uint8_t note, std::uint8_t velocity, bool retrigger)
   gate_ = true;
 
   if (retrigger) {
-    osc_a_phase_ = 0.0f;
-    osc_b_phase_ = 0.0f;
+    osc_a_phase_ = kVoicePhaseOffsets[voice_index_];
+    osc_b_phase_ = std::fmod(kVoicePhaseOffsets[voice_index_] + 0.31f, 1.0f);
     amp_env_ = 0.0f;
     filter_env_ = 0.0f;
     amp_stage_ = EnvelopeStage::Attack;
@@ -121,21 +134,32 @@ float SynthVoice::Render(
     return 0.0f;
   }
 
+  const auto voice_detune_cents = VoiceDetuneCents(patch);
   const auto osc_a_hz = OscillatorFrequencyHz(
     patch.osc_a,
     pitch_bend,
-    modulation.osc_pitch_semitones);
+    modulation.osc_pitch_semitones,
+    patch.pitch_bend_range_semitones,
+    voice_detune_cents);
   const auto osc_b_hz = OscillatorFrequencyHz(
     patch.osc_b,
     pitch_bend,
-    modulation.osc_pitch_semitones);
+    modulation.osc_pitch_semitones,
+    patch.pitch_bend_range_semitones,
+    voice_detune_cents);
 
-  const auto osc_a = ProcessOscillator(
+  const auto osc_a_sample = ProcessOscillator(
     patch.osc_a.waveform,
     osc_a_hz,
     patch.osc_a.pwm,
     osc_a_phase_);
-  const auto osc_b = ProcessOscillator(
+  if (patch.osc_a.sync_enabled || patch.osc_b.sync_enabled) {
+    if (osc_a_sample.wrapped) {
+      osc_b_phase_ = 0.0f;
+    }
+  }
+
+  const auto osc_b_sample = ProcessOscillator(
     patch.osc_b.waveform,
     osc_b_hz,
     patch.osc_b.pwm,
@@ -149,10 +173,13 @@ float SynthVoice::Render(
   const auto amp_envelope = AdvanceAmpEnvelope(patch.amp_env);
   const auto filter_envelope = AdvanceFilterEnvelope(patch.filter_env);
 
-  auto mixed = (osc_a * patch.osc_a.level) +
-               (osc_b * patch.osc_b.level) +
+  const auto total_source_level =
+    std::max(1.0f, patch.osc_a.level + patch.osc_b.level + patch.noise_level);
+  auto mixed = (osc_a_sample.value * patch.osc_a.level) +
+               (osc_b_sample.value * patch.osc_b.level) +
                (noise * patch.noise_level);
-  mixed *= 0.45f;
+  mixed *= 1.0f / std::sqrt(total_source_level);
+  mixed = std::tanh(mixed * 1.18f) * 0.82f;
 
   auto cutoff_norm = patch.filter.cutoff;
   cutoff_norm += filter_envelope * patch.filter.env_amount * 0.55f;
@@ -164,7 +191,10 @@ float SynthVoice::Render(
     MapCutoffNormToHz(cutoff_norm, sample_rate_),
     patch.filter.resonance);
 
-  const auto output = filtered * amp_envelope * velocity_gain_;
+  const auto output =
+    std::tanh(filtered * (1.08f + (patch.filter.resonance * 0.12f))) *
+    amp_envelope *
+    velocity_gain_;
 
   if (amp_stage_ == EnvelopeStage::Idle && !gate_) {
     active_ = false;
@@ -178,7 +208,7 @@ bool SynthVoice::IsActive() const
   return active_;
 }
 
-float SynthVoice::ProcessOscillator(
+SynthVoice::OscillatorSample SynthVoice::ProcessOscillator(
   Waveform waveform,
   float frequency_hz,
   float pulse_width,
@@ -186,69 +216,68 @@ float SynthVoice::ProcessOscillator(
 {
   const auto clamped_frequency = std::clamp(frequency_hz, 1.0f, sample_rate_ * 0.45f);
   const auto phase_increment = clamped_frequency / sample_rate_;
-  float sample = 0.0f;
+  OscillatorSample result;
 
   switch (waveform) {
     case Waveform::Sine:
-      sample = std::sin(2.0f * kPi * phase);
+      result.value = std::sin(2.0f * kPi * phase);
       break;
     case Waveform::Triangle:
-      sample = 1.0f - 4.0f * std::fabs(phase - 0.5f);
+      result.value = 1.0f - 4.0f * std::fabs(phase - 0.5f);
       break;
     case Waveform::Square: {
       const auto width = std::clamp(pulse_width, 0.05f, 0.95f);
-      sample = phase < width ? 1.0f : -1.0f;
-      sample += PolyBlep(phase, phase_increment);
+      result.value = phase < width ? 1.0f : -1.0f;
+      result.value += PolyBlep(phase, phase_increment);
       const auto trailing_phase = std::fmod(phase - width + 1.0f, 1.0f);
-      sample -= PolyBlep(trailing_phase, phase_increment);
+      result.value -= PolyBlep(trailing_phase, phase_increment);
       break;
     }
     case Waveform::Saw:
-      sample = (2.0f * phase) - 1.0f;
-      sample -= PolyBlep(phase, phase_increment);
+      result.value = (2.0f * phase) - 1.0f;
+      result.value -= PolyBlep(phase, phase_increment);
       break;
     case Waveform::Noise:
       noise_state_ ^= noise_state_ << 13;
       noise_state_ ^= noise_state_ >> 17;
       noise_state_ ^= noise_state_ << 5;
-      sample = (static_cast<float>(noise_state_ & 0x7fffffff) / 1073741824.0f) - 1.0f;
+      result.value = (static_cast<float>(noise_state_ & 0x7fffffff) / 1073741824.0f) - 1.0f;
       break;
   }
 
   phase += phase_increment;
   if (phase >= 1.0f) {
     phase -= 1.0f;
+    result.wrapped = true;
   }
 
-  return sample;
+  return result;
 }
 
 float SynthVoice::AdvanceAmpEnvelope(const AmpEnvelopeSettings& settings)
 {
-  const auto attack_s = std::max(settings.attack_s, 0.0005f);
-  const auto decay_s = std::max(settings.decay_s, 0.0005f);
-  const auto release_s = std::max(settings.release_s, 0.0005f);
+  const auto sustain = Clamp01(settings.sustain);
 
   switch (amp_stage_) {
     case EnvelopeStage::Idle:
       amp_env_ = 0.0f;
       break;
     case EnvelopeStage::Attack:
-      amp_env_ += 1.0f / (attack_s * sample_rate_);
-      if (amp_env_ >= 1.0f) {
+      amp_env_ += (1.0f - amp_env_) * TimeCoefficient(settings.attack_s, sample_rate_);
+      if (amp_env_ >= 0.9995f) {
         amp_env_ = 1.0f;
         amp_stage_ = EnvelopeStage::Decay;
       }
       break;
     case EnvelopeStage::Decay:
-      amp_env_ -= (1.0f - settings.sustain) / (decay_s * sample_rate_);
-      if (amp_env_ <= settings.sustain) {
-        amp_env_ = settings.sustain;
+      amp_env_ += (sustain - amp_env_) * TimeCoefficient(settings.decay_s, sample_rate_);
+      if (std::fabs(amp_env_ - sustain) <= 0.0015f) {
+        amp_env_ = sustain;
         amp_stage_ = gate_ ? EnvelopeStage::Sustain : EnvelopeStage::Release;
       }
       break;
     case EnvelopeStage::Sustain:
-      amp_env_ = settings.sustain;
+      amp_env_ = sustain;
       if (!gate_) {
         amp_stage_ = EnvelopeStage::Release;
       }
@@ -256,7 +285,7 @@ float SynthVoice::AdvanceAmpEnvelope(const AmpEnvelopeSettings& settings)
     case EnvelopeStage::Hold:
       break;
     case EnvelopeStage::Release:
-      amp_env_ -= std::max(amp_env_, 0.0001f) / (release_s * sample_rate_);
+      amp_env_ += (0.0f - amp_env_) * TimeCoefficient(settings.release_s, sample_rate_);
       if (amp_env_ <= 0.0001f) {
         amp_env_ = 0.0f;
         amp_stage_ = EnvelopeStage::Idle;
@@ -269,16 +298,13 @@ float SynthVoice::AdvanceAmpEnvelope(const AmpEnvelopeSettings& settings)
 
 float SynthVoice::AdvanceFilterEnvelope(const FilterEnvelopeSettings& settings)
 {
-  const auto attack_s = std::max(settings.attack_s, 0.0005f);
-  const auto release_s = std::max(settings.release_s, 0.0005f);
-
   switch (filter_stage_) {
     case EnvelopeStage::Idle:
       filter_env_ = 0.0f;
       break;
     case EnvelopeStage::Attack:
-      filter_env_ += 1.0f / (attack_s * sample_rate_);
-      if (filter_env_ >= 1.0f) {
+      filter_env_ += (1.0f - filter_env_) * TimeCoefficient(settings.attack_s, sample_rate_);
+      if (filter_env_ >= 0.9995f) {
         filter_env_ = 1.0f;
         filter_stage_ = gate_ ? EnvelopeStage::Hold : EnvelopeStage::Release;
       }
@@ -292,7 +318,7 @@ float SynthVoice::AdvanceFilterEnvelope(const FilterEnvelopeSettings& settings)
       }
       break;
     case EnvelopeStage::Release:
-      filter_env_ -= std::max(filter_env_, 0.0001f) / (release_s * sample_rate_);
+      filter_env_ += (0.0f - filter_env_) * TimeCoefficient(settings.release_s, sample_rate_);
       if (filter_env_ <= 0.0001f) {
         filter_env_ = 0.0f;
         filter_stage_ = EnvelopeStage::Idle;
@@ -310,26 +336,39 @@ float SynthVoice::ProcessFilter(float input, float cutoff_hz, float resonance)
     2.0f * std::sin(kPi * cutoff / sample_rate_),
     0.001f,
     0.99f);
-  const auto damping = std::clamp(2.0f - (resonance * 1.95f), 0.05f, 2.0f);
-
-  const auto driven_input = std::tanh(input * 1.35f);
+  const auto damping = std::clamp(1.98f - (resonance * 1.72f), 0.12f, 2.0f);
+  const auto feedback = filter_band_ * (0.18f + (resonance * 0.72f));
+  const auto driven_input = std::tanh((input - feedback) * (1.15f + (resonance * 0.55f)));
   filter_low_ += frequency * filter_band_;
   const auto high = driven_input - filter_low_ - (damping * filter_band_);
   filter_band_ += frequency * high;
 
-  return filter_low_;
+  return filter_low_ * (1.0f + (resonance * 0.10f));
+}
+
+float SynthVoice::VoiceDetuneCents(const Patch& patch) const
+{
+  if (patch.play_mode != PlayMode::Unison) {
+    return 0.0f;
+  }
+
+  return kUnisonDetuneCents[voice_index_];
 }
 
 float SynthVoice::OscillatorFrequencyHz(
   const OscillatorSettings& settings,
   float pitch_bend,
-  float vibrato_semitones) const
+  float vibrato_semitones,
+  int pitch_bend_range_semitones,
+  float voice_detune_cents) const
 {
-  const auto pitch_bend_semitones = pitch_bend * 2.0f;
+  const auto pitch_bend_semitones =
+    pitch_bend * static_cast<float>(std::max(pitch_bend_range_semitones, 0));
   const auto note_semitones =
     static_cast<float>(note_) +
     static_cast<float>(settings.octave * 12) +
     (settings.fine_tune_cents / 100.0f) +
+    (voice_detune_cents / 100.0f) +
     pitch_bend_semitones +
     vibrato_semitones;
 

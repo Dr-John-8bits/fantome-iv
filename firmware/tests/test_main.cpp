@@ -42,6 +42,25 @@ float BufferEnergy(const std::vector<float>& left, const std::vector<float>& rig
   return energy;
 }
 
+float StereoDifference(const std::vector<float>& left, const std::vector<float>& right)
+{
+  float difference = 0.0f;
+  for (std::size_t index = 0; index < left.size(); ++index) {
+    difference += std::fabs(left[index] - right[index]);
+  }
+  return difference;
+}
+
+float MaxAbsSample(const std::vector<float>& left, const std::vector<float>& right)
+{
+  float max_value = 0.0f;
+  for (std::size_t index = 0; index < left.size(); ++index) {
+    max_value = std::max(max_value, std::fabs(left[index]));
+    max_value = std::max(max_value, std::fabs(right[index]));
+  }
+  return max_value;
+}
+
 void TestOldestVoiceSteal()
 {
   fantome::FantomeEngine engine;
@@ -336,6 +355,112 @@ void TestReverbAddsLateTail()
   Expect(BufferEnergy(wet_tail_left, wet_tail_right) >
            (BufferEnergy(dry_tail_left, dry_tail_right) * 1.2f),
          "reverb should add a late tail after the dry note has faded");
+}
+
+void TestOscillatorSyncChangesRenderedSignal()
+{
+  fantome::FantomeEngine free_engine;
+  free_engine.SetSampleRate(48000.0f);
+  free_engine.CurrentPatchMutable().noise_level = 0.0f;
+  free_engine.CurrentPatchMutable().osc_a.waveform = fantome::Waveform::Saw;
+  free_engine.CurrentPatchMutable().osc_b.waveform = fantome::Waveform::Saw;
+  free_engine.CurrentPatchMutable().osc_b.octave = 1;
+  free_engine.CurrentPatchMutable().chorus.mix = 0.0f;
+  free_engine.CurrentPatchMutable().delay.mix = 0.0f;
+  free_engine.CurrentPatchMutable().reverb.mix = 0.0f;
+  free_engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  free_engine.CurrentPatchMutable().amp_env.decay_s = 0.05f;
+  free_engine.CurrentPatchMutable().amp_env.sustain = 0.9f;
+  free_engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 48, 100));
+
+  fantome::FantomeEngine sync_engine = free_engine;
+  sync_engine.CurrentPatchMutable().osc_a.sync_enabled = true;
+  sync_engine.CurrentPatchMutable().osc_b.sync_enabled = true;
+  sync_engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 48, 100));
+
+  std::vector<float> free_left(4096, 0.0f);
+  std::vector<float> free_right(4096, 0.0f);
+  free_engine.Render(free_left.data(), free_right.data(), free_left.size());
+
+  std::vector<float> sync_left(4096, 0.0f);
+  std::vector<float> sync_right(4096, 0.0f);
+  sync_engine.Render(sync_left.data(), sync_right.data(), sync_left.size());
+
+  float diff = 0.0f;
+  for (std::size_t index = 0; index < free_left.size(); ++index) {
+    diff += std::fabs(free_left[index] - sync_left[index]);
+    diff += std::fabs(free_right[index] - sync_right[index]);
+  }
+
+  Expect(diff > 10.0f, "oscillator sync should audibly reshape the rendered signal");
+}
+
+void TestUnisonIsWiderThanMono()
+{
+  fantome::FantomeEngine mono_engine;
+  mono_engine.SetSampleRate(48000.0f);
+  mono_engine.CurrentPatchMutable().play_mode = fantome::PlayMode::Mono;
+  mono_engine.CurrentPatchMutable().noise_level = 0.0f;
+  mono_engine.CurrentPatchMutable().chorus.mix = 0.0f;
+  mono_engine.CurrentPatchMutable().delay.mix = 0.0f;
+  mono_engine.CurrentPatchMutable().reverb.mix = 0.0f;
+  mono_engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  mono_engine.CurrentPatchMutable().amp_env.decay_s = 0.02f;
+  mono_engine.CurrentPatchMutable().amp_env.sustain = 0.9f;
+  mono_engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 100));
+
+  fantome::FantomeEngine unison_engine;
+  unison_engine.SetSampleRate(48000.0f);
+  unison_engine.CurrentPatchMutable().play_mode = fantome::PlayMode::Unison;
+  unison_engine.CurrentPatchMutable().noise_level = 0.0f;
+  unison_engine.CurrentPatchMutable().chorus.mix = 0.0f;
+  unison_engine.CurrentPatchMutable().delay.mix = 0.0f;
+  unison_engine.CurrentPatchMutable().reverb.mix = 0.0f;
+  unison_engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  unison_engine.CurrentPatchMutable().amp_env.decay_s = 0.02f;
+  unison_engine.CurrentPatchMutable().amp_env.sustain = 0.9f;
+  unison_engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 100));
+
+  std::vector<float> mono_left(4096, 0.0f);
+  std::vector<float> mono_right(4096, 0.0f);
+  mono_engine.Render(mono_left.data(), mono_right.data(), mono_left.size());
+
+  std::vector<float> unison_left(4096, 0.0f);
+  std::vector<float> unison_right(4096, 0.0f);
+  unison_engine.Render(unison_left.data(), unison_right.data(), unison_left.size());
+
+  Expect(StereoDifference(unison_left, unison_right) >
+           (StereoDifference(mono_left, mono_right) * 4.0f),
+         "unison should create much more stereo width than mono mode");
+}
+
+void TestAggressiveEffectsStayBounded()
+{
+  fantome::FantomeEngine engine;
+  engine.SetSampleRate(48000.0f);
+  engine.CurrentPatchMutable().play_mode = fantome::PlayMode::Unison;
+  engine.CurrentPatchMutable().noise_level = 0.08f;
+  engine.CurrentPatchMutable().chorus.depth = 0.8f;
+  engine.CurrentPatchMutable().chorus.mix = 0.55f;
+  engine.CurrentPatchMutable().delay.sync_mode = fantome::SyncMode::Free;
+  engine.CurrentPatchMutable().delay.time_ms = 240.0f;
+  engine.CurrentPatchMutable().delay.feedback = 0.92f;
+  engine.CurrentPatchMutable().delay.mix = 0.48f;
+  engine.CurrentPatchMutable().reverb.mix = 0.32f;
+  engine.CurrentPatchMutable().filter.resonance = 0.72f;
+  engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  engine.CurrentPatchMutable().amp_env.decay_s = 0.05f;
+  engine.CurrentPatchMutable().amp_env.sustain = 0.75f;
+  engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 120));
+
+  std::vector<float> left(32768, 0.0f);
+  std::vector<float> right(32768, 0.0f);
+  engine.Render(left.data(), right.data(), left.size());
+
+  Expect(std::isfinite(BufferEnergy(left, right)),
+         "aggressive effect settings should still produce finite audio");
+  Expect(MaxAbsSample(left, right) <= 1.0f,
+         "aggressive effect settings should remain bounded by the output soft clip");
 }
 
 void TestUiEncoderEditsFilterCutoff()
@@ -769,6 +894,9 @@ int main()
     TestDelayExtendsTailEnergy();
     TestChorusChangesStereoSignal();
     TestReverbAddsLateTail();
+    TestOscillatorSyncChangesRenderedSignal();
+    TestUnisonIsWiderThanMono();
+    TestAggressiveEffectsStayBounded();
     TestUiEncoderEditsFilterCutoff();
     TestSoftTakeoverBlocksUntilPickup();
     TestPresetPersistenceRoundTrip();

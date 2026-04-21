@@ -20,11 +20,32 @@ constexpr std::uint8_t kCcCutoff = 74;
 constexpr std::uint8_t kCcReverbMix = 91;
 constexpr std::uint8_t kCcChorusDepth = 93;
 constexpr std::uint8_t kCcAllNotesOff = 123;
-constexpr std::array<float, kVoiceCount> kVoicePan {-0.36f, -0.12f, 0.12f, 0.36f};
+constexpr std::array<float, kVoiceCount> kPolyVoicePan {-0.24f, -0.08f, 0.08f, 0.24f};
+constexpr std::array<float, kVoiceCount> kUnisonVoicePan {-0.58f, -0.20f, 0.20f, 0.58f};
 
 float SoftClip(float input)
 {
   return std::tanh(input);
+}
+
+float VoicePanForMode(PlayMode mode, std::size_t voice_index)
+{
+  if (mode == PlayMode::Mono) {
+    return 0.0f;
+  }
+
+  if (mode == PlayMode::Unison) {
+    return kUnisonVoicePan[voice_index];
+  }
+
+  return kPolyVoicePan[voice_index];
+}
+
+float VoiceNormalizationForMode(PlayMode mode, std::size_t active_voice_count)
+{
+  const auto safe_count = static_cast<float>(std::max<std::size_t>(1, active_voice_count));
+  const auto base = mode == PlayMode::Unison ? 1.02f : 0.88f;
+  return base / std::sqrt(safe_count);
 }
 
 }  // namespace
@@ -172,6 +193,13 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
   constexpr float kHeadroom = 0.22f;
   for (std::size_t frame = 0; frame < frame_count; ++frame) {
     last_modulation_ = BuildModulationFrame();
+    const auto active_voice_count = static_cast<std::size_t>(std::count_if(
+      dsp_voices_.begin(),
+      dsp_voices_.end(),
+      [](const SynthVoice& voice) {
+        return voice.IsActive();
+      }));
+    const auto voice_gain = VoiceNormalizationForMode(patch_.play_mode, active_voice_count);
     float mix_left = 0.0f;
     float mix_right = 0.0f;
 
@@ -181,13 +209,16 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
         patch_,
         last_modulation_,
         performance_.pitch_bend);
-      const auto pan = kVoicePan[voice_index];
+      const auto pan = VoicePanForMode(patch_.play_mode, voice_index);
       const auto gain_left = std::sqrt(0.5f * (1.0f - pan));
       const auto gain_right = std::sqrt(0.5f * (1.0f + pan));
 
-      mix_left += sample * gain_left;
-      mix_right += sample * gain_right;
+      mix_left += sample * gain_left * voice_gain;
+      mix_right += sample * gain_right * voice_gain;
     }
+
+    mix_left = SoftClip(mix_left * 0.92f);
+    mix_right = SoftClip(mix_right * 0.92f);
 
     chorus_.Process(mix_left, mix_right, patch_.chorus);
     delay_.Process(mix_left, mix_right, patch_.delay, transport_.tempo_bpm);
@@ -385,7 +416,9 @@ void FantomeEngine::SyncVoicesFromAllocator()
 
 void FantomeEngine::ResetDspVoices()
 {
-  for (auto& voice : dsp_voices_) {
+  for (std::size_t index = 0; index < dsp_voices_.size(); ++index) {
+    auto& voice = dsp_voices_[index];
+    voice.SetVoiceIndex(index);
     voice.SetSampleRate(sample_rate_);
     voice.Reset();
   }

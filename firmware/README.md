@@ -22,13 +22,16 @@ On sépare volontairement le code en trois couches :
 - état de transport pour la synchro `MIDI Clock`
 - première voix DSP portable
 - rendu audio stéréo de base sur Mac
-- oscillateurs de départ, enveloppes et filtre low-pass
+- oscillateurs portables avec `hard sync` et `PWM`
+- enveloppes plus musicales et filtre low-pass plus stable
+- comportement `Mono / Unison` raffiné avec centrage, largeur et détune
 - `LFO` pitch et filtre dans le cœur portable
 - `Sample & Hold` filtre dans le cœur portable
 - modes `Free / Clock` de base pour les modulations
-- `delay` stéréo global portable
-- `chorus` stéréo global portable
-- `reverb` stéréo globale portable
+- `delay` stéréo global portable avec feedback plus sûr
+- `chorus` stéréo global portable avec mix plus cohérent
+- `reverb` stéréo globale portable avec headroom plus propre
+- gain staging global de travail et soft clipping de sortie
 - état UI portable
 - paramètres éditables par pages
 - `soft takeover` portable pour les `8` potentiomètres
@@ -42,8 +45,8 @@ On sépare volontairement le code en trois couches :
 
 ## Ce que cette base ne fait pas encore
 
-- effets globaux complets
-- oscillateurs et filtre DSP finalisés
+- qualité sonore DSP finale
+- calibration fine des presets d'usine
 - intégration `libDaisy`
 - UI OLED réelle sur `Daisy`
 - persistance réelle sur hardware

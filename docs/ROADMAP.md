@@ -2,6 +2,15 @@
 
 Cette roadmap reste volontairement simple. Elle sert à garder une vue claire du projet sans recopier toutes les specs.
 
+## État actuel
+
+Au `21 avril 2026` :
+
+- la phase 0 documentaire est largement solide
+- la phase 1A logicielle est concrètement ouverte et déjà très avancée
+- le cœur portable, l'UI portable, la persistance et le smoke test existent
+- la prochaine marche logique est désormais la maturité DSP puis la première cible `Daisy`
+
 ## Phase 0 - Base du projet
 
 - finaliser les specs V1
@@ -58,6 +67,10 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - créer une cible desktop simple
 - écrire les premiers tests locaux
 
+État :
+
+- largement réalisé
+
 ## Phase 1B - DSP de base
 
 - implémenter une première voix complète dans le cœur portable
@@ -92,6 +105,11 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - ajouter sauvegarde et rappel des presets
 - implémenter le soft takeover
 
+État :
+
+- très avancé côté portable
+- pas encore branché au vrai hardware
+
 ## Phase 5 - MIDI complet
 
 - Program Change
@@ -106,6 +124,15 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - valider les contrôles
 - valider la sortie stéréo
 - nettoyer l'expérience utilisateur finale
+
+## Priorité recommandée
+
+À court terme :
+
+- raffiner la qualité sonore des oscillateurs et du filtre
+- stabiliser niveaux et effets
+- démarrer `targets/daisy/`
+- garder les tests et la doc alignés
 
 ## Cap du projet
 

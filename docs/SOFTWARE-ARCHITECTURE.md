@@ -89,6 +89,8 @@ Le socle logiciel V1 doit partir avec ces intentions :
 - chorus large et audible
 - reverb discrète
 - `4` presets d'usine dès la base logicielle
+- unison large mais maîtrisé
+- headroom cohérent sur toute la chaîne d'effets
 
 ## 3. Ce qu'on peut avancer sans hardware
 
@@ -172,6 +174,9 @@ La base logicielle porte déjà :
 - un `delay` stéréo global portable
 - un `chorus` stéréo global portable
 - une `reverb` stéréo globale portable
+- un `hard sync` d'oscillateurs portable
+- un comportement `Mono / Unison` plus musical
+- un gain staging de travail et des mixes d'effets plus cohérents
 - un état UI portable par pages
 - une logique de `soft takeover` portable
 - une persistance portable de la banque de presets

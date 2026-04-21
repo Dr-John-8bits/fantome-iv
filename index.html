@@ -261,34 +261,35 @@
 
     <main class="grid">
       <section class="panel">
-        <span class="status">Phase 1A logicielle</span>
+        <span class="status">Audit global validé</span>
         <h2>L'essentiel</h2>
         <p>
-          Fantôme IV vise une V1 claire et réaliste : deux oscillateurs par voix,
-          filtre résonant, enveloppes simples, modulations musicales, presets,
-          sortie stéréo et interface physique réduite mais efficace.
+          Fantôme IV a maintenant une base documentaire solide et un vrai socle
+          firmware portable déjà testé sur Mac. La V1 reste cadrée autour d'une
+          Daisy Seed, de 4 voix, d'un MIDI DIN, d'un OLED et d'une interface
+          simple mais musicale.
         </p>
       </section>
 
       <section class="panel">
         <h2>Actualité</h2>
         <p>
-          La base documentaire est maintenant assez solide pour ouvrir une vraie
-          phase logicielle sur Mac : arborescence firmware, cœur portable en C++,
-          cible desktop de test, premiers comportements MIDI, allocation de
-          voix, et désormais une première voix DSP portable avec rendu audio.
-          Le hardware reste fixé sur Daisy Seed 65MB avec MIDI DIN, OLED, 8
-          potentiomètres, 1 encodeur et 4 boutons.
+          Un audit complet a été passé sur le projet. Le build standard
+          fonctionne, les tests passent, le smoke test desktop passe, et l'UI
+          portable couvre maintenant splash screen, édition par pages,
+          navigateur preset/session, persistance de session et simulation des
+          contrôles. Le hardware réel n'est pas encore branché, mais le socle
+          logiciel tient déjà debout.
         </p>
       </section>
 
       <section class="panel">
         <h2>Roadmap courte</h2>
         <ul>
-          <li>Faire grandir le cœur logiciel portable sur Mac.</li>
-          <li>Ajouter la première vraie voix de synthèse et les modulations.</li>
-          <li>Stabiliser les effets globaux et les presets.</li>
-          <li>Passer ensuite à l'intégration Daisy et au hardware réel.</li>
+          <li>Raffiner la qualité DSP des oscillateurs et du filtre.</li>
+          <li>Stabiliser les niveaux, la dynamique et les effets globaux.</li>
+          <li>Démarrer la première cible `Daisy` propre.</li>
+          <li>Brancher ensuite l'OLED, le MIDI DIN et les contrôles réels.</li>
         </ul>
       </section>
 

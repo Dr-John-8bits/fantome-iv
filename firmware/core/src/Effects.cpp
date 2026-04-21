@@ -37,6 +37,18 @@ float ClampMix(float mix)
   return std::clamp(mix, 0.0f, 1.0f);
 }
 
+float EqualPowerMix(float dry, float wet, float mix)
+{
+  const auto clamped_mix = ClampMix(mix);
+  const auto angle = clamped_mix * (kPi * 0.5f);
+  return (dry * std::cos(angle)) + (wet * std::sin(angle));
+}
+
+float Saturate(float input)
+{
+  return std::tanh(input);
+}
+
 std::size_t ScaleDelayLength(int base_length, float sample_rate)
 {
   constexpr float kReferenceRate = 44100.0f;
@@ -62,6 +74,8 @@ void StereoDelayEffect::Reset()
   std::fill(left_buffer_.begin(), left_buffer_.end(), 0.0f);
   std::fill(right_buffer_.begin(), right_buffer_.end(), 0.0f);
   write_index_ = 0;
+  left_feedback_filter_ = 0.0f;
+  right_feedback_filter_ = 0.0f;
 }
 
 void StereoDelayEffect::Process(
@@ -79,7 +93,9 @@ void StereoDelayEffect::Process(
     return;
   }
 
-  const auto feedback = std::clamp(settings.feedback, 0.0f, 0.95f);
+  const auto dry_left = left;
+  const auto dry_right = right;
+  const auto feedback = std::clamp(settings.feedback, 0.0f, 0.88f);
   const auto delay_seconds = DelayTimeSeconds(settings, tempo_bpm);
   const auto delay_samples = std::clamp(
     delay_seconds * sample_rate_,
@@ -88,14 +104,26 @@ void StereoDelayEffect::Process(
 
   const auto delayed_left = ReadInterpolated(left_buffer_, delay_samples);
   const auto delayed_right = ReadInterpolated(right_buffer_, delay_samples);
+  constexpr float kFeedbackDamp = 0.16f;
+  left_feedback_filter_ += (delayed_left - left_feedback_filter_) * kFeedbackDamp;
+  right_feedback_filter_ += (delayed_right - right_feedback_filter_) * kFeedbackDamp;
 
-  left_buffer_[write_index_] = std::tanh(left + (delayed_left * feedback));
-  right_buffer_[write_index_] = std::tanh(right + (delayed_right * feedback));
+  const auto wet_left = (delayed_left * 0.94f) + (delayed_right * 0.06f);
+  const auto wet_right = (delayed_right * 0.94f) + (delayed_left * 0.06f);
+
+  left_buffer_[write_index_] = Saturate(
+    (dry_left * 0.98f) +
+    (left_feedback_filter_ * feedback) +
+    (right_feedback_filter_ * feedback * 0.08f));
+  right_buffer_[write_index_] = Saturate(
+    (dry_right * 0.98f) +
+    (right_feedback_filter_ * feedback) +
+    (left_feedback_filter_ * feedback * 0.08f));
 
   write_index_ = (write_index_ + 1) % left_buffer_.size();
 
-  left = (left * (1.0f - mix)) + (delayed_left * mix);
-  right = (right * (1.0f - mix)) + (delayed_right * mix);
+  left = EqualPowerMix(dry_left, wet_left, mix);
+  right = EqualPowerMix(dry_right, wet_right, mix);
 }
 
 float StereoDelayEffect::DelayTimeSeconds(
@@ -153,6 +181,8 @@ void StereoChorusEffect::Process(float& left, float& right, const ChorusSettings
     return;
   }
 
+  const auto dry_left = left;
+  const auto dry_right = right;
   const auto mono_input = 0.5f * (left + right);
   const auto base_delay_samples = sample_rate_ * 0.012f;
   const auto depth_samples = (2.0f + (settings.depth * 8.0f)) * (sample_rate_ / 1000.0f);
@@ -171,7 +201,7 @@ void StereoChorusEffect::Process(float& left, float& right, const ChorusSettings
   const auto wet_left = 0.5f * (ReadInterpolated(left_delay_a) + ReadInterpolated(left_delay_b));
   const auto wet_right = 0.5f * (ReadInterpolated(right_delay_a) + ReadInterpolated(right_delay_b));
 
-  buffer_[write_index_] = mono_input;
+  buffer_[write_index_] = Saturate(mono_input * 0.92f);
   write_index_ = (write_index_ + 1) % buffer_.size();
 
   phase_ += rate_hz / sample_rate_;
@@ -179,8 +209,8 @@ void StereoChorusEffect::Process(float& left, float& right, const ChorusSettings
     phase_ -= std::floor(phase_);
   }
 
-  left = (left * (1.0f - mix)) + (wet_left * mix);
-  right = (right * (1.0f - mix)) + (wet_right * mix);
+  left = EqualPowerMix(dry_left, wet_left * 0.92f, mix);
+  right = EqualPowerMix(dry_right, wet_right * 0.92f, mix);
 }
 
 float StereoChorusEffect::ReadInterpolated(float delay_samples) const
@@ -248,18 +278,21 @@ void StereoReverbEffect::Process(float& left, float& right, const ReverbSettings
     return;
   }
 
-  const auto input = (left + right) * 0.020f;
+  const auto dry_left = left;
+  const auto dry_right = right;
+  const auto input_left = (dry_left * 0.020f) + (dry_right * 0.006f);
+  const auto input_right = (dry_right * 0.020f) + (dry_left * 0.006f);
   float wet_left = 0.0f;
   float wet_right = 0.0f;
 
   for (std::size_t index = 0; index < kCombCount; ++index) {
     wet_left += ProcessComb(
-      input,
+      input_left,
       comb_left_[index],
       comb_left_index_[index],
       comb_left_filter_[index]);
     wet_right += ProcessComb(
-      input,
+      input_right,
       comb_right_[index],
       comb_right_index_[index],
       comb_right_filter_[index]);
@@ -270,11 +303,11 @@ void StereoReverbEffect::Process(float& left, float& right, const ReverbSettings
     wet_right = ProcessAllpass(wet_right, allpass_right_[index], allpass_right_index_[index]);
   }
 
-  wet_left *= 0.35f;
-  wet_right *= 0.35f;
+  wet_left *= 0.30f;
+  wet_right *= 0.30f;
 
-  left = (left * (1.0f - mix)) + (wet_left * mix);
-  right = (right * (1.0f - mix)) + (wet_right * mix);
+  left = EqualPowerMix(dry_left, wet_left, mix);
+  right = EqualPowerMix(dry_right, wet_right, mix);
 }
 
 float StereoReverbEffect::ProcessComb(
@@ -288,7 +321,7 @@ float StereoReverbEffect::ProcessComb(
 
   const auto output = buffer[index];
   filter_store = (output * (1.0f - kDamp)) + (filter_store * kDamp);
-  buffer[index] = input + (filter_store * kRoomSize);
+  buffer[index] = Saturate(input + (filter_store * kRoomSize));
   index = (index + 1u) % buffer.size();
   return output;
 }

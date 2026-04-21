@@ -22,6 +22,8 @@ class StereoDelayEffect {
   std::vector<float> left_buffer_ {};
   std::vector<float> right_buffer_ {};
   std::size_t write_index_ = 0;
+  float left_feedback_filter_ = 0.0f;
+  float right_feedback_filter_ = 0.0f;
 };
 
 class StereoChorusEffect {
