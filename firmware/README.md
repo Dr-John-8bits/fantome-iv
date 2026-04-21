@@ -23,6 +23,16 @@ On sépare volontairement le code en trois couches :
 - première voix DSP portable
 - rendu audio stéréo de base sur Mac
 - oscillateurs de départ, enveloppes et filtre low-pass
+- `LFO` pitch et filtre dans le cœur portable
+- `Sample & Hold` filtre dans le cœur portable
+- modes `Free / Clock` de base pour les modulations
+- `delay` stéréo global portable
+- `chorus` stéréo global portable
+- `reverb` stéréo globale portable
+- état UI portable
+- paramètres éditables par pages
+- `soft takeover` portable pour les `8` potentiomètres
+- persistance portable de la banque de `4` presets
 
 ## Ce que cette base ne fait pas encore
 

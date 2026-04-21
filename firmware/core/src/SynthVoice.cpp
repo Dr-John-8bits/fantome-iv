@@ -63,7 +63,6 @@ void SynthVoice::Reset()
   velocity_gain_ = 0.0f;
   osc_a_phase_ = 0.0f;
   osc_b_phase_ = 0.0f;
-  vibrato_phase_ = 0.0f;
   amp_stage_ = EnvelopeStage::Idle;
   amp_env_ = 0.0f;
   filter_stage_ = EnvelopeStage::Idle;
@@ -113,21 +112,23 @@ void SynthVoice::Release()
   }
 }
 
-float SynthVoice::Render(const Patch& patch, float pitch_bend, float mod_wheel)
+float SynthVoice::Render(
+  const Patch& patch,
+  const ModulationFrame& modulation,
+  float pitch_bend)
 {
   if (!active_) {
     return 0.0f;
   }
 
-  const auto vibrato_rate_hz = 5.0f;
-  vibrato_phase_ += vibrato_rate_hz / sample_rate_;
-  if (vibrato_phase_ >= 1.0f) {
-    vibrato_phase_ -= 1.0f;
-  }
-  const auto vibrato = std::sin(2.0f * kPi * vibrato_phase_) * mod_wheel * 0.25f;
-
-  const auto osc_a_hz = OscillatorFrequencyHz(patch.osc_a, pitch_bend, vibrato);
-  const auto osc_b_hz = OscillatorFrequencyHz(patch.osc_b, pitch_bend, vibrato);
+  const auto osc_a_hz = OscillatorFrequencyHz(
+    patch.osc_a,
+    pitch_bend,
+    modulation.osc_pitch_semitones);
+  const auto osc_b_hz = OscillatorFrequencyHz(
+    patch.osc_b,
+    pitch_bend,
+    modulation.osc_pitch_semitones);
 
   const auto osc_a = ProcessOscillator(
     patch.osc_a.waveform,
@@ -155,6 +156,7 @@ float SynthVoice::Render(const Patch& patch, float pitch_bend, float mod_wheel)
 
   auto cutoff_norm = patch.filter.cutoff;
   cutoff_norm += filter_envelope * patch.filter.env_amount * 0.55f;
+  cutoff_norm += modulation.filter_cutoff_delta;
   cutoff_norm = Clamp01(cutoff_norm);
 
   const auto filtered = ProcessFilter(

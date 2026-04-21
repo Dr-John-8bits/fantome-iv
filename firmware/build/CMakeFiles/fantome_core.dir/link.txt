@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfantome_core.a CMakeFiles/fantome_core.dir/core/src/Effects.cpp.o CMakeFiles/fantome_core.dir/core/src/FantomeEngine.cpp.o CMakeFiles/fantome_core.dir/core/src/Modulation.cpp.o CMakeFiles/fantome_core.dir/core/src/PresetPersistence.cpp.o CMakeFiles/fantome_core.dir/core/src/SynthVoice.cpp.o CMakeFiles/fantome_core.dir/core/src/UiState.cpp.o CMakeFiles/fantome_core.dir/core/src/VoiceAllocator.cpp.o
+/usr/bin/ranlib libfantome_core.a

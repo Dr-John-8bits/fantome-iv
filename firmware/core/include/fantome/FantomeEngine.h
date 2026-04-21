@@ -3,7 +3,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
+#include "fantome/Effects.h"
+#include "fantome/Modulation.h"
 #include "fantome/MidiTypes.h"
 #include "fantome/Patch.h"
 #include "fantome/SynthVoice.h"
@@ -33,6 +36,9 @@ class FantomeEngine {
   void SetClockTempoBpm(float bpm);
   void SavePreset(std::size_t slot);
   bool LoadPreset(std::size_t slot);
+  void InitializeCurrentPatch();
+  bool SavePresetBankToFile(const std::string& path) const;
+  bool LoadPresetBankFromFile(const std::string& path);
   void Render(float* left, float* right, std::size_t frame_count);
 
   Patch& CurrentPatchMutable();
@@ -41,7 +47,9 @@ class FantomeEngine {
   const std::array<VoiceState, kVoiceCount>& Voices() const;
   const TransportState& Transport() const;
   const PerformanceState& Performance() const;
+  const ModulationFrame& LastModulationFrame() const;
   float SampleRate() const;
+  std::size_t CurrentPresetSlot() const;
 
  private:
   bool MatchesCurrentChannel(const MidiMessage& message) const;
@@ -52,6 +60,7 @@ class FantomeEngine {
   void HandlePitchBend(int value);
   void SyncVoicesFromAllocator();
   void ResetDspVoices();
+  ModulationFrame BuildModulationFrame();
   static float NormalizeMidi7(std::uint8_t value);
 
   Patch patch_ {};
@@ -59,9 +68,17 @@ class FantomeEngine {
   VoiceAllocator allocator_ {};
   std::array<SynthVoice, kVoiceCount> dsp_voices_ {};
   std::array<VoiceState, kVoiceCount> allocator_snapshot_ {};
+  StereoChorusEffect chorus_ {};
+  StereoDelayEffect delay_ {};
+  StereoReverbEffect reverb_ {};
+  LfoSource osc_lfo_source_ {};
+  LfoSource filter_lfo_source_ {};
+  SampleAndHoldSource filter_sample_hold_source_ {};
   TransportState transport_ {};
   PerformanceState performance_ {};
+  ModulationFrame last_modulation_ {};
   float sample_rate_ = 48000.0f;
+  std::size_t active_preset_slot_ = 0;
 };
 
 }  // namespace fantome

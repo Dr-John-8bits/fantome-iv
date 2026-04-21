@@ -8,8 +8,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(
   fantome_core
+  core/src/Effects.cpp
   core/src/FantomeEngine.cpp
+  core/src/Modulation.cpp
+  core/src/PresetPersistence.cpp
   core/src/SynthVoice.cpp
+  core/src/UiState.cpp
   core/src/VoiceAllocator.cpp
 )
 

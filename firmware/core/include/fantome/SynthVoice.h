@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include "fantome/Modulation.h"
 #include "fantome/Patch.h"
 
 namespace fantome {
@@ -12,7 +13,7 @@ class SynthVoice {
   void Reset();
   void Start(std::uint8_t note, std::uint8_t velocity, bool retrigger);
   void Release();
-  float Render(const Patch& patch, float pitch_bend, float mod_wheel);
+  float Render(const Patch& patch, const ModulationFrame& modulation, float pitch_bend);
   bool IsActive() const;
 
  private:
@@ -47,7 +48,6 @@ class SynthVoice {
 
   float osc_a_phase_ = 0.0f;
   float osc_b_phase_ = 0.0f;
-  float vibrato_phase_ = 0.0f;
 
   EnvelopeStage amp_stage_ = EnvelopeStage::Idle;
   float amp_env_ = 0.0f;

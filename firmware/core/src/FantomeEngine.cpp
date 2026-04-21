@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdint>
 
+#include "fantome/PresetPersistence.h"
+
 namespace fantome {
 
 namespace {
@@ -36,6 +38,7 @@ void FantomeEngine::Reset()
 {
   preset_bank_ = MakeFactoryPresetBank();
   patch_ = preset_bank_[0];
+  active_preset_slot_ = 0;
   allocator_.AllNotesOff();
   allocator_snapshot_ = allocator_.Voices();
   performance_ = PerformanceState {};
@@ -49,6 +52,12 @@ void FantomeEngine::SetSampleRate(float sample_rate)
   for (auto& voice : dsp_voices_) {
     voice.SetSampleRate(sample_rate_);
   }
+  chorus_.SetSampleRate(sample_rate_);
+  delay_.SetSampleRate(sample_rate_);
+  reverb_.SetSampleRate(sample_rate_);
+  osc_lfo_source_.SetSampleRate(sample_rate_);
+  filter_lfo_source_.SetSampleRate(sample_rate_);
+  filter_sample_hold_source_.SetSampleRate(sample_rate_);
 }
 
 void FantomeEngine::HandleMidi(const MidiMessage& message)
@@ -112,6 +121,7 @@ void FantomeEngine::SavePreset(std::size_t slot)
     return;
   }
   preset_bank_[slot] = patch_;
+  active_preset_slot_ = slot;
 }
 
 bool FantomeEngine::LoadPreset(std::size_t slot)
@@ -121,11 +131,36 @@ bool FantomeEngine::LoadPreset(std::size_t slot)
   }
 
   patch_ = preset_bank_[slot];
+  active_preset_slot_ = slot;
   allocator_.AllNotesOff();
   allocator_snapshot_ = allocator_.Voices();
   ResetDspVoices();
   performance_.sustain = false;
   return true;
+}
+
+void FantomeEngine::InitializeCurrentPatch()
+{
+  patch_ = MakeInitPatch("Init");
+  allocator_.AllNotesOff();
+  allocator_snapshot_ = allocator_.Voices();
+  ResetDspVoices();
+  performance_.sustain = false;
+}
+
+bool FantomeEngine::SavePresetBankToFile(const std::string& path) const
+{
+  return PresetPersistence::SaveBank(path, preset_bank_, active_preset_slot_);
+}
+
+bool FantomeEngine::LoadPresetBankFromFile(const std::string& path)
+{
+  std::size_t active_slot = 0;
+  if (!PresetPersistence::LoadBank(path, preset_bank_, active_slot)) {
+    return false;
+  }
+
+  return LoadPreset(active_slot);
 }
 
 void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
@@ -136,6 +171,7 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
 
   constexpr float kHeadroom = 0.22f;
   for (std::size_t frame = 0; frame < frame_count; ++frame) {
+    last_modulation_ = BuildModulationFrame();
     float mix_left = 0.0f;
     float mix_right = 0.0f;
 
@@ -143,8 +179,8 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
       auto& voice = dsp_voices_[voice_index];
       const auto sample = voice.Render(
         patch_,
-        performance_.pitch_bend,
-        performance_.mod_wheel);
+        last_modulation_,
+        performance_.pitch_bend);
       const auto pan = kVoicePan[voice_index];
       const auto gain_left = std::sqrt(0.5f * (1.0f - pan));
       const auto gain_right = std::sqrt(0.5f * (1.0f + pan));
@@ -152,6 +188,10 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
       mix_left += sample * gain_left;
       mix_right += sample * gain_right;
     }
+
+    chorus_.Process(mix_left, mix_right, patch_.chorus);
+    delay_.Process(mix_left, mix_right, patch_.delay, transport_.tempo_bpm);
+    reverb_.Process(mix_left, mix_right, patch_.reverb);
 
     left[frame] = SoftClip(mix_left * patch_.master_volume * kHeadroom);
     right[frame] = SoftClip(mix_right * patch_.master_volume * kHeadroom);
@@ -188,9 +228,19 @@ const PerformanceState& FantomeEngine::Performance() const
   return performance_;
 }
 
+const ModulationFrame& FantomeEngine::LastModulationFrame() const
+{
+  return last_modulation_;
+}
+
 float FantomeEngine::SampleRate() const
 {
   return sample_rate_;
+}
+
+std::size_t FantomeEngine::CurrentPresetSlot() const
+{
+  return active_preset_slot_;
 }
 
 bool FantomeEngine::MatchesCurrentChannel(const MidiMessage& message) const
@@ -311,6 +361,44 @@ void FantomeEngine::ResetDspVoices()
     voice.SetSampleRate(sample_rate_);
     voice.Reset();
   }
+
+  chorus_.SetSampleRate(sample_rate_);
+  chorus_.Reset();
+  delay_.SetSampleRate(sample_rate_);
+  delay_.Reset();
+  reverb_.SetSampleRate(sample_rate_);
+  reverb_.Reset();
+  osc_lfo_source_.SetSampleRate(sample_rate_);
+  osc_lfo_source_.Reset();
+  filter_lfo_source_.SetSampleRate(sample_rate_);
+  filter_lfo_source_.Reset();
+  filter_sample_hold_source_.SetSampleRate(sample_rate_);
+  filter_sample_hold_source_.Reset();
+  last_modulation_ = ModulationFrame {};
+}
+
+ModulationFrame FantomeEngine::BuildModulationFrame()
+{
+  ModulationFrame frame;
+
+  const auto osc_lfo_sample = osc_lfo_source_.Render(patch_.osc_lfo, transport_.tempo_bpm);
+  const auto filter_lfo_sample = filter_lfo_source_.Render(patch_.filter_lfo, transport_.tempo_bpm);
+  const auto sample_hold_sample = filter_sample_hold_source_.Render(
+    patch_.filter_sample_hold,
+    transport_.tempo_bpm);
+
+  const auto osc_amount = patch_.osc_lfo.amount + (performance_.mod_wheel * 0.35f);
+  const auto filter_lfo_amount = std::max(patch_.filter.lfo_amount, patch_.filter_lfo.amount);
+  const auto filter_sample_hold_amount = std::max(
+    patch_.filter.sample_hold_amount,
+    patch_.filter_sample_hold.amount);
+
+  frame.osc_pitch_semitones = osc_lfo_sample * osc_amount;
+  frame.filter_cutoff_delta =
+    (filter_lfo_sample * filter_lfo_amount * 0.35f) +
+    (sample_hold_sample * filter_sample_hold_amount * 0.30f);
+
+  return frame;
 }
 
 }  // namespace fantome

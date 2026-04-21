@@ -119,6 +119,14 @@ inline Patch MakeInitPatch(const std::string& name = "Init")
   patch.osc_b.level = 0.65f;
   patch.filter.cutoff = 0.72f;
   patch.filter.resonance = 0.18f;
+  patch.osc_lfo.rate_hz = 4.5f;
+  patch.osc_lfo.amount = 0.0f;
+  patch.filter_lfo.waveform = Waveform::Triangle;
+  patch.filter_lfo.rate_hz = 0.8f;
+  patch.filter_lfo.amount = 0.0f;
+  patch.filter_sample_hold.sync_mode = SyncMode::MidiClock;
+  patch.filter_sample_hold.division_index = 2;
+  patch.filter_sample_hold.amount = 0.0f;
   patch.chorus.depth = 0.35f;
   patch.delay.feedback = 0.32f;
   patch.delay.mix = 0.24f;
@@ -141,6 +149,10 @@ inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
   bank[0].filter.cutoff = 0.58f;
   bank[0].amp_env.attack_s = 0.45f;
   bank[0].amp_env.release_s = 1.20f;
+  bank[0].osc_lfo.amount = 0.08f;
+  bank[0].osc_lfo.rate_hz = 0.32f;
+  bank[0].filter_lfo.amount = 0.10f;
+  bank[0].filter_lfo.rate_hz = 0.18f;
   bank[0].chorus.depth = 0.52f;
   bank[0].reverb.mix = 0.28f;
 
@@ -149,6 +161,9 @@ inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
   bank[1].osc_b.waveform = Waveform::Square;
   bank[1].filter.cutoff = 0.68f;
   bank[1].filter.resonance = 0.24f;
+  bank[1].filter_sample_hold.amount = 0.08f;
+  bank[1].filter_sample_hold.sync_mode = SyncMode::MidiClock;
+  bank[1].filter_sample_hold.division_index = 3;
   bank[1].delay.mix = 0.18f;
   bank[1].delay.feedback = 0.26f;
 
@@ -158,6 +173,8 @@ inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
   bank[2].osc_b.octave = -1;
   bank[2].filter.cutoff = 0.48f;
   bank[2].filter.env_amount = 0.62f;
+  bank[2].filter_lfo.amount = 0.06f;
+  bank[2].filter_lfo.rate_hz = 4.8f;
   bank[2].amp_env.attack_s = 0.04f;
   bank[2].amp_env.release_s = 0.18f;
 
@@ -167,10 +184,11 @@ inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
   bank[3].osc_b.waveform = Waveform::Saw;
   bank[3].osc_b.fine_tune_cents = 6.0f;
   bank[3].filter.cutoff = 0.74f;
+  bank[3].osc_lfo.amount = 0.12f;
+  bank[3].osc_lfo.rate_hz = 5.2f;
   bank[3].delay.mix = 0.12f;
 
   return bank;
 }
 
 }  // namespace fantome
-

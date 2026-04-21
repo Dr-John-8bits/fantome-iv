@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/lib CMakeFiles/fantome_desktop_smoke.dir/targets/desktop/main.cpp.o -o fantome_desktop_smoke  libfantome_core.a
