@@ -88,7 +88,7 @@ Le socle logiciel V1 doit partir avec ces intentions :
 - filtre à caractère musical
 - chorus large et audible
 - reverb discrète
-- `4` presets d'usine dès la base logicielle
+- `4` slots utilisateur dès la base logicielle
 - unison large mais maîtrisé
 - headroom cohérent sur toute la chaîne d'effets
 
@@ -162,7 +162,7 @@ Cette architecture permet de :
 La base logicielle porte déjà :
 
 - le modèle de patch V1
-- la banque de `4` presets d'usine
+- la banque de `4` slots utilisateur
 - le moteur MIDI de base
 - l'allocation de voix
 - une cible desktop de smoke test

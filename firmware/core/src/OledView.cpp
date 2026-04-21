@@ -14,6 +14,14 @@ std::string PresetSlotLabel(std::size_t slot)
   return "P" + std::to_string(slot + 1);
 }
 
+std::string ActiveSlotHeader(
+  std::size_t slot,
+  const std::string& patch_name,
+  bool dirty)
+{
+  return PresetSlotLabel(slot) + (dirty ? "* " : " ") + patch_name;
+}
+
 }  // namespace
 
 std::string OledTextFrame::ToDebugString() const
@@ -49,10 +57,15 @@ OledTextFrame OledTextRenderer::Render(
 
   OledTextFrame frame;
   frame.rows[0] = PadRight(
-    Clip(PresetSlotLabel(model.active_preset_slot) + " " + model.preset_name, kDisplayColumns),
+    Clip(
+      ActiveSlotHeader(
+        model.active_preset_slot,
+        model.preset_name,
+        model.current_patch_dirty),
+      kDisplayColumns),
     kDisplayColumns);
   frame.rows[1] = ComposeHeader(
-    ui.CurrentPage() == UiPage::System ? "Preset/Session" : model.page_label,
+    ui.CurrentPage() == UiPage::System ? "User Slots" : model.page_label,
     InteractionLabel(model.interaction_state),
     15);
 
@@ -215,11 +228,18 @@ std::string OledTextRenderer::ComposePresetBrowserRow(
 
 std::string OledTextRenderer::BuildSystemSelectionSummary(const UiDisplayModel& model)
 {
+  std::string summary;
   if (model.selected_value.empty()) {
-    return "Sel:" + model.selected_label;
+    summary = "Sel:" + model.selected_label;
+  } else {
+    summary = "Sel:" + model.selected_label + " " + model.selected_value;
   }
 
-  return "Sel:" + model.selected_label + " " + model.selected_value;
+  if (model.current_patch_dirty) {
+    summary += " *";
+  }
+
+  return summary;
 }
 
 std::string OledTextRenderer::SessionStatusText(const SessionManagerState* session_state)

@@ -531,6 +531,22 @@ void TestPresetPersistenceRoundTrip()
   std::filesystem::remove(preset_path);
 }
 
+void TestCurrentPresetDirtyStateTracksEdits()
+{
+  fantome::FantomeEngine engine;
+
+  Expect(!engine.IsCurrentPresetDirty(),
+         "freshly loaded user slot should start in a saved state");
+
+  engine.CurrentPatchMutable().filter.cutoff = 0.41f;
+  Expect(engine.IsCurrentPresetDirty(),
+         "editing the current patch should mark the active user slot as dirty");
+
+  engine.SavePreset(engine.CurrentPresetSlot());
+  Expect(!engine.IsCurrentPresetDirty(),
+         "writing the patch back into the active user slot should clear the dirty state");
+}
+
 void TestOledRendererShowsPresetAndSelection()
 {
   fantome::FantomeEngine engine;
@@ -599,7 +615,7 @@ void TestOledRendererShowsConfirmationState()
 
   Expect(debug.find("CONF") != std::string::npos,
          "oled view should show confirmation mode for sensitive actions");
-  Expect(debug.find("Save Preset") != std::string::npos,
+  Expect(debug.find("Write Slot") != std::string::npos,
          "oled view should show the selected action label");
   Expect(debug.find("Enc=ok") != std::string::npos,
          "oled view should show confirmation guidance");
@@ -627,8 +643,8 @@ void TestOledRendererShowsPresetSessionBrowserOnSystemPage()
 
   const auto debug = oled.Render(ui, engine, &manager.State()).ToDebugString();
 
-  Expect(debug.find("Preset/Session") != std::string::npos,
-         "system page should switch to the preset/session browser header");
+  Expect(debug.find("User Slots") != std::string::npos,
+         "system page should switch to the user-slot browser header");
   Expect(debug.find("*P1 Ghost Pad") != std::string::npos,
          "system browser should show the active preset");
   Expect(debug.find(">P3 Phantom Brass") != std::string::npos,
@@ -637,6 +653,20 @@ void TestOledRendererShowsPresetSessionBrowserOnSystemPage()
          "system browser should show current session status");
 
   std::filesystem::remove(session_path);
+}
+
+void TestOledRendererShowsDirtyUserSlotState()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  ui.Reset(engine);
+
+  engine.CurrentPatchMutable().filter.cutoff = 0.42f;
+
+  const auto debug = oled.Render(ui, engine).ToDebugString();
+  Expect(debug.find("P1* Ghost Pad") != std::string::npos,
+         "oled header should show when the current user slot has unsaved changes");
 }
 
 void TestPortableSessionPersistenceRoundTrip()
@@ -752,7 +782,7 @@ void TestSessionManagerStartsFreshWhenNoSessionFile()
   Expect(!result.session_file_present,
          "missing session file should be reported as absent");
   Expect(engine.CurrentPatch().name == "Ghost Pad",
-         "fresh boot should start from the factory first patch");
+         "fresh boot should start from the default first user slot");
 }
 
 void TestSessionManagerShutdownAndRestoreRoundTrip()
@@ -900,11 +930,13 @@ int main()
     TestUiEncoderEditsFilterCutoff();
     TestSoftTakeoverBlocksUntilPickup();
     TestPresetPersistenceRoundTrip();
+    TestCurrentPresetDirtyStateTracksEdits();
     TestOledRendererShowsStartupSplash();
     TestOledRendererShowsPresetAndSelection();
     TestOledRendererShowsPickupState();
     TestOledRendererShowsConfirmationState();
     TestOledRendererShowsPresetSessionBrowserOnSystemPage();
+    TestOledRendererShowsDirtyUserSlotState();
     TestPortableSessionPersistenceRoundTrip();
     TestPortableInputSurfaceCanNavigateAndEdit();
     TestSessionManagerStartsFreshWhenNoSessionFile();

@@ -65,7 +65,7 @@ bool ParseFloat(const std::string& value, float& output)
 PortableSessionState MakeDefaultSessionState()
 {
   PortableSessionState state;
-  state.engine.preset_bank = MakeFactoryPresetBank();
+  state.engine.preset_bank = MakeDefaultUserPresetBank();
   state.engine.current_patch = state.engine.preset_bank[0];
   state.engine.active_preset_slot = 0;
   state.engine.tempo_bpm = 120.0f;

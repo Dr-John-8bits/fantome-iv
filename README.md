@@ -114,7 +114,7 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - premiers effets globaux portables en place : `delay`, `chorus`, `reverb`
 - couche `UI state` portable en place
 - `soft takeover` portable en place
-- persistance portable de la banque de `4` presets en place
+- persistance portable de la banque de `4` slots utilisateur en place
 - représentation portable de l'écran OLED page par page en place
 - écran de démarrage OLED portable en place
 - mini navigateur preset/session portable en place sur la page système

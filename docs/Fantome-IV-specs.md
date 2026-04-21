@@ -68,7 +68,7 @@ La direction sonore retenue pour la V1 est la suivante :
 - filtre : caractère musical avant neutralité clinique
 - chorus : large et audible
 - reverb : discrète et lisible
-- presets de départ : `4` presets d'usine
+- presets de départ : `4` slots utilisateur préremplis
 
 ## 5. Non-objectifs V1
 
@@ -785,7 +785,7 @@ Définition d'une "V1 réussie" :
 
 - Poser le cœur logiciel portable
 - Implémenter le modèle de patch
-- Implémenter la banque de `4` presets d'usine
+- Implémenter la banque de `4` slots utilisateur
 - Implémenter le moteur MIDI
 - Implémenter l'allocation de voix
 - Ajouter une cible desktop de test

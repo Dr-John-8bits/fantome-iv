@@ -76,12 +76,12 @@ constexpr std::array<Item, 8> kEffectsPageItems {{
 }};
 
 constexpr std::array<Item, 7> kSystemPageItems {{
-  {true, ParameterId::MidiChannel, UiAction::None, "MIDI Channel"},
+  {true, ParameterId::MidiChannel, UiAction::None, "MIDI Ch"},
   {true, ParameterId::PlayMode, UiAction::None, "Play Mode"},
   {true, ParameterId::Legato, UiAction::None, "Legato"},
-  {true, ParameterId::PresetSlot, UiAction::None, "Preset Slot"},
-  {false, ParameterId::PresetSlot, UiAction::LoadPreset, "Load Preset"},
-  {false, ParameterId::PresetSlot, UiAction::SavePreset, "Save Preset"},
+  {true, ParameterId::PresetSlot, UiAction::None, "User Slot"},
+  {false, ParameterId::PresetSlot, UiAction::LoadPreset, "Recall Slot"},
+  {false, ParameterId::PresetSlot, UiAction::SavePreset, "Write Slot"},
   {false, ParameterId::PresetSlot, UiAction::InitPatch, "Init Patch"},
 }};
 
@@ -518,6 +518,7 @@ UiDisplayModel UiState::BuildDisplayModel(const FantomeEngine& engine) const
   model.target_preset_slot = preset_target_slot_;
   model.page_label = CurrentPageLabel();
   model.interaction_state = interaction_state_;
+  model.current_patch_dirty = engine.IsCurrentPresetDirty();
   model.item_count = CurrentPageItemCount();
   model.selected_label = CurrentItem().label;
   model.selected_value = FormatItemValue(CurrentItem(), engine);
@@ -685,6 +686,7 @@ void UiState::ApplyPendingAction(FantomeEngine& engine)
       break;
     case UiAction::SavePreset:
       engine.SavePreset(preset_target_slot_);
+      preset_target_slot_ = engine.CurrentPresetSlot();
       break;
     case UiAction::InitPatch:
       engine.InitializeCurrentPatch();
@@ -854,8 +856,8 @@ std::string UiState::BuildStatusText(const FantomeEngine& engine) const
 
   switch (current_page_) {
     case UiPage::System:
-      return "MIDI " + std::to_string(patch.midi_channel) + " " +
-             PlayModeLabel(patch.play_mode);
+      return "Slot " + PresetSlotLabel(engine.CurrentPresetSlot()) +
+             (engine.IsCurrentPresetDirty() ? " unsaved" : " saved");
     case UiPage::Modulation:
       if (patch.osc_lfo.sync_mode == SyncMode::MidiClock ||
           patch.filter_lfo.sync_mode == SyncMode::MidiClock ||

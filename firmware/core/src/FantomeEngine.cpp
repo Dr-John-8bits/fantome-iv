@@ -57,7 +57,7 @@ FantomeEngine::FantomeEngine()
 
 void FantomeEngine::Reset()
 {
-  preset_bank_ = MakeFactoryPresetBank();
+  preset_bank_ = MakeDefaultUserPresetBank();
   patch_ = preset_bank_[0];
   active_preset_slot_ = 0;
   allocator_.AllNotesOff();
@@ -272,6 +272,15 @@ float FantomeEngine::SampleRate() const
 std::size_t FantomeEngine::CurrentPresetSlot() const
 {
   return active_preset_slot_;
+}
+
+bool FantomeEngine::IsCurrentPresetDirty() const
+{
+  if (active_preset_slot_ >= preset_bank_.size()) {
+    return false;
+  }
+
+  return !PatchApproximatelyEqual(patch_, preset_bank_[active_preset_slot_]);
 }
 
 EngineSessionState FantomeEngine::ExportSessionState() const

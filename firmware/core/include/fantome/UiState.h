@@ -123,6 +123,7 @@ struct UiDisplayModel {
   std::size_t target_preset_slot = 0;
   std::string page_label;
   UiInteractionState interaction_state = UiInteractionState::Navigation;
+  bool current_patch_dirty = false;
   std::array<UiDisplayItem, kMaxItems> items {};
   std::size_t item_count = 0;
   std::string selected_label;

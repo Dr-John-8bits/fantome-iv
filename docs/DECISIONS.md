@@ -536,7 +536,7 @@ Décision :
 - le filtre V1 doit viser un caractère musical
 - le chorus V1 doit être large et audible
 - la reverb V1 doit rester discrète
-- la base logicielle doit partir sur `4` presets d'usine
+- la base logicielle doit partir sur `4` slots utilisateur préremplis
 
 Documents de référence :
 

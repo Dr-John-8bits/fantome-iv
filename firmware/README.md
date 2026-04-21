@@ -14,7 +14,7 @@ On sépare volontairement le code en trois couches :
 ## Ce que cette base couvre déjà
 
 - modèle de patch V1
-- banque de `4` presets
+- banque de `4` slots utilisateur
 - contrat MIDI principal
 - allocation de voix
 - modes `Poly`, `Mono`, `Unison`
@@ -35,7 +35,7 @@ On sépare volontairement le code en trois couches :
 - état UI portable
 - paramètres éditables par pages
 - `soft takeover` portable pour les `8` potentiomètres
-- persistance portable de la banque de `4` presets
+- persistance portable de la banque de `4` slots utilisateur
 - représentation portable de l'écran OLED page par page
 - mini navigateur `preset/session` sur la page système OLED portable
 - persistance portable de session de travail
@@ -46,7 +46,7 @@ On sépare volontairement le code en trois couches :
 ## Ce que cette base ne fait pas encore
 
 - qualité sonore DSP finale
-- calibration fine des presets d'usine
+- calibration fine des slots utilisateur par défaut
 - intégration `libDaisy`
 - UI OLED réelle sur `Daisy`
 - persistance réelle sur hardware

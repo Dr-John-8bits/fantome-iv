@@ -177,8 +177,8 @@ L'UI V1 fonctionne avec trois états simples :
 
 Actions concernées par `Confirmation` :
 
-- `Save preset`
-- `Load preset` si risque de perte de contexte jugé important
+- `Write slot`
+- `Recall slot` si risque de perte de contexte jugé important
 - `Init patch`
 
 Les paramètres ordinaires n'utilisent pas cet état supplémentaire.
@@ -390,9 +390,9 @@ Pot 8 recommandé :
 
 Affichage portable retenu :
 
-- aperçu des `4` presets
-- mise en évidence du preset actif
-- mise en évidence du slot preset ciblé
+- aperçu des `4` slots utilisateur
+- mise en évidence du slot actif
+- mise en évidence du slot ciblé
 - ligne de résumé de l'élément système actuellement sélectionné
 - ligne d'état de session (`fresh`, `restored`, `fallback`) en navigation
 
@@ -400,7 +400,7 @@ Affichage portable retenu :
 
 ### 7.1 Capacité retenue
 
-- `4 presets`
+- `4 slots utilisateur`
 
 ### 7.2 Exigences UX
 

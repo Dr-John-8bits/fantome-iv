@@ -61,7 +61,7 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 
 - poser l'arborescence `firmware/`
 - implémenter le modèle de patch V1
-- implémenter la banque de `4` presets
+- implémenter la banque de `4` slots utilisateur
 - implémenter le moteur MIDI de base
 - implémenter l'allocation de voix
 - créer une cible desktop simple

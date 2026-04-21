@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <string>
 
@@ -134,7 +135,7 @@ inline Patch MakeInitPatch(const std::string& name = "Init")
   return patch;
 }
 
-inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
+inline std::array<Patch, kPresetCount> MakeDefaultUserPresetBank()
 {
   auto bank = std::array<Patch, kPresetCount> {
     MakeInitPatch("Preset 1"),
@@ -189,6 +190,69 @@ inline std::array<Patch, kPresetCount> MakeFactoryPresetBank()
   bank[3].delay.mix = 0.12f;
 
   return bank;
+}
+
+inline bool NearlyEqual(float left, float right, float epsilon = 0.0001f)
+{
+  return std::fabs(left - right) <= epsilon;
+}
+
+inline bool PatchApproximatelyEqual(const Patch& left, const Patch& right)
+{
+  return left.name == right.name &&
+         left.play_mode == right.play_mode &&
+         left.legato_enabled == right.legato_enabled &&
+         left.midi_channel == right.midi_channel &&
+         left.pitch_bend_range_semitones == right.pitch_bend_range_semitones &&
+         NearlyEqual(left.master_volume, right.master_volume) &&
+         left.osc_a.waveform == right.osc_a.waveform &&
+         left.osc_a.octave == right.osc_a.octave &&
+         NearlyEqual(left.osc_a.fine_tune_cents, right.osc_a.fine_tune_cents) &&
+         NearlyEqual(left.osc_a.level, right.osc_a.level) &&
+         NearlyEqual(left.osc_a.pwm, right.osc_a.pwm) &&
+         left.osc_a.sync_enabled == right.osc_a.sync_enabled &&
+         left.osc_b.waveform == right.osc_b.waveform &&
+         left.osc_b.octave == right.osc_b.octave &&
+         NearlyEqual(left.osc_b.fine_tune_cents, right.osc_b.fine_tune_cents) &&
+         NearlyEqual(left.osc_b.level, right.osc_b.level) &&
+         NearlyEqual(left.osc_b.pwm, right.osc_b.pwm) &&
+         left.osc_b.sync_enabled == right.osc_b.sync_enabled &&
+         NearlyEqual(left.noise_level, right.noise_level) &&
+         NearlyEqual(left.filter.cutoff, right.filter.cutoff) &&
+         NearlyEqual(left.filter.resonance, right.filter.resonance) &&
+         NearlyEqual(left.filter.env_amount, right.filter.env_amount) &&
+         NearlyEqual(left.filter.lfo_amount, right.filter.lfo_amount) &&
+         NearlyEqual(left.filter.sample_hold_amount, right.filter.sample_hold_amount) &&
+         NearlyEqual(left.amp_env.attack_s, right.amp_env.attack_s) &&
+         NearlyEqual(left.amp_env.decay_s, right.amp_env.decay_s) &&
+         NearlyEqual(left.amp_env.sustain, right.amp_env.sustain) &&
+         NearlyEqual(left.amp_env.release_s, right.amp_env.release_s) &&
+         NearlyEqual(left.filter_env.attack_s, right.filter_env.attack_s) &&
+         NearlyEqual(left.filter_env.release_s, right.filter_env.release_s) &&
+         left.osc_lfo.sync_mode == right.osc_lfo.sync_mode &&
+         left.osc_lfo.waveform == right.osc_lfo.waveform &&
+         NearlyEqual(left.osc_lfo.rate_hz, right.osc_lfo.rate_hz) &&
+         NearlyEqual(left.osc_lfo.amount, right.osc_lfo.amount) &&
+         left.osc_lfo.division_index == right.osc_lfo.division_index &&
+         left.filter_lfo.sync_mode == right.filter_lfo.sync_mode &&
+         left.filter_lfo.waveform == right.filter_lfo.waveform &&
+         NearlyEqual(left.filter_lfo.rate_hz, right.filter_lfo.rate_hz) &&
+         NearlyEqual(left.filter_lfo.amount, right.filter_lfo.amount) &&
+         left.filter_lfo.division_index == right.filter_lfo.division_index &&
+         left.filter_sample_hold.sync_mode == right.filter_sample_hold.sync_mode &&
+         left.filter_sample_hold.waveform == right.filter_sample_hold.waveform &&
+         NearlyEqual(left.filter_sample_hold.rate_hz, right.filter_sample_hold.rate_hz) &&
+         NearlyEqual(left.filter_sample_hold.amount, right.filter_sample_hold.amount) &&
+         left.filter_sample_hold.division_index == right.filter_sample_hold.division_index &&
+         NearlyEqual(left.chorus.depth, right.chorus.depth) &&
+         NearlyEqual(left.chorus.rate_hz, right.chorus.rate_hz) &&
+         NearlyEqual(left.chorus.mix, right.chorus.mix) &&
+         left.delay.sync_mode == right.delay.sync_mode &&
+         NearlyEqual(left.delay.time_ms, right.delay.time_ms) &&
+         left.delay.division_index == right.delay.division_index &&
+         NearlyEqual(left.delay.feedback, right.delay.feedback) &&
+         NearlyEqual(left.delay.mix, right.delay.mix) &&
+         NearlyEqual(left.reverb.mix, right.reverb.mix);
 }
 
 }  // namespace fantome

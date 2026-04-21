@@ -57,6 +57,7 @@ class FantomeEngine {
   const ModulationFrame& LastModulationFrame() const;
   float SampleRate() const;
   std::size_t CurrentPresetSlot() const;
+  bool IsCurrentPresetDirty() const;
   EngineSessionState ExportSessionState() const;
   bool RestoreSessionState(const EngineSessionState& state);
 
