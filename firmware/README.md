@@ -20,11 +20,14 @@ On sépare volontairement le code en trois couches :
 - modes `Poly`, `Mono`, `Unison`
 - gestion de `Pitch Bend`, `Mod Wheel`, `Sustain`, `CC`, `Program Change`
 - état de transport pour la synchro `MIDI Clock`
+- première voix DSP portable
+- rendu audio stéréo de base sur Mac
+- oscillateurs de départ, enveloppes et filtre low-pass
 
 ## Ce que cette base ne fait pas encore
 
-- rendu audio temps réel
-- oscillateurs, filtre et effets DSP complets
+- effets globaux complets
+- oscillateurs et filtre DSP finalisés
 - intégration `libDaisy`
 - UI OLED réelle
 - persistance réelle sur hardware
@@ -51,4 +54,3 @@ Le but est de sécuriser très tôt :
 - le comportement MIDI
 - les règles d'allocation de voix
 - les points de friction probables avant l'arrivée du hardware
-

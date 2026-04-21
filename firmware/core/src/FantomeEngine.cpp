@@ -1,6 +1,7 @@
 #include "fantome/FantomeEngine.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 
 namespace fantome {
@@ -17,6 +18,12 @@ constexpr std::uint8_t kCcCutoff = 74;
 constexpr std::uint8_t kCcReverbMix = 91;
 constexpr std::uint8_t kCcChorusDepth = 93;
 constexpr std::uint8_t kCcAllNotesOff = 123;
+constexpr std::array<float, kVoiceCount> kVoicePan {-0.36f, -0.12f, 0.12f, 0.36f};
+
+float SoftClip(float input)
+{
+  return std::tanh(input);
+}
 
 }  // namespace
 
@@ -30,8 +37,18 @@ void FantomeEngine::Reset()
   preset_bank_ = MakeFactoryPresetBank();
   patch_ = preset_bank_[0];
   allocator_.AllNotesOff();
+  allocator_snapshot_ = allocator_.Voices();
   performance_ = PerformanceState {};
   transport_ = TransportState {};
+  ResetDspVoices();
+}
+
+void FantomeEngine::SetSampleRate(float sample_rate)
+{
+  sample_rate_ = std::clamp(sample_rate, 8000.0f, 192000.0f);
+  for (auto& voice : dsp_voices_) {
+    voice.SetSampleRate(sample_rate_);
+  }
 }
 
 void FantomeEngine::HandleMidi(const MidiMessage& message)
@@ -80,6 +97,8 @@ void FantomeEngine::HandleMidi(const MidiMessage& message)
     case MidiMessageType::Unknown:
       break;
   }
+
+  SyncVoicesFromAllocator();
 }
 
 void FantomeEngine::SetClockTempoBpm(float bpm)
@@ -103,8 +122,40 @@ bool FantomeEngine::LoadPreset(std::size_t slot)
 
   patch_ = preset_bank_[slot];
   allocator_.AllNotesOff();
+  allocator_snapshot_ = allocator_.Voices();
+  ResetDspVoices();
   performance_.sustain = false;
   return true;
+}
+
+void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
+{
+  if (left == nullptr || right == nullptr || frame_count == 0) {
+    return;
+  }
+
+  constexpr float kHeadroom = 0.22f;
+  for (std::size_t frame = 0; frame < frame_count; ++frame) {
+    float mix_left = 0.0f;
+    float mix_right = 0.0f;
+
+    for (std::size_t voice_index = 0; voice_index < dsp_voices_.size(); ++voice_index) {
+      auto& voice = dsp_voices_[voice_index];
+      const auto sample = voice.Render(
+        patch_,
+        performance_.pitch_bend,
+        performance_.mod_wheel);
+      const auto pan = kVoicePan[voice_index];
+      const auto gain_left = std::sqrt(0.5f * (1.0f - pan));
+      const auto gain_right = std::sqrt(0.5f * (1.0f + pan));
+
+      mix_left += sample * gain_left;
+      mix_right += sample * gain_right;
+    }
+
+    left[frame] = SoftClip(mix_left * patch_.master_volume * kHeadroom);
+    right[frame] = SoftClip(mix_right * patch_.master_volume * kHeadroom);
+  }
 }
 
 Patch& FantomeEngine::CurrentPatchMutable()
@@ -135,6 +186,11 @@ const TransportState& FantomeEngine::Transport() const
 const PerformanceState& FantomeEngine::Performance() const
 {
   return performance_;
+}
+
+float FantomeEngine::SampleRate() const
+{
+  return sample_rate_;
 }
 
 bool FantomeEngine::MatchesCurrentChannel(const MidiMessage& message) const
@@ -191,6 +247,7 @@ void FantomeEngine::HandleControlChange(std::uint8_t controller, std::uint8_t va
     case kCcAllNotesOff:
       allocator_.AllNotesOff();
       performance_.sustain = false;
+      ResetDspVoices();
       break;
     default:
       break;
@@ -217,5 +274,43 @@ float FantomeEngine::NormalizeMidi7(std::uint8_t value)
   return static_cast<float>(value) / 127.0f;
 }
 
-}  // namespace fantome
+void FantomeEngine::SyncVoicesFromAllocator()
+{
+  const auto& allocator_voices = allocator_.Voices();
 
+  for (std::size_t index = 0; index < allocator_voices.size(); ++index) {
+    const auto& state = allocator_voices[index];
+    const auto& previous = allocator_snapshot_[index];
+    auto& dsp_voice = dsp_voices_[index];
+
+    if (state.active) {
+      const auto assignment_changed =
+        !previous.active || state.note != previous.note || state.age != previous.age;
+
+      if (assignment_changed) {
+        bool retrigger = true;
+        if ((patch_.play_mode == PlayMode::Mono || patch_.play_mode == PlayMode::Unison) &&
+            patch_.legato_enabled &&
+            previous.active) {
+          retrigger = false;
+        }
+
+        dsp_voice.Start(state.note, state.velocity, retrigger);
+      }
+    } else if (previous.active) {
+      dsp_voice.Release();
+    }
+  }
+
+  allocator_snapshot_ = allocator_voices;
+}
+
+void FantomeEngine::ResetDspVoices()
+{
+  for (auto& voice : dsp_voices_) {
+    voice.SetSampleRate(sample_rate_);
+    voice.Reset();
+  }
+}
+
+}  // namespace fantome

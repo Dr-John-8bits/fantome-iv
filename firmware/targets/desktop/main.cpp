@@ -1,6 +1,8 @@
 #include <iomanip>
 #include <iostream>
+#include <numeric>
 #include <string>
+#include <vector>
 
 #include "fantome/FantomeEngine.h"
 
@@ -39,6 +41,7 @@ void PrintVoices(const fantome::FantomeEngine& engine)
 int main()
 {
   fantome::FantomeEngine engine;
+  engine.SetSampleRate(48000.0f);
 
   std::cout << "Fantome IV desktop smoke\n";
   std::cout << "patch: " << engine.CurrentPatch().name
@@ -69,6 +72,21 @@ int main()
             << '\n';
 
   PrintVoices(engine);
+
+  std::vector<float> left(4096, 0.0f);
+  std::vector<float> right(4096, 0.0f);
+  engine.Render(left.data(), right.data(), left.size());
+
+  const auto energy = std::inner_product(
+    left.begin(),
+    left.end(),
+    right.begin(),
+    0.0f,
+    std::plus<float> {},
+    [](float l, float r) {
+      return (l * l) + (r * r);
+    });
+
+  std::cout << "render_energy=" << energy << '\n';
   return 0;
 }
-

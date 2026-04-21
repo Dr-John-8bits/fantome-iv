@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(
   fantome_core
   core/src/FantomeEngine.cpp
+  core/src/SynthVoice.cpp
   core/src/VoiceAllocator.cpp
 )
 
@@ -39,4 +40,3 @@ add_executable(
 )
 
 target_link_libraries(fantome_tests PRIVATE fantome_core)
-

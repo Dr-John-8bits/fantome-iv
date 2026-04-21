@@ -1,0 +1,64 @@
+#pragma once
+
+#include <cstdint>
+
+#include "fantome/Patch.h"
+
+namespace fantome {
+
+class SynthVoice {
+ public:
+  void SetSampleRate(float sample_rate);
+  void Reset();
+  void Start(std::uint8_t note, std::uint8_t velocity, bool retrigger);
+  void Release();
+  float Render(const Patch& patch, float pitch_bend, float mod_wheel);
+  bool IsActive() const;
+
+ private:
+  enum class EnvelopeStage {
+    Idle,
+    Attack,
+    Decay,
+    Sustain,
+    Hold,
+    Release,
+  };
+
+  float ProcessOscillator(
+    Waveform waveform,
+    float frequency_hz,
+    float pulse_width,
+    float& phase);
+  float AdvanceAmpEnvelope(const AmpEnvelopeSettings& settings);
+  float AdvanceFilterEnvelope(const FilterEnvelopeSettings& settings);
+  float ProcessFilter(float input, float cutoff_hz, float resonance);
+  float OscillatorFrequencyHz(
+    const OscillatorSettings& settings,
+    float pitch_bend,
+    float vibrato_semitones) const;
+
+  float sample_rate_ = 48000.0f;
+  bool active_ = false;
+  bool gate_ = false;
+  std::uint8_t note_ = 0;
+  std::uint8_t velocity_ = 0;
+  float velocity_gain_ = 0.0f;
+
+  float osc_a_phase_ = 0.0f;
+  float osc_b_phase_ = 0.0f;
+  float vibrato_phase_ = 0.0f;
+
+  EnvelopeStage amp_stage_ = EnvelopeStage::Idle;
+  float amp_env_ = 0.0f;
+
+  EnvelopeStage filter_stage_ = EnvelopeStage::Idle;
+  float filter_env_ = 0.0f;
+
+  float filter_low_ = 0.0f;
+  float filter_band_ = 0.0f;
+
+  std::uint32_t noise_state_ = 0x12345678u;
+};
+
+}  // namespace fantome

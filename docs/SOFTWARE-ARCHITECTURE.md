@@ -148,3 +148,20 @@ Cette architecture permet de :
 - réduire le risque de se retrouver avec une carte branchée mais pas de socle logiciel
 - garder le projet open source lisible et maintenable
 - faciliter la reprise du projet par d'autres personnes
+
+## 8. Jalons déjà posés
+
+La base logicielle porte déjà :
+
+- le modèle de patch V1
+- la banque de `4` presets d'usine
+- le moteur MIDI de base
+- l'allocation de voix
+- une cible desktop de smoke test
+- des tests locaux
+- une première voix DSP portable avec oscillateurs, enveloppes et filtre
+- un premier rendu stéréo de travail
+
+Ce n'est pas encore la qualité sonore finale.
+
+C'est en revanche une vraie base de firmware exploitable sans hardware.

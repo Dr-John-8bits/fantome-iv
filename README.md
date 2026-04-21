@@ -107,12 +107,15 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - cœur logiciel portable en place
 - cible desktop de smoke test en place
 - premiers tests locaux en place
+- premier chemin de rendu audio portable en place
+- première voix DSP portable en place : oscillateurs, enveloppes, filtre, rendu stéréo de base
 
 ## Prochaine étape
 
 Faire grandir le cœur logiciel avant achat du hardware :
 
 - enrichir le moteur portable : paramètres, DSP, états UI et presets
-- ajouter progressivement oscillateurs, enveloppes, filtre et modulations
+- raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
+- ajouter progressivement modulations, delay, chorus et reverb
 - garder la doc et les tests alignés avec l'implémentation
 - préparer ensuite l'intégration Daisy quand le socle logiciel sera assez mûr

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "fantome/FantomeEngine.h"
 
@@ -22,6 +23,15 @@ bool HasActiveNote(const fantome::FantomeEngine& engine, std::uint8_t note)
     }
   }
   return false;
+}
+
+float BufferEnergy(const std::vector<float>& left, const std::vector<float>& right)
+{
+  float energy = 0.0f;
+  for (std::size_t index = 0; index < left.size(); ++index) {
+    energy += (left[index] * left[index]) + (right[index] * right[index]);
+  }
+  return energy;
 }
 
 void TestOldestVoiceSteal()
@@ -90,6 +100,50 @@ void TestMonoFallback()
   Expect(!HasActiveNote(engine, 67), "released mono note should not stay active");
 }
 
+void TestRenderProducesAudio()
+{
+  fantome::FantomeEngine engine;
+  engine.SetSampleRate(48000.0f);
+  engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 100));
+
+  std::vector<float> left(1024, 0.0f);
+  std::vector<float> right(1024, 0.0f);
+  engine.Render(left.data(), right.data(), left.size());
+
+  Expect(BufferEnergy(left, right) > 0.001f,
+         "render should produce audible energy after note on");
+}
+
+void TestRenderReleaseFallsTowardSilence()
+{
+  fantome::FantomeEngine engine;
+  engine.SetSampleRate(48000.0f);
+  engine.CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  engine.CurrentPatchMutable().amp_env.decay_s = 0.01f;
+  engine.CurrentPatchMutable().amp_env.sustain = 0.0f;
+  engine.CurrentPatchMutable().amp_env.release_s = 0.01f;
+  engine.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 100));
+
+  std::vector<float> pre_release_left(1024, 0.0f);
+  std::vector<float> pre_release_right(1024, 0.0f);
+  engine.Render(
+    pre_release_left.data(),
+    pre_release_right.data(),
+    pre_release_left.size());
+
+  engine.HandleMidi(fantome::MidiMessage::NoteOff(1, 60));
+  std::vector<float> post_release_left(4096, 0.0f);
+  std::vector<float> post_release_right(4096, 0.0f);
+  engine.Render(
+    post_release_left.data(),
+    post_release_right.data(),
+    post_release_left.size());
+
+  const auto tail_energy = BufferEnergy(post_release_left, post_release_right);
+  Expect(tail_energy < 5.0f,
+         "release tail should decay toward silence with a short release");
+}
+
 }  // namespace
 
 int main()
@@ -100,6 +154,8 @@ int main()
     TestCcMapping();
     TestSustainBehavior();
     TestMonoFallback();
+    TestRenderProducesAudio();
+    TestRenderReleaseFallsTowardSilence();
   } catch (const std::exception& exception) {
     std::cerr << "Test failure: " << exception.what() << '\n';
     return 1;
@@ -108,4 +164,3 @@ int main()
   std::cout << "Fantome IV tests: OK\n";
   return 0;
 }
-
