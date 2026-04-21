@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/lib CMakeFiles/fantome_tests.dir/tests/test_main.cpp.o -o fantome_tests  libfantome_core.a
