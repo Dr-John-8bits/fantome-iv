@@ -110,7 +110,8 @@ int main()
 
   std::vector<float> left(4096, 0.0f);
   std::vector<float> right(4096, 0.0f);
-  runtime.Render(left.data(), right.data(), left.size());
+  fantome::HardwareAudioBuffer audio {left.data(), right.data(), left.size()};
+  runtime.Render(audio);
 
   const auto energy = std::inner_product(
     left.begin(),
@@ -123,9 +124,14 @@ int main()
     });
 
   std::cout << "render_energy=" << std::setprecision(6) << energy << '\n';
+  auto output = runtime.BuildHardwareOutputFrame();
+  std::cout << std::setprecision(2);
+  std::cout << "audio_blocks=" << output.audio_block_count
+            << " peak=" << output.output_peak
+            << " clip=" << (output.output_clip ? "yes" : "no") << '\n';
   std::cout << std::setprecision(2);
   runtime.AdvanceDisplay(1.6f);
-  const auto output = runtime.BuildHardwareOutputFrame();
+  output = runtime.BuildHardwareOutputFrame();
   std::cout << "startup_active="
             << (output.startup_active ? "yes" : "no")
             << " elapsed=" << runtime.StartupDisplay().ElapsedSeconds()

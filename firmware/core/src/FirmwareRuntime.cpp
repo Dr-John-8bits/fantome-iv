@@ -1,8 +1,15 @@
 #include "fantome/FirmwareRuntime.h"
 
 #include <algorithm>
+#include <cmath>
 
 namespace fantome {
+
+namespace {
+
+constexpr float kPeakDecayPerSecond = 0.80f;
+
+}  // namespace
 
 RuntimeBootResult FirmwareRuntime::BootWithSession(
   const std::string& session_path,
@@ -56,12 +63,38 @@ void FirmwareRuntime::HandleMidi(const MidiMessage& message)
 void FirmwareRuntime::AdvanceDisplay(float delta_seconds)
 {
   startup_display_.Advance(delta_seconds);
+  ui_.Advance(delta_seconds);
   midi_activity_hold_s_ = std::max(0.0f, midi_activity_hold_s_ - std::max(delta_seconds, 0.0f));
+  clip_activity_hold_s_ = std::max(0.0f, clip_activity_hold_s_ - std::max(delta_seconds, 0.0f));
+  output_peak_hold_ = std::max(0.0f, output_peak_hold_ - (kPeakDecayPerSecond * std::max(delta_seconds, 0.0f)));
+}
+
+void FirmwareRuntime::Render(HardwareAudioBuffer& buffer)
+{
+  if (!buffer.IsValid()) {
+    buffer.Clear();
+    return;
+  }
+
+  engine_.Render(buffer.left, buffer.right, buffer.frame_count);
+
+  float peak = 0.0f;
+  for (std::size_t index = 0; index < buffer.frame_count; ++index) {
+    peak = std::max(peak, std::fabs(buffer.left[index]));
+    peak = std::max(peak, std::fabs(buffer.right[index]));
+  }
+
+  output_peak_hold_ = std::max(output_peak_hold_, peak);
+  if (peak >= 0.985f) {
+    clip_activity_hold_s_ = 0.18f;
+  }
+  ++audio_block_count_;
 }
 
 void FirmwareRuntime::Render(float* left, float* right, std::size_t frame_count)
 {
-  engine_.Render(left, right, frame_count);
+  HardwareAudioBuffer buffer {left, right, frame_count};
+  Render(buffer);
 }
 
 HardwareOutputFrame FirmwareRuntime::BuildHardwareOutputFrame() const
@@ -75,6 +108,9 @@ HardwareOutputFrame FirmwareRuntime::BuildHardwareOutputFrame() const
   output.midi_activity = midi_activity_hold_s_ > 0.0f;
   output.preset_dirty = engine_.IsCurrentPresetDirty();
   output.startup_active = startup_display_.ShowingSplash();
+  output.output_clip = clip_activity_hold_s_ > 0.0f;
+  output.output_peak = output_peak_hold_;
+  output.audio_block_count = audio_block_count_;
   output.active_preset_slot = engine_.CurrentPresetSlot();
 
   if (!standalone_) {
@@ -159,6 +195,9 @@ void FirmwareRuntime::ResetCore(float sample_rate)
   controls_.Reset();
   startup_display_.Reset();
   midi_activity_hold_s_ = 0.0f;
+  output_peak_hold_ = 0.0f;
+  clip_activity_hold_s_ = 0.0f;
+  audio_block_count_ = 0;
   engine_.SetSampleRate(sample_rate);
 }
 
@@ -198,9 +237,19 @@ bool FirmwareRuntime::ConsumeUiRuntimeActions()
 
   switch (action) {
     case UiAction::SaveSession:
-      return SaveSessionCheckpoint();
+      if (SaveSessionCheckpoint()) {
+        ui_.SetTransientStatus("Session saved", 1.8f);
+        return true;
+      }
+      ui_.SetTransientStatus("Save failed", 1.8f);
+      return false;
     case UiAction::ReloadSession:
-      return ReloadSession();
+      if (ReloadSession()) {
+        ui_.SetTransientStatus("Session restored", 1.8f);
+        return true;
+      }
+      ui_.SetTransientStatus("Reload failed", 1.8f);
+      return false;
     case UiAction::None:
     case UiAction::LoadPreset:
     case UiAction::SavePreset:

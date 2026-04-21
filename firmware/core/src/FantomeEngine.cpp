@@ -44,8 +44,16 @@ float VoicePanForMode(PlayMode mode, std::size_t voice_index)
 float VoiceNormalizationForMode(PlayMode mode, std::size_t active_voice_count)
 {
   const auto safe_count = static_cast<float>(std::max<std::size_t>(1, active_voice_count));
-  const auto base = mode == PlayMode::Unison ? 1.02f : 0.88f;
-  return base / std::sqrt(safe_count);
+  switch (mode) {
+    case PlayMode::Mono:
+      return 0.92f;
+    case PlayMode::Unison:
+      return 0.84f / std::pow(safe_count, 0.72f);
+    case PlayMode::Poly:
+      return 0.86f / std::sqrt(safe_count);
+  }
+
+  return 0.84f;
 }
 
 }  // namespace
@@ -64,6 +72,10 @@ void FantomeEngine::Reset()
   allocator_snapshot_ = allocator_.Voices();
   performance_ = PerformanceState {};
   transport_ = TransportState {};
+  output_dc_left_in_ = 0.0f;
+  output_dc_left_out_ = 0.0f;
+  output_dc_right_in_ = 0.0f;
+  output_dc_right_out_ = 0.0f;
   ResetDspVoices();
 }
 
@@ -190,7 +202,7 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
     return;
   }
 
-  constexpr float kHeadroom = 0.22f;
+  constexpr float kHeadroom = 0.24f;
   for (std::size_t frame = 0; frame < frame_count; ++frame) {
     last_modulation_ = BuildModulationFrame();
     const auto active_voice_count = static_cast<std::size_t>(std::count_if(
@@ -224,8 +236,24 @@ void FantomeEngine::Render(float* left, float* right, std::size_t frame_count)
     delay_.Process(mix_left, mix_right, patch_.delay, transport_.tempo_bpm);
     reverb_.Process(mix_left, mix_right, patch_.reverb);
 
-    left[frame] = SoftClip(mix_left * patch_.master_volume * kHeadroom);
-    right[frame] = SoftClip(mix_right * patch_.master_volume * kHeadroom);
+    const auto wet_trim = 0.98f -
+                          (patch_.chorus.mix * 0.08f) -
+                          (patch_.delay.mix * 0.12f) -
+                          (patch_.reverb.mix * 0.10f);
+    mix_left *= std::max(0.72f, wet_trim);
+    mix_right *= std::max(0.72f, wet_trim);
+
+    const auto calibrated_left = ProcessDcBlock(
+      mix_left * patch_.master_volume * kHeadroom,
+      output_dc_left_in_,
+      output_dc_left_out_);
+    const auto calibrated_right = ProcessDcBlock(
+      mix_right * patch_.master_volume * kHeadroom,
+      output_dc_right_in_,
+      output_dc_right_out_);
+
+    left[frame] = SoftClip(calibrated_left * 1.04f);
+    right[frame] = SoftClip(calibrated_right * 1.04f);
   }
 }
 
@@ -469,6 +497,15 @@ ModulationFrame FantomeEngine::BuildModulationFrame()
     (sample_hold_sample * filter_sample_hold_amount * 0.30f);
 
   return frame;
+}
+
+float FantomeEngine::ProcessDcBlock(float input, float& input_state, float& output_state)
+{
+  constexpr float kDcBlockR = 0.995f;
+  const auto output = input - input_state + (kDcBlockR * output_state);
+  input_state = input;
+  output_state = output;
+  return output;
 }
 
 }  // namespace fantome

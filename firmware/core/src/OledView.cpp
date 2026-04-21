@@ -283,6 +283,9 @@ std::string OledTextRenderer::FooterText(
   }
 
   if (model.page_label == "System") {
+    if (model.status_text.rfind("Slot ", 0) != 0) {
+      return model.status_text;
+    }
     return SessionStatusText(session_state);
   }
 

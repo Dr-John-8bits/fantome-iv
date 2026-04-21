@@ -124,7 +124,10 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - couche d'input portable en place pour simuler encodeur, boutons et potentiomètres
 - runtime firmware portable unifié en place
 - logique d'entrées/sorties hardware abstraites en place
+- scanner portable `raw -> cooked` des contrôles en place
+- rendu audio bloc par bloc avec métriques de sortie en place
 - première cible `targets/daisy/` mince compilable en place
+- adaptation Daisy en stub séparant tick de contrôle et rendu audio en place
 - audit global projet exécuté et validé
 
 ## Prochaine étape

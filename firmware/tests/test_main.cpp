@@ -15,6 +15,8 @@
 #include "fantome/SessionPersistence.h"
 #include "fantome/StartupDisplay.h"
 #include "fantome/UiState.h"
+#include "DaisyApp.h"
+#include "DaisyPlatformStub.h"
 
 namespace {
 
@@ -803,6 +805,34 @@ void TestHardwareControlRouterBridgesRawControls()
          "hardware router should preserve the fixed cutoff mapping on pot 2");
 }
 
+void TestHardwareControlScannerFiltersRawInput()
+{
+  fantome::HardwareControlScanner scanner;
+  fantome::RawHardwareInputFrame raw;
+  fantome::HardwareInputFrame cooked;
+
+  raw.pot_available[1] = true;
+  raw.pots[1] = 0.0f;
+  Expect(scanner.Scan(raw, cooked),
+         "scanner should report a first available potentiometer sample");
+  Expect(cooked.pots[1].available,
+         "scanner should expose available pots");
+
+  raw.ClearTransient();
+  raw.pot_available[1] = true;
+  raw.pots[1] = 1.0f;
+  raw.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::PageNext)] = true;
+  raw.PushMidi(fantome::MidiMessage::NoteOn(1, 60, 100));
+  Expect(scanner.Scan(raw, cooked),
+         "scanner should surface button edges, MIDI and filtered pot motion");
+  Expect(cooked.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::PageNext)].just_pressed,
+         "scanner should detect just-pressed button edges");
+  Expect(cooked.midi_message_count == 1,
+         "scanner should forward queued MIDI messages");
+  Expect(cooked.pots[1].normalized > 0.2f && cooked.pots[1].normalized < 1.0f,
+         "scanner should smooth large pot jumps instead of teleporting");
+}
+
 void TestFirmwareRuntimeTracksDirtyPresetAndSession()
 {
   const auto session_path =
@@ -841,6 +871,27 @@ void TestFirmwareRuntimeTracksDirtyPresetAndSession()
   std::filesystem::remove(session_path);
 }
 
+void TestFirmwareRuntimeRenderAudioBlockTracksMeter()
+{
+  fantome::FirmwareRuntime runtime;
+  runtime.BootStandalone(48000.0f);
+  runtime.Engine().CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  runtime.Engine().CurrentPatchMutable().amp_env.decay_s = 0.02f;
+  runtime.Engine().CurrentPatchMutable().amp_env.sustain = 0.7f;
+  runtime.HandleMidi(fantome::MidiMessage::NoteOn(1, 60, 110));
+
+  std::vector<float> left(2048, 0.0f);
+  std::vector<float> right(2048, 0.0f);
+  fantome::HardwareAudioBuffer buffer {left.data(), right.data(), left.size()};
+  runtime.Render(buffer);
+
+  const auto output = runtime.BuildHardwareOutputFrame();
+  Expect(output.audio_block_count == 1,
+         "runtime should count rendered audio blocks");
+  Expect(output.output_peak > 0.001f,
+         "runtime should expose a non-zero output peak after rendering audio");
+}
+
 void TestFirmwareRuntimeUiSaveAndReloadSessionActions()
 {
   const auto session_path =
@@ -870,9 +921,12 @@ void TestFirmwareRuntimeUiSaveAndReloadSessionActions()
   frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
   runtime.ApplyHardwareFrame(frame);
 
+  runtime.AdvanceDisplay(1.6f);
   auto output = runtime.BuildHardwareOutputFrame();
   Expect(!output.session_dirty,
          "save-session action from the system page should clear the session dirty flag");
+  Expect(output.oled.ToDebugString().find("Session saved") != std::string::npos,
+         "save-session action should surface a transient confirmation message");
 
   runtime.Engine().CurrentPatchMutable().filter.cutoff = 0.82f;
   runtime.Engine().CurrentPatchMutable().name = "Unsaved";
@@ -890,9 +944,46 @@ void TestFirmwareRuntimeUiSaveAndReloadSessionActions()
          "reload-session action should restore the last saved session patch state");
   Expect(runtime.Engine().CurrentPatch().name == "Ghost Pad",
          "reload-session action should restore the last saved session patch name");
+  runtime.AdvanceDisplay(0.01f);
+  output = runtime.BuildHardwareOutputFrame();
+  Expect(output.oled.ToDebugString().find("Session restored") != std::string::npos,
+         "reload-session action should surface a transient restore message");
+
+  runtime.AdvanceDisplay(2.0f);
+  output = runtime.BuildHardwareOutputFrame();
+  Expect(output.oled.ToDebugString().find("Session restored") == std::string::npos,
+         "transient session message should expire after a short hold time");
 
   runtime.Shutdown();
   std::filesystem::remove(session_path);
+}
+
+void TestDaisyStubAppBridgesQueuedInputAndAudio()
+{
+  fantome::DaisyPlatformStub platform;
+  fantome::DaisyApp app(platform);
+  app.BootStandalone();
+
+  fantome::RawHardwareInputFrame raw;
+  raw.PushMidi(fantome::MidiMessage::NoteOn(1, 60, 110));
+  raw.pot_available[1] = true;
+  raw.pots[1] = 0.42f;
+  platform.QueueInput(raw);
+
+  Expect(app.TickControlFrame(0.01f),
+         "daisy app should consume queued stub input");
+  Expect(platform.LastOutput().midi_activity,
+         "queued MIDI should light the runtime MIDI activity state");
+
+  std::vector<float> left(1024, 0.0f);
+  std::vector<float> right(1024, 0.0f);
+  fantome::HardwareAudioBuffer buffer {left.data(), right.data(), left.size()};
+  app.RenderAudioBlock(buffer);
+
+  Expect(BufferEnergy(left, right) > 0.0001f,
+         "daisy stub app should render audible audio through the runtime");
+  Expect(platform.LastOutput().audio_block_count == 1,
+         "daisy stub app should surface rendered audio block metrics");
 }
 
 void TestSessionManagerStartsFreshWhenNoSessionFile()
@@ -1070,8 +1161,11 @@ int main()
     TestPortableSessionPersistenceRoundTrip();
     TestPortableInputSurfaceCanNavigateAndEdit();
     TestHardwareControlRouterBridgesRawControls();
+    TestHardwareControlScannerFiltersRawInput();
     TestFirmwareRuntimeTracksDirtyPresetAndSession();
+    TestFirmwareRuntimeRenderAudioBlockTracksMeter();
     TestFirmwareRuntimeUiSaveAndReloadSessionActions();
+    TestDaisyStubAppBridgesQueuedInputAndAudio();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

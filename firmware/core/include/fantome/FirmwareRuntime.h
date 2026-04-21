@@ -21,6 +21,7 @@ class FirmwareRuntime {
   bool ApplyHardwareFrame(const HardwareInputFrame& frame);
   void HandleMidi(const MidiMessage& message);
   void AdvanceDisplay(float delta_seconds);
+  void Render(HardwareAudioBuffer& buffer);
   void Render(float* left, float* right, std::size_t frame_count);
   HardwareOutputFrame BuildHardwareOutputFrame() const;
   bool SaveSessionCheckpoint();
@@ -49,6 +50,9 @@ class FirmwareRuntime {
   StartupDisplayController startup_display_ {};
   bool standalone_ = true;
   float midi_activity_hold_s_ = 0.0f;
+  float output_peak_hold_ = 0.0f;
+  float clip_activity_hold_s_ = 0.0f;
+  std::size_t audio_block_count_ = 0;
 };
 
 }  // namespace fantome

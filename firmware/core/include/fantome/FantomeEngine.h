@@ -71,6 +71,7 @@ class FantomeEngine {
   void SyncVoicesFromAllocator();
   void ResetDspVoices();
   ModulationFrame BuildModulationFrame();
+  float ProcessDcBlock(float input, float& input_state, float& output_state);
   static float NormalizeMidi7(std::uint8_t value);
 
   Patch patch_ {};
@@ -89,6 +90,10 @@ class FantomeEngine {
   ModulationFrame last_modulation_ {};
   float sample_rate_ = 48000.0f;
   std::size_t active_preset_slot_ = 0;
+  float output_dc_left_in_ = 0.0f;
+  float output_dc_left_out_ = 0.0f;
+  float output_dc_right_in_ = 0.0f;
+  float output_dc_right_out_ = 0.0f;
 };
 
 }  // namespace fantome

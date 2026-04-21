@@ -17,6 +17,16 @@ float Clamp01(float value)
   return std::clamp(value, 0.0f, 1.0f);
 }
 
+float VelocityToGain(float normalized_velocity)
+{
+  const auto clamped = Clamp01(normalized_velocity);
+  if (clamped <= 0.0f) {
+    return 0.0f;
+  }
+
+  return 0.18f + (0.82f * std::pow(clamped, 0.72f));
+}
+
 float MidiNoteToHz(float note)
 {
   return 440.0f * std::pow(2.0f, (note - 69.0f) / 12.0f);
@@ -89,7 +99,7 @@ void SynthVoice::Start(std::uint8_t note, std::uint8_t velocity, bool retrigger)
 {
   note_ = note;
   velocity_ = velocity;
-  velocity_gain_ = std::clamp(static_cast<float>(velocity_) / 127.0f, 0.0f, 1.0f);
+  velocity_gain_ = VelocityToGain(static_cast<float>(velocity_) / 127.0f);
   active_ = true;
   gate_ = true;
 

@@ -476,6 +476,21 @@ void UiState::NotifyPresetLoaded(const FantomeEngine& engine)
   RearmAllPots(engine);
 }
 
+void UiState::Advance(float delta_seconds)
+{
+  transient_status_hold_s_ =
+    std::max(0.0f, transient_status_hold_s_ - std::max(delta_seconds, 0.0f));
+  if (transient_status_hold_s_ <= 0.0f) {
+    transient_status_text_.clear();
+  }
+}
+
+void UiState::SetTransientStatus(const std::string& text, float hold_seconds)
+{
+  transient_status_text_ = text;
+  transient_status_hold_s_ = std::max(hold_seconds, 0.0f);
+}
+
 UiPage UiState::CurrentPage() const
 {
   return current_page_;
@@ -594,6 +609,8 @@ void UiState::RestoreSessionState(const UiSessionState& state, const FantomeEngi
   preset_target_slot_ = std::min(state.preset_target_slot, kPresetCount - 1);
   pending_action_ = state.pending_action;
   emitted_runtime_action_ = UiAction::None;
+  transient_status_text_.clear();
+  transient_status_hold_s_ = 0.0f;
 
   ClampSelection();
   AssignFixedPots();
@@ -707,11 +724,13 @@ void UiState::ApplyPendingAction(FantomeEngine& engine)
     case UiAction::LoadPreset:
       if (engine.LoadPreset(preset_target_slot_)) {
         NotifyPresetLoaded(engine);
+        SetTransientStatus("Loaded " + PresetSlotLabel(preset_target_slot_), 1.4f);
       }
       break;
     case UiAction::SavePreset:
       engine.SavePreset(preset_target_slot_);
       preset_target_slot_ = engine.CurrentPresetSlot();
+      SetTransientStatus("Saved " + PresetSlotLabel(preset_target_slot_), 1.4f);
       break;
     case UiAction::SaveSession:
     case UiAction::ReloadSession:
@@ -720,6 +739,7 @@ void UiState::ApplyPendingAction(FantomeEngine& engine)
     case UiAction::InitPatch:
       engine.InitializeCurrentPatch();
       RearmAllPots(engine);
+      SetTransientStatus("Patch reset", 1.4f);
       break;
     case UiAction::None:
       break;
@@ -885,6 +905,10 @@ std::string UiState::FormatItemValue(const UiItem& item, const FantomeEngine& en
 
 std::string UiState::BuildStatusText(const FantomeEngine& engine) const
 {
+  if (transient_status_hold_s_ > 0.0f && !transient_status_text_.empty()) {
+    return transient_status_text_;
+  }
+
   const auto& patch = engine.CurrentPatch();
 
   switch (current_page_) {

@@ -14,6 +14,10 @@ Ce dossier porte maintenant une première cible `Daisy` volontairement très min
 - [DaisyPlatform.h](./DaisyPlatform.h) définit l'interface minimale de plateforme
 - [DaisyApp.h](./DaisyApp.h) recolle cette plateforme au runtime portable
 - [DaisyPlatformStub.h](./DaisyPlatformStub.h) fournit une implémentation de test sans hardware
+- `DaisyApp` sépare maintenant explicitement :
+  - le tick de contrôle
+  - le rendu audio bloc par bloc
+- un scanner portable transforme les lectures brutes de contrôles en événements firmware stables
 - si `libDaisy` n'est pas disponible, la cible compile en mode `stub`
 - si `libDaisy` est disponible plus tard, ce point d'entrée servira de base à l'intégration réelle
 
@@ -25,6 +29,7 @@ Ce dossier porte maintenant une première cible `Daisy` volontairement très min
 - l'affichage OLED réel
 - le `MIDI UART DIN`
 - la persistance finale sur la cible
+- le branchement effectif des callbacks audio temps réel
 
 ## Règle
 

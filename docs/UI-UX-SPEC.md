@@ -415,6 +415,7 @@ Affichage portable retenu :
 - `init patch` disponible
 - sauvegarde de session explicite disponible
 - rechargement de session explicite disponible
+- message transitoire de confirmation après `write slot`, `save session` et `reload session`
 - rappel du dernier preset au démarrage recommandé
 
 ### 7.3 Comportement attendu

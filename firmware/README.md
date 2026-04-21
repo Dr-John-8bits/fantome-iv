@@ -40,10 +40,13 @@ On sépare volontairement le code en trois couches :
 - mini navigateur `preset/session` sur la page système OLED portable
 - persistance portable de session de travail
 - session manager portable explicite pour le démarrage et l'arrêt
+- messages transitoires de confirmation pour `save`, `reload` et `write slot`
 - contrôleur portable de splash screen au démarrage
 - couche d'input portable pour simuler boutons, encodeur et potards
 - runtime firmware portable unifié
 - logique d'entrées/sorties hardware abstraites
+- scanner matériel portable `raw -> cooked` pour préparer le scan réel des contrôles
+- rendu audio portable bloc par bloc avec métriques de sortie
 - première cible `targets/daisy/` très mince avec stub compilable
 
 ## Ce que cette base ne fait pas encore
@@ -54,6 +57,7 @@ On sépare volontairement le code en trois couches :
 - UI OLED réelle sur `Daisy`
 - persistance réelle sur hardware
 - lecture des contrôles physiques réels
+- callback audio réel et drivers `OLED / MIDI UART / ADC`
 
 ## Build local
 

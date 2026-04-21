@@ -149,6 +149,8 @@ class UiState {
   void PressAction(FantomeEngine& engine);
   bool MovePot(std::size_t pot_index, float normalized, FantomeEngine& engine);
   void NotifyPresetLoaded(const FantomeEngine& engine);
+  void Advance(float delta_seconds);
+  void SetTransientStatus(const std::string& text, float hold_seconds = 1.6f);
 
   UiPage CurrentPage() const;
   UiInteractionState InteractionState() const;
@@ -200,6 +202,8 @@ class UiState {
   std::size_t preset_target_slot_ = 0;
   UiAction pending_action_ = UiAction::None;
   UiAction emitted_runtime_action_ = UiAction::None;
+  std::string transient_status_text_ {};
+  float transient_status_hold_s_ = 0.0f;
   std::array<PotTakeoverState, kPotCount> pots_ {};
 };
 

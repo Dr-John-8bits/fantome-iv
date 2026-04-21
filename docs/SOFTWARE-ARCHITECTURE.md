@@ -111,7 +111,9 @@ On peut avancer immédiatement sur :
 - persistance portable de session
 - cycle de session portable explicite `Boot / Checkpoint / Shutdown`
 - simulation logicielle des contrôles physiques
+- scan logiciel `raw -> cooked` des contrôles pour préparer le comportement matériel réel
 - première implémentation DSP portable
+- rendu audio bloc par bloc avec métriques de sortie et calibration globale
 - tests de cohérence
 
 ## 4. Ce qui attendra le hardware
@@ -189,7 +191,9 @@ La base logicielle porte déjà :
 - une façade d'input portable pour simuler encodeur, boutons et potentiomètres
 - un runtime firmware portable qui recolle moteur, UI, session et affichage
 - une première abstraction hardware pour boutons, encodeur, potards et file MIDI
-- une première cible `Daisy` très mince compilable en mode stub
+- un scanner portable qui transforme des lectures brutes en événements contrôlés
+- un rendu audio portable bloc par bloc avec suivi de peak / clip
+- une première cible `Daisy` mince compilable en mode stub, avec app et plateforme séparées
 
 Ce n'est pas encore la qualité sonore finale.
 
