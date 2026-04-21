@@ -199,6 +199,8 @@ La base logicielle porte déjà :
 - une première cible `Daisy` mince compilable en mode stub, avec app, plateforme et périphériques séparés
 - un parser `MIDI UART` portable côté stub et un stub `ADC` capable de recevoir des valeurs brutes
 - un store de session côté cible et un adaptateur interleavé pour le futur callback audio
+- une config cible Daisy figée en code, miroir de la pinmap documentaire
+- un boot cible capable d'utiliser directement un store de session appartenant à la plateforme
 
 Ce n'est pas encore la qualité sonore finale.
 

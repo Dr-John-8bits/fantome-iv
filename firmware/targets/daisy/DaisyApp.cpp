@@ -7,6 +7,15 @@ DaisyApp::DaisyApp(DaisyPlatform& platform)
 {
 }
 
+RuntimeBootResult DaisyApp::BootFromPlatform()
+{
+  if (auto* store = platform_.SessionStore()) {
+    return BootWithSessionStore(*store);
+  }
+
+  return BootStandalone();
+}
+
 RuntimeBootResult DaisyApp::BootStandalone()
 {
   platform_.Init();

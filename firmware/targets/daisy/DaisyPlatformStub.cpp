@@ -42,10 +42,25 @@ void DaisyPlatformStub::PresentIndicators(const HardwareOutputFrame& output)
   last_output_.oled = oled_.LastFrame();
 }
 
+const DaisyTargetConfig& DaisyPlatformStub::TargetConfig() const
+{
+  return target_config_;
+}
+
+DaisySessionStore* DaisyPlatformStub::SessionStore()
+{
+  return &session_store_;
+}
+
 void DaisyPlatformStub::SetAudioConfig(const DaisyAudioConfig& config)
 {
   audio_config_.sample_rate = config.sample_rate;
   audio_config_.block_size = config.block_size;
+}
+
+void DaisyPlatformStub::SetSessionPath(const std::string& session_path)
+{
+  session_store_.SetSessionPath(session_path);
 }
 
 const HardwareOutputFrame& DaisyPlatformStub::LastOutput() const
@@ -66,6 +81,11 @@ DaisyMidiUartStub& DaisyPlatformStub::MidiStub()
 DaisyOledDisplayStub& DaisyPlatformStub::OledStub()
 {
   return oled_;
+}
+
+DaisySessionFileStoreStub& DaisyPlatformStub::SessionStoreStub()
+{
+  return session_store_;
 }
 
 }  // namespace fantome

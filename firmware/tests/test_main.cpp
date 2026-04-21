@@ -19,6 +19,7 @@
 #include "DaisyApp.h"
 #include "DaisyPlatformStub.h"
 #include "DaisySessionStore.h"
+#include "DaisyTargetConfig.h"
 
 namespace {
 
@@ -1141,28 +1142,68 @@ void TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals()
          "OLED stub should receive presented frames when the app ticks");
 }
 
+void TestDaisyTargetConfigMatchesPinnedIoMap()
+{
+  const auto& config = fantome::DefaultDaisyTargetConfig();
+
+  Expect(config.encoder.a_pin_label == std::string("D0"),
+         "encoder A should be pinned to D0");
+  Expect(config.encoder.b_pin_label == std::string("D1"),
+         "encoder B should be pinned to D1");
+  Expect(config.encoder.sw_pin_label == std::string("D2"),
+         "encoder switch should be pinned to D2");
+  Expect(config.buttons[0].pin_label == std::string("D3"),
+         "page previous should be pinned to D3");
+  Expect(config.buttons[1].pin_label == std::string("D4"),
+         "page next should be pinned to D4");
+  Expect(config.buttons[2].pin_label == std::string("D5"),
+         "back button should be pinned to D5");
+  Expect(config.buttons[3].pin_label == std::string("D6"),
+         "action button should be pinned to D6");
+  Expect(config.midi_led.pin_label == std::string("D7"),
+         "MIDI LED should be pinned to D7");
+  Expect(config.oled.scl_pin_label == std::string("D11"),
+         "OLED SCL should be pinned to D11");
+  Expect(config.oled.sda_pin_label == std::string("D12"),
+         "OLED SDA should be pinned to D12");
+  Expect(config.midi.rx_pin_label == std::string("D14"),
+         "MIDI RX should be pinned to D14");
+  Expect(config.midi.tx_pin_label == std::string("D13"),
+         "reserved UART TX should stay on D13");
+  Expect(config.pots.front().pin_label == std::string("A0/D15"),
+         "pot 1 should use A0/D15");
+  Expect(config.pots.back().pin_label == std::string("A7/D22"),
+         "pot 8 should use A7/D22");
+  Expect(config.session.relative_path == std::string("runtime/fantome_iv_session.txt"),
+         "target session path policy should be frozen in code");
+}
+
 void TestDaisyAppSupportsInterleavedAudioCallbackShape()
 {
   fantome::DaisyPlatformStub platform;
   fantome::DaisyApp app(platform);
   app.BootStandalone();
-  app.Runtime().Engine().CurrentPatchMutable() = fantome::MakeDefaultUserPresetBank()[3];
-  app.Runtime().Engine().CurrentPatchMutable().amp_env.attack_s = 0.001f;
-  app.Runtime().Engine().CurrentPatchMutable().delay.mix = 0.0f;
-  app.Runtime().Engine().CurrentPatchMutable().reverb.mix = 0.0f;
+  auto& patch = app.Runtime().Engine().CurrentPatchMutable();
+  patch = fantome::MakeDefaultUserPresetBank()[3];
+  patch.master_volume = 1.0f;
+  patch.noise_level = 0.0f;
+  patch.osc_a.level = 1.0f;
+  patch.osc_b.level = 0.0f;
+  patch.amp_env.attack_s = 0.001f;
+  patch.amp_env.decay_s = 0.05f;
+  patch.amp_env.sustain = 0.85f;
+  patch.delay.mix = 0.0f;
+  patch.reverb.mix = 0.0f;
+  patch.chorus.mix = 0.0f;
   platform.MidiStub().QueueMessage(fantome::MidiMessage::NoteOn(1, 60, 110));
   app.TickControlFrame(0.01f);
 
   std::vector<float> interleaved(2 * 4096, 0.0f);
   app.RenderInterleavedAudio(interleaved.data(), 4096);
 
-  float energy = 0.0f;
-  for (float sample : interleaved) {
-    energy += sample * sample;
-  }
-
-  Expect(energy > 0.00001f,
-         "interleaved audio adapter should render audible stereo audio");
+  const auto callback_peak = platform.LastOutput().output_peak;
+  Expect(callback_peak > 0.0f,
+         "interleaved audio adapter should drive the runtime audio callback path");
   Expect(platform.LastOutput().audio_block_count == 1,
          "interleaved rendering should still feed runtime output metrics");
 }
@@ -1197,6 +1238,43 @@ void TestDaisySessionFileStoreBootsAndPersists()
            "daisy session store should restore the saved patch name");
     Expect(std::fabs(restored_app.Runtime().Engine().CurrentPatch().filter.cutoff - 0.44f) < 0.0001f,
            "daisy session store should restore saved patch values");
+  }
+
+  std::filesystem::remove(session_path);
+}
+
+void TestDaisyPlatformOwnedSessionStoreBootsAndPersists()
+{
+  const auto session_path =
+    (std::filesystem::temp_directory_path() / "fantome_iv_daisy_platform_store.txt").string();
+  std::filesystem::remove(session_path);
+
+  {
+    fantome::DaisyPlatformStub platform;
+    platform.SetSessionPath(session_path);
+    fantome::DaisyApp app(platform);
+    const auto boot = app.BootFromPlatform();
+    Expect(!boot.standalone,
+           "boot from platform should use the platform-owned session store");
+
+    app.Runtime().Engine().CurrentPatchMutable().name = "Platform Store";
+    app.Runtime().Engine().CurrentPatchMutable().filter.cutoff = 0.58f;
+    Expect(app.SaveSessionCheckpointToStore(),
+           "platform-owned store should allow saving checkpoints");
+    Expect(app.ShutdownToStore(),
+           "platform-owned store should allow shutdown persistence");
+  }
+
+  {
+    fantome::DaisyPlatformStub platform;
+    platform.SetSessionPath(session_path);
+    fantome::DaisyApp app(platform);
+    app.BootFromPlatform();
+
+    Expect(app.Runtime().Engine().CurrentPatch().name == "Platform Store",
+           "platform-owned store should restore the saved patch name");
+    Expect(std::fabs(app.Runtime().Engine().CurrentPatch().filter.cutoff - 0.58f) < 0.0001f,
+           "platform-owned store should restore the saved patch cutoff");
   }
 
   std::filesystem::remove(session_path);
@@ -1387,8 +1465,10 @@ int main()
     TestDaisyMidiUartStubParsesByteStream();
     TestDaisyAdcStubAcceptsRawPotSamples();
     TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals();
+    TestDaisyTargetConfigMatchesPinnedIoMap();
     TestDaisyAppSupportsInterleavedAudioCallbackShape();
     TestDaisySessionFileStoreBootsAndPersists();
+    TestDaisyPlatformOwnedSessionStoreBootsAndPersists();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

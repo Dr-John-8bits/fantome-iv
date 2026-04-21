@@ -52,7 +52,9 @@ add_executable(
   targets/daisy/DaisyApp.cpp
   targets/daisy/DaisyPeripherals.cpp
   targets/daisy/DaisySessionStore.cpp
+  targets/daisy/DaisyTargetConfig.cpp
   targets/daisy/DaisyPlatformStub.cpp
+  targets/daisy/LibDaisyPlatform.cpp
 )
 
 target_link_libraries(fantome_tests PRIVATE fantome_core)
@@ -67,7 +69,9 @@ add_executable(
   targets/daisy/DaisyApp.cpp
   targets/daisy/DaisyPeripherals.cpp
   targets/daisy/DaisySessionStore.cpp
+  targets/daisy/DaisyTargetConfig.cpp
   targets/daisy/DaisyPlatformStub.cpp
+  targets/daisy/LibDaisyPlatform.cpp
   targets/daisy/main.cpp
 )
 

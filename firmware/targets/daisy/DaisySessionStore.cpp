@@ -4,6 +4,11 @@
 
 namespace fantome {
 
+std::string DaisyDefaultSessionPath()
+{
+  return (std::filesystem::temp_directory_path() / "fantome_iv_daisy_target_session.txt").string();
+}
+
 DaisySessionFileStoreStub::DaisySessionFileStoreStub(std::string session_path)
   : session_path_(std::move(session_path))
 {
@@ -15,8 +20,7 @@ void DaisySessionFileStoreStub::Init()
     return;
   }
 
-  session_path_ =
-    (std::filesystem::temp_directory_path() / "fantome_iv_daisy_target_session.txt").string();
+  session_path_ = DaisyDefaultSessionPath();
 }
 
 std::string DaisySessionFileStoreStub::SessionPath() const

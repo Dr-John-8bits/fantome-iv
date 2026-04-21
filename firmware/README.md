@@ -54,12 +54,15 @@ On sépare volontairement le code en trois couches :
 - adaptateur audio interleavé pour préparer le callback cible
 - store de session côté cible avec backend stub fichier
 - première cible `targets/daisy/` très mince avec stub compilable
+- config cible Daisy figée en code avec pinmap, OLED, MIDI, audio et session
+- boot cible via store de session possédé par la plateforme
 
 ## Ce que cette base ne fait pas encore
 
 - qualité sonore DSP finale
 - calibration fine des slots utilisateur par défaut
 - intégration `libDaisy`
+- branchement effectif du callback audio `libDaisy`
 - UI OLED réelle sur `Daisy`
 - persistance réelle sur hardware
 - lecture des contrôles physiques réels

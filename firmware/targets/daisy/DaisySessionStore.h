@@ -4,6 +4,8 @@
 
 namespace fantome {
 
+std::string DaisyDefaultSessionPath();
+
 class DaisySessionStore {
  public:
   virtual ~DaisySessionStore() = default;

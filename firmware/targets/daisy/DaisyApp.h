@@ -13,6 +13,7 @@ class DaisyApp {
  public:
   explicit DaisyApp(DaisyPlatform& platform);
 
+  RuntimeBootResult BootFromPlatform();
   RuntimeBootResult BootStandalone();
   RuntimeBootResult BootWithSession(const std::string& session_path);
   RuntimeBootResult BootWithSessionStore(DaisySessionStore& session_store);

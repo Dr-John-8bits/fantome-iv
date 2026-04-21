@@ -132,6 +132,8 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - parser de flux d'octets MIDI côté stub en place
 - calibration de cohérence sur tailles de blocs audio variables en place
 - store de session côté cible en place
+- pinmap cible Daisy figée aussi en code côté `targets/daisy/`
+- boot cible Daisy désormais pensé depuis la plateforme et son store de session
 - adaptation audio interleavée de la cible Daisy en place
 - audit global projet exécuté et validé
 
@@ -144,6 +146,7 @@ Faire grandir le cœur logiciel avant achat du hardware :
 - raffiner les effets déjà en place
 - préparer la première vraie cible `targets/daisy/`
 - épaissir progressivement la couture runtime entre cœur portable et hardware
+- brancher ensuite les drivers et callbacks `libDaisy` réels sur cette couture déjà figée
 - brancher ensuite cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
 - garder la doc et les tests alignés avec l'implémentation
 - intégrer enfin le hardware réel quand le socle logiciel sera assez mûr
