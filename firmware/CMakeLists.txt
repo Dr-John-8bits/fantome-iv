@@ -55,7 +55,14 @@ target_link_libraries(fantome_tests PRIVATE fantome_core)
 
 add_executable(
   fantome_daisy_stub
+  targets/daisy/DaisyApp.cpp
+  targets/daisy/DaisyPlatformStub.cpp
   targets/daisy/main.cpp
 )
 
 target_link_libraries(fantome_daisy_stub PRIVATE fantome_core)
+target_include_directories(
+  fantome_daisy_stub
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/daisy
+)

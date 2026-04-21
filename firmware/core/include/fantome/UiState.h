@@ -77,6 +77,8 @@ enum class UiAction {
   LoadPreset,
   SavePreset,
   InitPatch,
+  SaveSession,
+  ReloadSession,
 };
 
 struct UiItem {
@@ -153,6 +155,7 @@ class UiState {
   std::size_t SelectedItemIndex() const;
   std::size_t PresetTargetSlot() const;
   UiAction PendingAction() const;
+  bool ConsumeRuntimeAction(UiAction& action);
   const std::array<PotTakeoverState, 8>& Pots() const;
   std::string CurrentPageLabel() const;
   std::string SelectedItemLabel() const;
@@ -196,6 +199,7 @@ class UiState {
   std::size_t selected_item_index_ = 0;
   std::size_t preset_target_slot_ = 0;
   UiAction pending_action_ = UiAction::None;
+  UiAction emitted_runtime_action_ = UiAction::None;
   std::array<PotTakeoverState, kPotCount> pots_ {};
 };
 

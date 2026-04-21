@@ -11,6 +11,9 @@ Ce dossier porte maintenant une première cible `Daisy` volontairement très min
 ## État actuel
 
 - [main.cpp](./main.cpp) existe
+- [DaisyPlatform.h](./DaisyPlatform.h) définit l'interface minimale de plateforme
+- [DaisyApp.h](./DaisyApp.h) recolle cette plateforme au runtime portable
+- [DaisyPlatformStub.h](./DaisyPlatformStub.h) fournit une implémentation de test sans hardware
 - si `libDaisy` n'est pas disponible, la cible compile en mode `stub`
 - si `libDaisy` est disponible plus tard, ce point d'entrée servira de base à l'intégration réelle
 

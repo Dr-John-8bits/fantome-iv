@@ -24,6 +24,7 @@ class FirmwareRuntime {
   void Render(float* left, float* right, std::size_t frame_count);
   HardwareOutputFrame BuildHardwareOutputFrame() const;
   bool SaveSessionCheckpoint();
+  bool ReloadSession();
   bool Shutdown();
 
   FantomeEngine& Engine();
@@ -37,6 +38,7 @@ class FirmwareRuntime {
  private:
   void ResetCore(float sample_rate);
   void MarkSessionDirty();
+  bool ConsumeUiRuntimeActions();
   bool ShouldMarkDirtyFromMidi(const MidiMessage& message) const;
 
   FantomeEngine engine_ {};
@@ -46,7 +48,7 @@ class FirmwareRuntime {
   SessionManager session_manager_ {};
   StartupDisplayController startup_display_ {};
   bool standalone_ = true;
-  bool midi_activity_latched_ = false;
+  float midi_activity_hold_s_ = 0.0f;
 };
 
 }  // namespace fantome

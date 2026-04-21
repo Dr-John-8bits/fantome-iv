@@ -179,6 +179,8 @@ Actions concernées par `Confirmation` :
 
 - `Write slot`
 - `Recall slot` si risque de perte de contexte jugé important
+- `Save session`
+- `Reload session`
 - `Init patch`
 
 Les paramètres ordinaires n'utilisent pas cet état supplémentaire.
@@ -393,8 +395,10 @@ Affichage portable retenu :
 - aperçu des `4` slots utilisateur
 - mise en évidence du slot actif
 - mise en évidence du slot ciblé
+- marqueur visuel si le slot actif a des modifications non écrites
 - ligne de résumé de l'élément système actuellement sélectionné
 - ligne d'état de session (`fresh`, `restored`, `fallback`) en navigation
+- marqueur visuel si la session de travail a des changements non checkpointés
 
 ## 7. Presets
 
@@ -409,6 +413,8 @@ Affichage portable retenu :
 - aucune confusion entre charger et écraser
 - soft takeover après chargement
 - `init patch` disponible
+- sauvegarde de session explicite disponible
+- rechargement de session explicite disponible
 - rappel du dernier preset au démarrage recommandé
 
 ### 7.3 Comportement attendu

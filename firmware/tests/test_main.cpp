@@ -841,6 +841,60 @@ void TestFirmwareRuntimeTracksDirtyPresetAndSession()
   std::filesystem::remove(session_path);
 }
 
+void TestFirmwareRuntimeUiSaveAndReloadSessionActions()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_runtime_ui_session_test.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FirmwareRuntime runtime;
+  runtime.BootWithSession(session_path.string(), 48000.0f);
+
+  fantome::HardwareInputFrame frame;
+  frame.pots[1] = {true, 0.36f};
+  runtime.ApplyHardwareFrame(frame);
+
+  for (int index = 0; index < 6; ++index) {
+    frame.ClearTransient();
+    frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::PageNext)].just_pressed = true;
+    runtime.ApplyHardwareFrame(frame);
+  }
+
+  frame.ClearTransient();
+  frame.encoder_delta = 6;
+  runtime.ApplyHardwareFrame(frame);
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  runtime.ApplyHardwareFrame(frame);
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  runtime.ApplyHardwareFrame(frame);
+
+  auto output = runtime.BuildHardwareOutputFrame();
+  Expect(!output.session_dirty,
+         "save-session action from the system page should clear the session dirty flag");
+
+  runtime.Engine().CurrentPatchMutable().filter.cutoff = 0.82f;
+  runtime.Engine().CurrentPatchMutable().name = "Unsaved";
+  frame.ClearTransient();
+  frame.encoder_delta = 1;
+  runtime.ApplyHardwareFrame(frame);
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  runtime.ApplyHardwareFrame(frame);
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  runtime.ApplyHardwareFrame(frame);
+
+  Expect(std::fabs(runtime.Engine().CurrentPatch().filter.cutoff - 0.36f) < 0.02f,
+         "reload-session action should restore the last saved session patch state");
+  Expect(runtime.Engine().CurrentPatch().name == "Ghost Pad",
+         "reload-session action should restore the last saved session patch name");
+
+  runtime.Shutdown();
+  std::filesystem::remove(session_path);
+}
+
 void TestSessionManagerStartsFreshWhenNoSessionFile()
 {
   const auto session_path =
@@ -1017,6 +1071,7 @@ int main()
     TestPortableInputSurfaceCanNavigateAndEdit();
     TestHardwareControlRouterBridgesRawControls();
     TestFirmwareRuntimeTracksDirtyPresetAndSession();
+    TestFirmwareRuntimeUiSaveAndReloadSessionActions();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

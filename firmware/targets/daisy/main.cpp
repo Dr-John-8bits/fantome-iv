@@ -1,24 +1,55 @@
 #include <iostream>
 
-#include "fantome/FirmwareRuntime.h"
+#include "DaisyApp.h"
+#include "DaisyPlatformStub.h"
 
 #if __has_include("daisy_seed.h")
 #include "daisy_seed.h"
 
+namespace fantome {
+
+class LibDaisyPlatform final : public DaisyPlatform {
+ public:
+  void Init() override
+  {
+    seed_.Configure();
+    seed_.Init();
+  }
+
+  float SampleRate() const override
+  {
+    return seed_.AudioSampleRate();
+  }
+
+  bool Poll(HardwareInputFrame& input) override
+  {
+    input.ClearTransient();
+    return false;
+  }
+
+  void Present(const HardwareOutputFrame& output) override
+  {
+    last_output_ = output;
+  }
+
+ private:
+  daisy::DaisySeed seed_ {};
+  HardwareOutputFrame last_output_ {};
+};
+
+}  // namespace fantome
+
 int main()
 {
-  daisy::DaisySeed seed;
-  seed.Configure();
-  seed.Init();
+  fantome::LibDaisyPlatform platform;
+  fantome::DaisyApp app(platform);
+  app.BootStandalone();
 
-  fantome::FirmwareRuntime runtime;
-  runtime.BootStandalone(seed.AudioSampleRate());
-
-  // Cible Daisy volontairement minimale :
-  // l'audio callback, le scan des contrôles, l'OLED et le MIDI UART
-  // seront branchés ici quand le hardware sera disponible.
+  // Intégration volontairement mince :
+  // le vrai callback audio, le scan des contrôles, l'OLED et le MIDI UART
+  // seront branchés ici en s'appuyant sur DaisyPlatform.
   while (true) {
-    runtime.AdvanceDisplay(0.001f);
+    app.Tick(0.001f);
   }
 
   return 0;
@@ -30,12 +61,12 @@ int main()
 {
   std::cout << "Fantome IV Daisy target stub (libDaisy unavailable)\n";
 
-  fantome::FirmwareRuntime runtime;
-  runtime.BootStandalone(48000.0f);
-  runtime.AdvanceDisplay(1.6f);
+  fantome::DaisyPlatformStub platform;
+  fantome::DaisyApp app(platform);
+  app.BootStandalone();
+  app.Tick(1.6f);
 
-  const auto output = runtime.BuildHardwareOutputFrame();
-  std::cout << output.oled.ToDebugString() << '\n';
+  std::cout << platform.LastOutput().oled.ToDebugString() << '\n';
   return 0;
 }
 

@@ -75,13 +75,15 @@ constexpr std::array<Item, 8> kEffectsPageItems {{
   {true, ParameterId::ReverbMix, UiAction::None, "Reverb Mix"},
 }};
 
-constexpr std::array<Item, 7> kSystemPageItems {{
+constexpr std::array<Item, 9> kSystemPageItems {{
   {true, ParameterId::MidiChannel, UiAction::None, "MIDI Ch"},
   {true, ParameterId::PlayMode, UiAction::None, "Play Mode"},
   {true, ParameterId::Legato, UiAction::None, "Legato"},
   {true, ParameterId::PresetSlot, UiAction::None, "User Slot"},
   {false, ParameterId::PresetSlot, UiAction::LoadPreset, "Recall Slot"},
   {false, ParameterId::PresetSlot, UiAction::SavePreset, "Write Slot"},
+  {false, ParameterId::PresetSlot, UiAction::SaveSession, "Save Sess"},
+  {false, ParameterId::PresetSlot, UiAction::ReloadSession, "Reload Sess"},
   {false, ParameterId::PresetSlot, UiAction::InitPatch, "Init Patch"},
 }};
 
@@ -349,6 +351,7 @@ void UiState::Reset(const FantomeEngine& engine)
   selected_item_index_ = 0;
   preset_target_slot_ = engine.CurrentPresetSlot();
   pending_action_ = UiAction::None;
+  emitted_runtime_action_ = UiAction::None;
   AssignFixedPots();
   AssignContextPot();
   for (auto& pot : pots_) {
@@ -362,6 +365,7 @@ void UiState::NextPage(const FantomeEngine& engine)
   selected_item_index_ = 0;
   interaction_state_ = UiInteractionState::Navigation;
   pending_action_ = UiAction::None;
+  emitted_runtime_action_ = UiAction::None;
   AssignContextPot();
   RearmContextPot(engine);
 }
@@ -372,6 +376,7 @@ void UiState::PreviousPage(const FantomeEngine& engine)
   selected_item_index_ = 0;
   interaction_state_ = UiInteractionState::Navigation;
   pending_action_ = UiAction::None;
+  emitted_runtime_action_ = UiAction::None;
   AssignContextPot();
   RearmContextPot(engine);
 }
@@ -428,6 +433,7 @@ void UiState::PressBack(const FantomeEngine& engine)
   (void)engine;
   interaction_state_ = UiInteractionState::Navigation;
   pending_action_ = UiAction::None;
+  emitted_runtime_action_ = UiAction::None;
 }
 
 void UiState::PressAction(FantomeEngine& engine)
@@ -493,6 +499,24 @@ std::size_t UiState::PresetTargetSlot() const
 UiAction UiState::PendingAction() const
 {
   return pending_action_;
+}
+
+bool UiState::ConsumeRuntimeAction(UiAction& action)
+{
+  switch (emitted_runtime_action_) {
+    case UiAction::SaveSession:
+    case UiAction::ReloadSession:
+      action = emitted_runtime_action_;
+      emitted_runtime_action_ = UiAction::None;
+      return true;
+    case UiAction::None:
+    case UiAction::LoadPreset:
+    case UiAction::SavePreset:
+    case UiAction::InitPatch:
+      break;
+  }
+
+  return false;
 }
 
 const std::array<PotTakeoverState, 8>& UiState::Pots() const
@@ -569,6 +593,7 @@ void UiState::RestoreSessionState(const UiSessionState& state, const FantomeEngi
   selected_item_index_ = state.selected_item_index;
   preset_target_slot_ = std::min(state.preset_target_slot, kPresetCount - 1);
   pending_action_ = state.pending_action;
+  emitted_runtime_action_ = UiAction::None;
 
   ClampSelection();
   AssignFixedPots();
@@ -687,6 +712,10 @@ void UiState::ApplyPendingAction(FantomeEngine& engine)
     case UiAction::SavePreset:
       engine.SavePreset(preset_target_slot_);
       preset_target_slot_ = engine.CurrentPresetSlot();
+      break;
+    case UiAction::SaveSession:
+    case UiAction::ReloadSession:
+      emitted_runtime_action_ = pending_action_;
       break;
     case UiAction::InitPatch:
       engine.InitializeCurrentPatch();
@@ -841,6 +870,10 @@ std::string UiState::FormatItemValue(const UiItem& item, const FantomeEngine& en
     case UiAction::SavePreset:
       return PresetSlotLabel(preset_target_slot_) + " " +
              engine.PresetBank()[preset_target_slot_].name;
+    case UiAction::SaveSession:
+      return "Checkpoint";
+    case UiAction::ReloadSession:
+      return "Restore";
     case UiAction::InitPatch:
       return "Reset";
     case UiAction::None:

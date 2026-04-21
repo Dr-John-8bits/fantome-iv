@@ -1,5 +1,7 @@
 #include "fantome/FirmwareRuntime.h"
 
+#include <algorithm>
+
 namespace fantome {
 
 RuntimeBootResult FirmwareRuntime::BootWithSession(
@@ -37,13 +39,14 @@ bool FirmwareRuntime::ApplyHardwareFrame(const HardwareInputFrame& frame)
     changed = true;
   }
 
+  changed |= ConsumeUiRuntimeActions();
   return changed;
 }
 
 void FirmwareRuntime::HandleMidi(const MidiMessage& message)
 {
   engine_.HandleMidi(message);
-  midi_activity_latched_ = true;
+  midi_activity_hold_s_ = 0.12f;
 
   if (ShouldMarkDirtyFromMidi(message)) {
     MarkSessionDirty();
@@ -53,6 +56,7 @@ void FirmwareRuntime::HandleMidi(const MidiMessage& message)
 void FirmwareRuntime::AdvanceDisplay(float delta_seconds)
 {
   startup_display_.Advance(delta_seconds);
+  midi_activity_hold_s_ = std::max(0.0f, midi_activity_hold_s_ - std::max(delta_seconds, 0.0f));
 }
 
 void FirmwareRuntime::Render(float* left, float* right, std::size_t frame_count)
@@ -68,7 +72,7 @@ HardwareOutputFrame FirmwareRuntime::BuildHardwareOutputFrame() const
     ui_,
     engine_,
     standalone_ ? nullptr : &session_manager_.State());
-  output.midi_activity = midi_activity_latched_;
+  output.midi_activity = midi_activity_hold_s_ > 0.0f;
   output.preset_dirty = engine_.IsCurrentPresetDirty();
   output.startup_active = startup_display_.ShowingSplash();
   output.active_preset_slot = engine_.CurrentPresetSlot();
@@ -90,6 +94,20 @@ bool FirmwareRuntime::SaveSessionCheckpoint()
   }
 
   return session_manager_.SaveCheckpoint(engine_, ui_);
+}
+
+bool FirmwareRuntime::ReloadSession()
+{
+  if (standalone_ || session_manager_.State().session_path.empty()) {
+    return false;
+  }
+
+  const auto boot = session_manager_.Boot(
+    session_manager_.State().session_path,
+    engine_,
+    ui_);
+  return boot.mode == SessionBootMode::RestoredFromDisk ||
+         boot.mode == SessionBootMode::FreshStart;
 }
 
 bool FirmwareRuntime::Shutdown()
@@ -140,7 +158,7 @@ void FirmwareRuntime::ResetCore(float sample_rate)
 {
   controls_.Reset();
   startup_display_.Reset();
-  midi_activity_latched_ = false;
+  midi_activity_hold_s_ = 0.0f;
   engine_.SetSampleRate(sample_rate);
 }
 
@@ -166,6 +184,28 @@ bool FirmwareRuntime::ShouldMarkDirtyFromMidi(const MidiMessage& message) const
     case MidiMessageType::Continue:
     case MidiMessageType::Unknown:
       return false;
+  }
+
+  return false;
+}
+
+bool FirmwareRuntime::ConsumeUiRuntimeActions()
+{
+  UiAction action = UiAction::None;
+  if (!ui_.ConsumeRuntimeAction(action)) {
+    return false;
+  }
+
+  switch (action) {
+    case UiAction::SaveSession:
+      return SaveSessionCheckpoint();
+    case UiAction::ReloadSession:
+      return ReloadSession();
+    case UiAction::None:
+    case UiAction::LoadPreset:
+    case UiAction::SavePreset:
+    case UiAction::InitPatch:
+      break;
   }
 
   return false;
