@@ -37,6 +37,8 @@ Contenu attendu :
 - allocation de voix
 - transport et état de clock
 - DSP portable au fur et à mesure
+- runtime firmware portable unifié
+- logique d'I/O hardware abstraite
 
 ### 2.2 `firmware/targets/desktop/`
 
@@ -185,6 +187,9 @@ La base logicielle porte déjà :
 - une persistance portable de session
 - un session manager portable explicite pour le cycle de démarrage et d'arrêt
 - une façade d'input portable pour simuler encodeur, boutons et potentiomètres
+- un runtime firmware portable qui recolle moteur, UI, session et affichage
+- une première abstraction hardware pour boutons, encodeur, potards et file MIDI
+- une première cible `Daisy` très mince compilable en mode stub
 
 Ce n'est pas encore la qualité sonore finale.
 

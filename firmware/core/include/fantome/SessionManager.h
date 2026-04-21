@@ -26,6 +26,7 @@ struct SessionManagerState {
   std::string session_path;
   SessionBootMode last_boot_mode = SessionBootMode::FreshStart;
   bool last_shutdown_saved = false;
+  bool checkpoint_dirty = false;
   std::string last_error;
 };
 
@@ -35,6 +36,7 @@ class SessionManager {
     const std::string& session_path,
     FantomeEngine& engine,
     UiState& ui);
+  void MarkDirty();
   bool SaveCheckpoint(const FantomeEngine& engine, const UiState& ui);
   bool Shutdown(const FantomeEngine& engine, const UiState& ui);
 

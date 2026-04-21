@@ -10,6 +10,8 @@ add_library(
   fantome_core
   core/src/Effects.cpp
   core/src/FantomeEngine.cpp
+  core/src/FirmwareRuntime.cpp
+  core/src/HardwareIO.cpp
   core/src/Modulation.cpp
   core/src/OledView.cpp
   core/src/PatchSerialization.cpp
@@ -50,3 +52,10 @@ add_executable(
 )
 
 target_link_libraries(fantome_tests PRIVATE fantome_core)
+
+add_executable(
+  fantome_daisy_stub
+  targets/daisy/main.cpp
+)
+
+target_link_libraries(fantome_daisy_stub PRIVATE fantome_core)

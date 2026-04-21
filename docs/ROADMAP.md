@@ -9,7 +9,7 @@ Au `21 avril 2026` :
 - la phase 0 documentaire est largement solide
 - la phase 1A logicielle est concrètement ouverte et déjà très avancée
 - le cœur portable, l'UI portable, la persistance et le smoke test existent
-- la prochaine marche logique est désormais la maturité DSP puis la première cible `Daisy`
+- la prochaine marche logique est désormais la maturité DSP puis l'épaississement progressif de la cible `Daisy`
 
 ## Phase 0 - Base du projet
 
@@ -120,6 +120,7 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 ## Phase 6 - Intégration Daisy et hardware
 
 - brancher la cible `libDaisy`
+- brancher le runtime portable abstrait au vrai scan hardware
 - tester avec la vraie face avant
 - valider les contrôles
 - valider la sortie stéréo

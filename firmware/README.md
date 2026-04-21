@@ -42,6 +42,9 @@ On sépare volontairement le code en trois couches :
 - session manager portable explicite pour le démarrage et l'arrêt
 - contrôleur portable de splash screen au démarrage
 - couche d'input portable pour simuler boutons, encodeur et potards
+- runtime firmware portable unifié
+- logique d'entrées/sorties hardware abstraites
+- première cible `targets/daisy/` très mince avec stub compilable
 
 ## Ce que cette base ne fait pas encore
 
@@ -61,6 +64,7 @@ cmake -S firmware -B firmware/build
 cmake --build firmware/build
 ./firmware/build/fantome_desktop_smoke
 ./firmware/build/fantome_tests
+./firmware/build/fantome_daisy_stub
 ```
 
 ## Intention

@@ -265,7 +265,9 @@ std::string OledTextRenderer::SessionStatusText(const SessionManagerState* sessi
       break;
   }
 
-  return "Sess:" + boot_mode + (session_state->active ? " on" : " off");
+  return "Sess:" + boot_mode +
+         (session_state->checkpoint_dirty ? "*" : "") +
+         (session_state->active ? " on" : " off");
 }
 
 std::string OledTextRenderer::FooterText(

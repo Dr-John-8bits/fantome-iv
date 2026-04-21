@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "fantome/FantomeEngine.h"
+#include "fantome/FirmwareRuntime.h"
+#include "fantome/HardwareIO.h"
 #include "fantome/OledView.h"
 #include "fantome/PortableInput.h"
 #include "fantome/SessionManager.h"
@@ -765,6 +767,80 @@ void TestPortableInputSurfaceCanNavigateAndEdit()
          "portable input should track cumulative encoder motion");
 }
 
+void TestHardwareControlRouterBridgesRawControls()
+{
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::HardwareControlRouter router;
+  ui.Reset(engine);
+
+  fantome::HardwareInputFrame frame;
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::PageNext)].just_pressed = true;
+  Expect(router.Apply(frame, engine, ui),
+         "hardware router should accept raw page-next button presses");
+  Expect(ui.CurrentPage() == fantome::UiPage::Filter,
+         "hardware router should move the UI to the next page");
+
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  Expect(router.Apply(frame, engine, ui),
+         "hardware router should translate encoder clicks");
+
+  frame.ClearTransient();
+  frame.encoder_delta = 4;
+  Expect(router.Apply(frame, engine, ui),
+         "hardware router should translate encoder turns");
+
+  frame.ClearTransient();
+  frame.buttons[static_cast<std::size_t>(fantome::HardwareButtonId::Encoder)].just_pressed = true;
+  router.Apply(frame, engine, ui);
+
+  frame.ClearTransient();
+  frame.pots[1] = {true, 0.22f};
+  Expect(router.Apply(frame, engine, ui),
+         "hardware router should forward available pots to the UI mapping");
+  Expect(std::fabs(engine.CurrentPatch().filter.cutoff - 0.22f) < 0.02f,
+         "hardware router should preserve the fixed cutoff mapping on pot 2");
+}
+
+void TestFirmwareRuntimeTracksDirtyPresetAndSession()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_runtime_session_test.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FirmwareRuntime runtime;
+  const auto boot = runtime.BootWithSession(session_path.string(), 48000.0f);
+
+  Expect(!boot.standalone, "runtime should boot in session-backed mode");
+  auto output = runtime.BuildHardwareOutputFrame();
+  Expect(!output.preset_dirty,
+         "freshly booted runtime should begin with a clean active user slot");
+  Expect(!output.session_dirty,
+         "freshly booted runtime should begin with a clean session checkpoint state");
+
+  fantome::HardwareInputFrame frame;
+  frame.pots[1] = {true, 0.31f};
+  Expect(runtime.ApplyHardwareFrame(frame),
+         "runtime should accept raw hardware frames");
+
+  output = runtime.BuildHardwareOutputFrame();
+  Expect(output.preset_dirty,
+         "runtime should surface unsaved preset edits after a pot move");
+  Expect(output.session_dirty,
+         "runtime should mark the session dirty after an edit");
+
+  Expect(runtime.SaveSessionCheckpoint(),
+         "runtime should expose explicit checkpoint saves");
+  output = runtime.BuildHardwareOutputFrame();
+  Expect(!output.session_dirty,
+         "saving a checkpoint should clear the session dirty flag");
+
+  Expect(runtime.Shutdown(),
+         "runtime should save successfully on shutdown");
+  std::filesystem::remove(session_path);
+}
+
 void TestSessionManagerStartsFreshWhenNoSessionFile()
 {
   const auto session_path =
@@ -939,6 +1015,8 @@ int main()
     TestOledRendererShowsDirtyUserSlotState();
     TestPortableSessionPersistenceRoundTrip();
     TestPortableInputSurfaceCanNavigateAndEdit();
+    TestHardwareControlRouterBridgesRawControls();
+    TestFirmwareRuntimeTracksDirtyPresetAndSession();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

@@ -122,6 +122,9 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - persistance portable de session en place
 - session manager portable explicite en place pour le cycle de démarrage et d'arrêt
 - couche d'input portable en place pour simuler encodeur, boutons et potentiomètres
+- runtime firmware portable unifié en place
+- logique d'entrées/sorties hardware abstraites en place
+- première cible `targets/daisy/` mince compilable en place
 - audit global projet exécuté et validé
 
 ## Prochaine étape
@@ -132,6 +135,7 @@ Faire grandir le cœur logiciel avant achat du hardware :
 - raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
 - raffiner les effets déjà en place
 - préparer la première vraie cible `targets/daisy/`
+- épaissir progressivement la couture runtime entre cœur portable et hardware
 - brancher ensuite cet état UI portable et cette couche d'input au vrai OLED, au vrai encodeur et aux vrais potentiomètres
 - garder la doc et les tests alignés avec l'implémentation
 - intégrer enfin le hardware réel quand le socle logiciel sera assez mûr

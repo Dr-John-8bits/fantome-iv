@@ -28,6 +28,7 @@ SessionBootResult SessionManager::Boot(
   state_.active = true;
   state_.session_path = session_path;
   state_.last_shutdown_saved = false;
+  state_.checkpoint_dirty = false;
   state_.last_error.clear();
 
   SessionBootResult result;
@@ -60,6 +61,15 @@ SessionBootResult SessionManager::Boot(
   return result;
 }
 
+void SessionManager::MarkDirty()
+{
+  if (!state_.active) {
+    return;
+  }
+
+  state_.checkpoint_dirty = true;
+}
+
 bool SessionManager::SaveCheckpoint(const FantomeEngine& engine, const UiState& ui)
 {
   if (!state_.active || state_.session_path.empty()) {
@@ -73,6 +83,7 @@ bool SessionManager::SaveCheckpoint(const FantomeEngine& engine, const UiState& 
   }
 
   state_.last_error.clear();
+  state_.checkpoint_dirty = false;
   return true;
 }
 
@@ -91,6 +102,7 @@ bool SessionManager::Shutdown(const FantomeEngine& engine, const UiState& ui)
   }
 
   state_.last_error.clear();
+  state_.checkpoint_dirty = false;
   state_.active = false;
   return true;
 }
