@@ -480,6 +480,40 @@ void TestOledRendererShowsConfirmationState()
          "oled view should show confirmation guidance");
 }
 
+void TestOledRendererShowsPresetSessionBrowserOnSystemPage()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_oled_browser_session.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FantomeEngine engine;
+  fantome::UiState ui;
+  fantome::OledTextRenderer oled;
+  fantome::SessionManager manager;
+  manager.Boot(session_path.string(), engine, ui);
+
+  for (int index = 0; index < 6; ++index) {
+    ui.NextPage(engine);
+  }
+  ui.RotateEncoder(3, engine);
+  ui.PressEncoder(engine);
+  ui.RotateEncoder(2, engine);
+  ui.PressEncoder(engine);
+
+  const auto debug = oled.Render(ui, engine, &manager.State()).ToDebugString();
+
+  Expect(debug.find("Preset/Session") != std::string::npos,
+         "system page should switch to the preset/session browser header");
+  Expect(debug.find("*P1 Ghost Pad") != std::string::npos,
+         "system browser should show the active preset");
+  Expect(debug.find(">P3 Phantom Brass") != std::string::npos,
+         "system browser should highlight the target preset slot");
+  Expect(debug.find("Sess:fresh on") != std::string::npos,
+         "system browser should show current session status");
+
+  std::filesystem::remove(session_path);
+}
+
 void TestPortableSessionPersistenceRoundTrip()
 {
   const auto session_path = std::filesystem::temp_directory_path() / "fantome_iv_session_test.txt";
@@ -742,6 +776,7 @@ int main()
     TestOledRendererShowsPresetAndSelection();
     TestOledRendererShowsPickupState();
     TestOledRendererShowsConfirmationState();
+    TestOledRendererShowsPresetSessionBrowserOnSystemPage();
     TestPortableSessionPersistenceRoundTrip();
     TestPortableInputSurfaceCanNavigateAndEdit();
     TestSessionManagerStartsFreshWhenNoSessionFile();

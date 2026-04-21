@@ -373,6 +373,7 @@ Exemple pour le delay :
 But :
 
 - gérer la configuration globale
+- regrouper aussi un mini navigateur `preset/session` lisible sur l'OLED
 
 Paramètres typiques :
 
@@ -386,6 +387,14 @@ Paramètres typiques :
 Pot 8 recommandé :
 
 - paramètre système principal sélectionné
+
+Affichage portable retenu :
+
+- aperçu des `4` presets
+- mise en évidence du preset actif
+- mise en évidence du slot preset ciblé
+- ligne de résumé de l'élément système actuellement sélectionné
+- ligne d'état de session (`fresh`, `restored`, `fallback`) en navigation
 
 ## 7. Presets
 

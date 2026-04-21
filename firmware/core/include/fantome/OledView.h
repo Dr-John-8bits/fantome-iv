@@ -9,6 +9,8 @@
 
 namespace fantome {
 
+struct SessionManagerState;
+
 struct OledTextFrame {
   static constexpr std::size_t kRowCount = 8;
 
@@ -20,11 +22,15 @@ struct OledTextFrame {
 class OledTextRenderer {
  public:
   OledTextFrame RenderStartupSplash() const;
-  OledTextFrame Render(const UiState& ui, const FantomeEngine& engine) const;
+  OledTextFrame Render(
+    const UiState& ui,
+    const FantomeEngine& engine,
+    const SessionManagerState* session_state = nullptr) const;
 
  private:
   static constexpr std::size_t kDisplayColumns = 21;
 
+  static bool IsPresetBrowserFocused(const UiState& ui);
   static std::size_t FirstVisibleIndex(const UiDisplayModel& model);
   static std::string InteractionLabel(UiInteractionState state);
   static std::string CenterText(const std::string& text, std::size_t width);
@@ -38,7 +44,15 @@ class OledTextRenderer {
     char marker,
     const std::string& label,
     const std::string& value);
-  static std::string FooterText(const UiDisplayModel& model);
+  static std::string ComposePresetBrowserRow(
+    char marker,
+    std::size_t slot,
+    const std::string& name);
+  static std::string BuildSystemSelectionSummary(const UiDisplayModel& model);
+  static std::string SessionStatusText(const SessionManagerState* session_state);
+  static std::string FooterText(
+    const UiDisplayModel& model,
+    const SessionManagerState* session_state);
 };
 
 }  // namespace fantome

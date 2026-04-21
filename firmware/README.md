@@ -34,6 +34,7 @@ On sépare volontairement le code en trois couches :
 - `soft takeover` portable pour les `8` potentiomètres
 - persistance portable de la banque de `4` presets
 - représentation portable de l'écran OLED page par page
+- mini navigateur `preset/session` sur la page système OLED portable
 - persistance portable de session de travail
 - session manager portable explicite pour le démarrage et l'arrêt
 - contrôleur portable de splash screen au démarrage

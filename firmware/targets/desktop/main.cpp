@@ -59,7 +59,8 @@ int main()
 
   std::cout << "Fantome IV desktop smoke\n";
   std::cout << "startup (t=0.0s):\n"
-            << startup_display.Render(oled, ui, engine).ToDebugString() << '\n';
+            << startup_display.Render(oled, ui, engine, &session_manager.State()).ToDebugString()
+            << '\n';
   std::cout << "session: " << boot.message << '\n';
   std::cout << "patch: " << engine.CurrentPatch().name
             << " | mode: " << PlayModeToString(engine.CurrentPatch().play_mode)
@@ -84,6 +85,10 @@ int main()
   input.PressEncoder(engine, ui);
   input.TurnEncoder(2, engine, ui);
   input.MovePot(2, 0.38f, engine, ui);
+  for (int index = 0; index < 5; ++index) {
+    input.PressPageNext(engine, ui);
+  }
+  input.TurnEncoder(3, engine, ui);
 
   std::cout << std::fixed << std::setprecision(2);
   std::cout << "cutoff=" << engine.CurrentPatch().filter.cutoff
@@ -117,7 +122,9 @@ int main()
             << " splash_dur=" << startup_display.SplashDurationSeconds() << '\n';
   std::cout << "input: encoder=" << input.EncoderPosition()
             << " pot2=" << input.PotPositions()[2] << '\n';
-  std::cout << "oled:\n" << startup_display.Render(oled, ui, engine).ToDebugString() << '\n';
+  std::cout << "oled:\n"
+            << startup_display.Render(oled, ui, engine, &session_manager.State()).ToDebugString()
+            << '\n';
   const auto shutdown_saved = session_manager.Shutdown(engine, ui);
   std::cout << "shutdown_saved=" << (shutdown_saved ? "yes" : "no") << '\n';
   std::filesystem::remove(session_path);

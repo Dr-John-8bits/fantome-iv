@@ -102,6 +102,7 @@ On peut avancer immédiatement sur :
 - comportement des modes de jeu
 - structure UI d'état
 - représentation portable de l'écran OLED
+- mini navigateur `preset/session` dans l'UI portable
 - splash screen portable avec durée d'affichage contrôlée
 - persistance portable de session
 - cycle de session portable explicite `Boot / Checkpoint / Shutdown`

@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <sstream>
 
+#include "fantome/SessionManager.h"
+
 namespace fantome {
 
 namespace {
@@ -40,7 +42,8 @@ OledTextFrame OledTextRenderer::RenderStartupSplash() const
 
 OledTextFrame OledTextRenderer::Render(
   const UiState& ui,
-  const FantomeEngine& engine) const
+  const FantomeEngine& engine,
+  const SessionManagerState* session_state) const
 {
   const auto model = ui.BuildDisplayModel(engine);
 
@@ -48,7 +51,34 @@ OledTextFrame OledTextRenderer::Render(
   frame.rows[0] = PadRight(
     Clip(PresetSlotLabel(model.active_preset_slot) + " " + model.preset_name, kDisplayColumns),
     kDisplayColumns);
-  frame.rows[1] = ComposeHeader(model.page_label, InteractionLabel(model.interaction_state), 15);
+  frame.rows[1] = ComposeHeader(
+    ui.CurrentPage() == UiPage::System ? "Preset/Session" : model.page_label,
+    InteractionLabel(model.interaction_state),
+    15);
+
+  if (ui.CurrentPage() == UiPage::System) {
+    for (std::size_t slot = 0; slot < kPresetCount; ++slot) {
+      char marker = ' ';
+      if (IsPresetBrowserFocused(ui) && slot == model.target_preset_slot) {
+        marker = '>';
+      } else if (slot == model.active_preset_slot) {
+        marker = '*';
+      } else if (slot == model.target_preset_slot) {
+        marker = '+';
+      }
+
+      frame.rows[2 + slot] =
+        ComposePresetBrowserRow(marker, slot, engine.PresetBank()[slot].name);
+    }
+
+    frame.rows[6] = PadRight(
+      Clip(BuildSystemSelectionSummary(model), kDisplayColumns),
+      kDisplayColumns);
+    frame.rows[7] = PadRight(
+      Clip(FooterText(model, session_state), kDisplayColumns),
+      kDisplayColumns);
+    return frame;
+  }
 
   const auto first_visible_index = FirstVisibleIndex(model);
   for (std::size_t row = 0; row < 5; ++row) {
@@ -67,8 +97,13 @@ OledTextFrame OledTextRenderer::Render(
     frame.rows[2 + row] = ComposeItemRow(marker, item.label, item.value);
   }
 
-  frame.rows[7] = PadRight(Clip(FooterText(model), kDisplayColumns), kDisplayColumns);
+  frame.rows[7] = PadRight(Clip(FooterText(model, session_state), kDisplayColumns), kDisplayColumns);
   return frame;
+}
+
+bool OledTextRenderer::IsPresetBrowserFocused(const UiState& ui)
+{
+  return ui.CurrentPage() == UiPage::System && ui.SelectedItemIndex() >= 3;
 }
 
 std::size_t OledTextRenderer::FirstVisibleIndex(const UiDisplayModel& model)
@@ -167,7 +202,55 @@ std::string OledTextRenderer::ComposeItemRow(
          PadRight(Clip(value, kValueWidth), kValueWidth);
 }
 
-std::string OledTextRenderer::FooterText(const UiDisplayModel& model)
+std::string OledTextRenderer::ComposePresetBrowserRow(
+  char marker,
+  std::size_t slot,
+  const std::string& name)
+{
+  static constexpr std::size_t kNameWidth = 17;
+  return std::string(1, marker) +
+         PadRight(PresetSlotLabel(slot) + " ", 3) +
+         PadRight(Clip(name, kNameWidth), kNameWidth);
+}
+
+std::string OledTextRenderer::BuildSystemSelectionSummary(const UiDisplayModel& model)
+{
+  if (model.selected_value.empty()) {
+    return "Sel:" + model.selected_label;
+  }
+
+  return "Sel:" + model.selected_label + " " + model.selected_value;
+}
+
+std::string OledTextRenderer::SessionStatusText(const SessionManagerState* session_state)
+{
+  if (session_state == nullptr) {
+    return "Sess:standalone";
+  }
+
+  if (!session_state->last_error.empty()) {
+    return "Sess:error";
+  }
+
+  std::string boot_mode = "fresh";
+  switch (session_state->last_boot_mode) {
+    case SessionBootMode::FreshStart:
+      boot_mode = "fresh";
+      break;
+    case SessionBootMode::RestoredFromDisk:
+      boot_mode = "restored";
+      break;
+    case SessionBootMode::FallbackFreshStart:
+      boot_mode = "fallback";
+      break;
+  }
+
+  return "Sess:" + boot_mode + (session_state->active ? " on" : " off");
+}
+
+std::string OledTextRenderer::FooterText(
+  const UiDisplayModel& model,
+  const SessionManagerState* session_state)
 {
   if (model.interaction_state == UiInteractionState::Editing) {
     return "Turn=edit Enc=done";
@@ -175,6 +258,10 @@ std::string OledTextRenderer::FooterText(const UiDisplayModel& model)
 
   if (model.interaction_state == UiInteractionState::Confirmation) {
     return "Enc=ok Back=cancel";
+  }
+
+  if (model.page_label == "System") {
+    return SessionStatusText(session_state);
   }
 
   if (model.context_pot_needs_pickup) {

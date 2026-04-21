@@ -6,6 +6,8 @@
 
 namespace fantome {
 
+struct SessionManagerState;
+
 class StartupDisplayController {
  public:
   explicit StartupDisplayController(float splash_duration_s = 1.5f);
@@ -18,7 +20,8 @@ class StartupDisplayController {
   OledTextFrame Render(
     const OledTextRenderer& renderer,
     const UiState& ui,
-    const FantomeEngine& engine) const;
+    const FantomeEngine& engine,
+    const SessionManagerState* session_state = nullptr) const;
 
  private:
   float splash_duration_s_ = 1.5f;

@@ -116,6 +116,7 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - persistance portable de la banque de `4` presets en place
 - représentation portable de l'écran OLED page par page en place
 - écran de démarrage OLED portable en place
+- mini navigateur preset/session portable en place sur la page système
 - durée portable de splash screen en place avec retour automatique vers l'écran principal
 - persistance portable de session en place
 - session manager portable explicite en place pour le cycle de démarrage et d'arrêt

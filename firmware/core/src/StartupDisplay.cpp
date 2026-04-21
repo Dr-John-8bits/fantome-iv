@@ -37,13 +37,14 @@ float StartupDisplayController::ElapsedSeconds() const
 OledTextFrame StartupDisplayController::Render(
   const OledTextRenderer& renderer,
   const UiState& ui,
-  const FantomeEngine& engine) const
+  const FantomeEngine& engine,
+  const SessionManagerState* session_state) const
 {
   if (ShowingSplash()) {
     return renderer.RenderStartupSplash();
   }
 
-  return renderer.Render(ui, engine);
+  return renderer.Render(ui, engine, session_state);
 }
 
 }  // namespace fantome
