@@ -18,6 +18,7 @@
 #include "fantome/UiState.h"
 #include "DaisyApp.h"
 #include "DaisyPlatformStub.h"
+#include "DaisySessionStore.h"
 
 namespace {
 
@@ -1140,6 +1141,67 @@ void TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals()
          "OLED stub should receive presented frames when the app ticks");
 }
 
+void TestDaisyAppSupportsInterleavedAudioCallbackShape()
+{
+  fantome::DaisyPlatformStub platform;
+  fantome::DaisyApp app(platform);
+  app.BootStandalone();
+  app.Runtime().Engine().CurrentPatchMutable() = fantome::MakeDefaultUserPresetBank()[3];
+  app.Runtime().Engine().CurrentPatchMutable().amp_env.attack_s = 0.001f;
+  app.Runtime().Engine().CurrentPatchMutable().delay.mix = 0.0f;
+  app.Runtime().Engine().CurrentPatchMutable().reverb.mix = 0.0f;
+  platform.MidiStub().QueueMessage(fantome::MidiMessage::NoteOn(1, 60, 110));
+  app.TickControlFrame(0.01f);
+
+  std::vector<float> interleaved(2 * 4096, 0.0f);
+  app.RenderInterleavedAudio(interleaved.data(), 4096);
+
+  float energy = 0.0f;
+  for (float sample : interleaved) {
+    energy += sample * sample;
+  }
+
+  Expect(energy > 0.00001f,
+         "interleaved audio adapter should render audible stereo audio");
+  Expect(platform.LastOutput().audio_block_count == 1,
+         "interleaved rendering should still feed runtime output metrics");
+}
+
+void TestDaisySessionFileStoreBootsAndPersists()
+{
+  const auto session_path =
+    (std::filesystem::temp_directory_path() / "fantome_iv_daisy_store_test.txt").string();
+  std::filesystem::remove(session_path);
+
+  fantome::DaisyPlatformStub platform;
+  fantome::DaisySessionFileStoreStub store(session_path);
+
+  {
+    fantome::DaisyApp app(platform);
+    const auto boot = app.BootWithSessionStore(store);
+    Expect(!boot.standalone,
+           "booting through a Daisy session store should use session-backed runtime boot");
+
+    app.Runtime().Engine().CurrentPatchMutable().name = "Stored Lead";
+    app.Runtime().Engine().CurrentPatchMutable().filter.cutoff = 0.44f;
+    Expect(app.SaveSessionCheckpointToStore(),
+           "daisy session store path should support explicit checkpoints");
+    Expect(app.ShutdownToStore(),
+           "daisy session store path should support shutdown persistence");
+  }
+
+  {
+    fantome::DaisyApp restored_app(platform);
+    restored_app.BootWithSessionStore(store);
+    Expect(restored_app.Runtime().Engine().CurrentPatch().name == "Stored Lead",
+           "daisy session store should restore the saved patch name");
+    Expect(std::fabs(restored_app.Runtime().Engine().CurrentPatch().filter.cutoff - 0.44f) < 0.0001f,
+           "daisy session store should restore saved patch values");
+  }
+
+  std::filesystem::remove(session_path);
+}
+
 void TestSessionManagerStartsFreshWhenNoSessionFile()
 {
   const auto session_path =
@@ -1325,6 +1387,8 @@ int main()
     TestDaisyMidiUartStubParsesByteStream();
     TestDaisyAdcStubAcceptsRawPotSamples();
     TestDaisyStubSupportsCustomAudioConfigAndSeparatePeripherals();
+    TestDaisyAppSupportsInterleavedAudioCallbackShape();
+    TestDaisySessionFileStoreBootsAndPersists();
     TestSessionManagerStartsFreshWhenNoSessionFile();
     TestSessionManagerShutdownAndRestoreRoundTrip();
     TestSessionManagerFallsBackWhenSessionIsCorrupt();

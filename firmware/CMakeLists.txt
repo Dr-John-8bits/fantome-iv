@@ -51,6 +51,7 @@ add_executable(
   tests/test_main.cpp
   targets/daisy/DaisyApp.cpp
   targets/daisy/DaisyPeripherals.cpp
+  targets/daisy/DaisySessionStore.cpp
   targets/daisy/DaisyPlatformStub.cpp
 )
 
@@ -65,6 +66,7 @@ add_executable(
   fantome_daisy_stub
   targets/daisy/DaisyApp.cpp
   targets/daisy/DaisyPeripherals.cpp
+  targets/daisy/DaisySessionStore.cpp
   targets/daisy/DaisyPlatformStub.cpp
   targets/daisy/main.cpp
 )

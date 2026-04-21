@@ -115,6 +115,8 @@ On peut avancer immédiatement sur :
 - première implémentation DSP portable
 - rendu audio bloc par bloc avec métriques de sortie et calibration globale
 - validation de cohérence sur plusieurs tailles de blocs audio
+- adaptation interleavée du rendu pour préparer le callback audio cible
+- persistance cible préfigurée par un store dédié côté `targets/daisy/`
 - tests de cohérence
 
 ## 4. Ce qui attendra le hardware
@@ -196,6 +198,7 @@ La base logicielle porte déjà :
 - un rendu audio portable bloc par bloc avec suivi de peak / clip
 - une première cible `Daisy` mince compilable en mode stub, avec app, plateforme et périphériques séparés
 - un parser `MIDI UART` portable côté stub et un stub `ADC` capable de recevoir des valeurs brutes
+- un store de session côté cible et un adaptateur interleavé pour le futur callback audio
 
 Ce n'est pas encore la qualité sonore finale.
 

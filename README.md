@@ -131,6 +131,8 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - interfaces/stubs séparés pour `ADC`, `OLED` et `MIDI UART` en place
 - parser de flux d'octets MIDI côté stub en place
 - calibration de cohérence sur tailles de blocs audio variables en place
+- store de session côté cible en place
+- adaptation audio interleavée de la cible Daisy en place
 - audit global projet exécuté et validé
 
 ## Prochaine étape

@@ -51,6 +51,8 @@ On sépare volontairement le code en trois couches :
 - slots utilisateur de départ plus différenciés musicalement
 - parser `MIDI UART` portable de flux d'octets côté stub Daisy
 - stub `ADC` capable d'accepter des échantillons de potentiomètres bruts
+- adaptateur audio interleavé pour préparer le callback cible
+- store de session côté cible avec backend stub fichier
 - première cible `targets/daisy/` très mince avec stub compilable
 
 ## Ce que cette base ne fait pas encore

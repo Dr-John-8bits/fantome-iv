@@ -14,13 +14,16 @@ Ce dossier porte maintenant une première cible `Daisy` volontairement très min
 - [DaisyPlatform.h](./DaisyPlatform.h) définit l'interface minimale de plateforme
 - [DaisyApp.h](./DaisyApp.h) recolle cette plateforme au runtime portable
 - [DaisyPeripherals.h](./DaisyPeripherals.h) sépare les interfaces `ADC`, `OLED` et `MIDI UART`
+- [DaisySessionStore.h](./DaisySessionStore.h) prépare la persistance cible via un store dédié
 - [DaisyPlatformStub.h](./DaisyPlatformStub.h) fournit une implémentation de test sans hardware
 - `DaisyApp` sépare maintenant explicitement :
   - le tick de contrôle
   - le rendu audio bloc par bloc
+  - l'adaptation interleavée pour un futur callback audio cible
 - un scanner portable transforme les lectures brutes de contrôles en événements firmware stables
 - le stub `MIDI UART` sait parser un flux d'octets MIDI en messages firmware
 - le stub `ADC` sait accepter des échantillons de potentiomètres bruts
+- un store de session cible peut déjà booter et persister via un backend stub fichier
 - si `libDaisy` n'est pas disponible, la cible compile en mode `stub`
 - si `libDaisy` est disponible plus tard, ce point d'entrée servira de base à l'intégration réelle
 
