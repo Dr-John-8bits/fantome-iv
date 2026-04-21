@@ -109,6 +109,11 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - premiers tests locaux en place
 - premier chemin de rendu audio portable en place
 - première voix DSP portable en place : oscillateurs, enveloppes, filtre, rendu stéréo de base
+- modulations portables `LFO + S&H` en place
+- premiers effets globaux portables en place : `delay`, `chorus`, `reverb`
+- couche `UI state` portable en place
+- `soft takeover` portable en place
+- persistance portable de la banque de `4` presets en place
 
 ## Prochaine étape
 
@@ -116,6 +121,8 @@ Faire grandir le cœur logiciel avant achat du hardware :
 
 - enrichir le moteur portable : paramètres, DSP, états UI et presets
 - raffiner la première voix DSP : qualité d'oscillateurs, filtre, niveaux, comportement mono/unison
-- ajouter progressivement modulations, delay, chorus et reverb
+- raffiner les effets déjà en place
+- commencer à structurer l'état UI et la future persistance de presets
+- brancher plus tard cet état UI portable à l'OLED, à l'encodeur et aux potentiomètres réels
 - garder la doc et les tests alignés avec l'implémentation
 - préparer ensuite l'intégration Daisy quand le socle logiciel sera assez mûr

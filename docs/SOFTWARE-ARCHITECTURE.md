@@ -161,6 +161,14 @@ La base logicielle porte déjà :
 - des tests locaux
 - une première voix DSP portable avec oscillateurs, enveloppes et filtre
 - un premier rendu stéréo de travail
+- les premières modulations portables `LFO + S&H`
+- une base `Free / Clock` pour les modulations
+- un `delay` stéréo global portable
+- un `chorus` stéréo global portable
+- une `reverb` stéréo globale portable
+- un état UI portable par pages
+- une logique de `soft takeover` portable
+- une persistance portable de la banque de presets
 
 Ce n'est pas encore la qualité sonore finale.
 
