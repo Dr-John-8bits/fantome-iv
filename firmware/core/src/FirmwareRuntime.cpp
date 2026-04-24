@@ -2,12 +2,20 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 
 namespace fantome {
 
 namespace {
 
 constexpr float kPeakDecayPerSecond = 0.80f;
+constexpr std::uint8_t kCcMasterVolume = 7;
+constexpr std::uint8_t kCcDelayFeedback = 12;
+constexpr std::uint8_t kCcDelayMix = 13;
+constexpr std::uint8_t kCcResonance = 71;
+constexpr std::uint8_t kCcCutoff = 74;
+constexpr std::uint8_t kCcReverbMix = 91;
+constexpr std::uint8_t kCcChorusDepth = 93;
 
 }  // namespace
 
@@ -212,6 +220,18 @@ bool FirmwareRuntime::ShouldMarkDirtyFromMidi(const MidiMessage& message) const
 {
   switch (message.type) {
     case MidiMessageType::ControlChange:
+      switch (message.data1) {
+        case kCcMasterVolume:
+        case kCcDelayFeedback:
+        case kCcDelayMix:
+        case kCcResonance:
+        case kCcCutoff:
+        case kCcReverbMix:
+        case kCcChorusDepth:
+          return true;
+        default:
+          return false;
+      }
     case MidiMessageType::ProgramChange:
       return true;
     case MidiMessageType::NoteOn:

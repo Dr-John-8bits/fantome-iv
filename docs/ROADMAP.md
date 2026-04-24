@@ -9,8 +9,9 @@ Au `21 avril 2026` :
 - la phase 0 documentaire est largement solide
 - la phase 1A logicielle est concrètement ouverte et déjà très avancée
 - le cœur portable, l'UI portable, la persistance et le smoke test existent
+- l'audit code du `24 avril 2026` valide le cœur portable, les tests, les stubs et les builds stricts
 - la BOM finale et le guide d'installation matériel sont prêts
-- la prochaine marche logique est maintenant l'achat puis le bring-up matériel réel
+- la prochaine marche logique est l'achat puis le bring-up matériel réel par blocs
 
 ## Phase 0 - Base du projet
 
@@ -60,7 +61,8 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 
 État :
 
-- gate levée
+- gate levée pour achat et bring-up réel
+- certification du firmware complet impossible sans vraie `Daisy Seed`
 
 ## Phase 1A - Socle logiciel portable
 
@@ -129,6 +131,7 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - valider la `Daisy Seed` seule au bootloader
 - brancher la cible `libDaisy`
 - brancher le runtime portable abstrait au vrai scan hardware
+- brancher le callback audio `libDaisy` réel
 - brancher l'audio stéréo
 - brancher d'abord un seul potard, puis les `8`
 - brancher encodeur, boutons et LED MIDI
@@ -147,6 +150,7 @@ L'intégration Daisy et hardware ne démarre pas tant que :
 - suivre l'ordre d'installation matériel documenté
 - valider la `Daisy Seed` seule
 - commencer le bring-up réel par blocs
+- ne pas considérer le firmware complet comme certifié avant validation sur carte réelle
 
 ## Cap du projet
 

@@ -955,6 +955,34 @@ void TestFirmwareRuntimeTracksDirtyPresetAndSession()
   std::filesystem::remove(session_path);
 }
 
+void TestFirmwareRuntimeOnlyMarksPersistedMidiChangesDirty()
+{
+  const auto session_path =
+    std::filesystem::temp_directory_path() / "fantome_iv_runtime_midi_dirty_test.txt";
+  std::filesystem::remove(session_path);
+
+  fantome::FirmwareRuntime runtime;
+  runtime.BootWithSession(session_path.string(), 48000.0f);
+
+  runtime.HandleMidi(fantome::MidiMessage::ControlChange(1, 1, 100));
+  runtime.HandleMidi(fantome::MidiMessage::ControlChange(1, 64, 127));
+  runtime.HandleMidi(fantome::MidiMessage::PitchBend(1, 2048));
+
+  auto output = runtime.BuildHardwareOutputFrame();
+  Expect(!output.session_dirty,
+         "performance-only MIDI should not dirty the persisted session");
+
+  runtime.HandleMidi(fantome::MidiMessage::ControlChange(1, 74, 84));
+  output = runtime.BuildHardwareOutputFrame();
+  Expect(output.session_dirty,
+         "patch-changing MIDI CC should dirty the persisted session");
+  Expect(output.preset_dirty,
+         "patch-changing MIDI CC should also mark the active user slot as unsaved");
+
+  runtime.Shutdown();
+  std::filesystem::remove(session_path);
+}
+
 void TestFirmwareRuntimeRenderAudioBlockTracksMeter()
 {
   fantome::FirmwareRuntime runtime;
@@ -1459,6 +1487,7 @@ int main()
     TestHardwareControlRouterBridgesRawControls();
     TestHardwareControlScannerFiltersRawInput();
     TestFirmwareRuntimeTracksDirtyPresetAndSession();
+    TestFirmwareRuntimeOnlyMarksPersistedMidiChangesDirty();
     TestFirmwareRuntimeRenderAudioBlockTracksMeter();
     TestFirmwareRuntimeUiSaveAndReloadSessionActions();
     TestDaisyStubAppBridgesQueuedInputAndAudio();

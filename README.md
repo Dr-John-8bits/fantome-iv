@@ -47,6 +47,7 @@ Le projet est désormais figé sur une base matérielle claire :
 - [docs/SOFTWARE-ARCHITECTURE.md](./docs/SOFTWARE-ARCHITECTURE.md) : stratégie logicielle portable et cible Daisy
 - [docs/PHASE-0-AUDIT.md](./docs/PHASE-0-AUDIT.md) : audit d'avancement de la phase 0 documentaire
 - [docs/PROJECT-AUDIT.md](./docs/PROJECT-AUDIT.md) : audit global du projet au `21 avril 2026`
+- [docs/CODE-AUDIT.md](./docs/CODE-AUDIT.md) : audit code et validation logicielle avant achat matériel
 - [docs/BOM.md](./docs/BOM.md) : BOM finale d'achat du prototype
 - [docs/INSTALLATION-MATERIEL.md](./docs/INSTALLATION-MATERIEL.md) : ordre de lecture et montage matériel pas à pas
 - [docs/ROADMAP.md](./docs/ROADMAP.md) : feuille de route du projet
@@ -136,13 +137,17 @@ Le projet est maintenant au stade `documentation solide + phase 1A logicielle ou
 - pinmap cible Daisy figée aussi en code côté `targets/daisy/`
 - boot cible Daisy désormais pensé depuis la plateforme et son store de session
 - adaptation audio interleavée de la cible Daisy en place
+- audit code exécuté le `24 avril 2026`
+- build standard, tests, smoke tests, `-Werror` et sanitizers validés
 - BOM finale d'achat prête
 - guide d'installation matériel prêt
 - audit global projet exécuté et validé
 
 ## Prochaine étape
 
-Le projet est maintenant au seuil où l'achat du matériel est justifié.
+Le projet est maintenant au seuil où l'achat du matériel est utile pour continuer la validation réelle.
+
+L'audit code confirme que le cœur portable est sain. Il confirme aussi que la cible `libDaisy` réelle doit encore être validée sur matériel : callback audio, ADC, OLED, MIDI UART, GPIO, persistance et charge CPU.
 
 La suite logique devient :
 

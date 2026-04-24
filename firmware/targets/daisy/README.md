@@ -31,6 +31,20 @@ Ce dossier porte maintenant une première cible `Daisy` volontairement très min
 - si `libDaisy` n'est pas disponible, la cible compile en mode `stub`
 - si `libDaisy` est disponible plus tard, ce point d'entrée servira de base à l'intégration réelle
 
+## Limite actuelle
+
+La cible Daisy est prête pour le bring-up, mais elle n'est pas encore un firmware matériel complet.
+
+À valider sur vraie `Daisy Seed` :
+
+- callback audio `libDaisy`
+- scan ADC réel
+- encodeur et boutons GPIO
+- OLED I2C réel
+- MIDI UART réel
+- LED MIDI
+- persistance cible
+
 ## Ce qui vivra ici ensuite
 
 - l'audio callback temps réel

@@ -261,25 +261,24 @@
 
     <main class="grid">
       <section class="panel">
-        <span class="status">BOM finale prête</span>
+        <span class="status">Audit code validé</span>
         <h2>L'essentiel</h2>
         <p>
           Fantôme IV a maintenant une base documentaire solide et un vrai socle
           firmware portable déjà testé sur Mac. La V1 reste cadrée autour d'une
           Daisy Seed, de 4 voix, d'un MIDI DIN, d'un OLED et d'une interface
-          simple mais musicale. Le projet a maintenant atteint le seuil où
-          l'achat du matériel est pertinent.
+          simple mais musicale. Le cœur portable est validé localement ;
+          la prochaine étape utile est maintenant le bring-up sur vraie Daisy.
         </p>
       </section>
 
       <section class="panel">
         <h2>Actualité</h2>
         <p>
-          La couture Daisy a été poussée au maximum sans carte réelle :
-          pinmap figée en code, boot cible préparé, session store côté cible,
-          adaptation audio interleavée, stubs `ADC`, `OLED` et `MIDI UART`
-          cohérents avec le hardware prévu. La BOM finale d'achat et le guide
-          d'installation matériel sont maintenant prêts.
+          L'audit code du 24 avril 2026 valide le build standard, les tests,
+          le smoke test desktop, le stub Daisy, une passe <code>-Werror</code> et une
+          passe sanitizer. Le cœur portable est sain ; les drivers <code>libDaisy</code>
+          réels restent à valider avec le matériel.
         </p>
       </section>
 
@@ -289,7 +288,7 @@
           <li>Commander le matériel selon la BOM finale.</li>
           <li>Valider la Daisy Seed seule en USB et bootloader.</li>
           <li>Câbler l'audio, puis les contrôles, puis l'OLED, puis le MIDI DIN.</li>
-          <li>Brancher ensuite le runtime Fantôme IV sur le vrai hardware.</li>
+          <li>Brancher ensuite les callbacks et drivers <code>libDaisy</code> réels.</li>
         </ul>
       </section>
 

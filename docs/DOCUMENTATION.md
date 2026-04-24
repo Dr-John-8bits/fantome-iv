@@ -66,16 +66,19 @@ Ordre de référence du plus stratégique au plus opérationnel :
 14. [BOM.md](./BOM.md)
    Rôle : BOM finale d'achat et référence de commande du prototype.
 
-15. [INSTALLATION-MATERIEL.md](./INSTALLATION-MATERIEL.md)
+15. [CODE-AUDIT.md](./CODE-AUDIT.md)
+   Rôle : audit du code et état réel de validation logicielle avant achat matériel.
+
+16. [INSTALLATION-MATERIEL.md](./INSTALLATION-MATERIEL.md)
    Rôle : ordre de lecture et ordre d'assemblage physique.
 
-16. [ROADMAP.md](./ROADMAP.md)
+17. [ROADMAP.md](./ROADMAP.md)
    Rôle : ordre de travail et jalons du projet.
 
-17. [README.md](../README.md)
+18. [README.md](../README.md)
    Rôle : porte d'entrée du dépôt.
 
-18. [LISTE-COURSES.md](./LISTE-COURSES.md)
+19. [LISTE-COURSES.md](./LISTE-COURSES.md)
    Rôle : version simple de la BOM pour les achats.
 
 ## Règles de maintenance
@@ -130,6 +133,7 @@ On considère la base documentaire comme suffisamment solide quand :
 - le comportement MIDI reçu est décrit
 - l'architecture logicielle est cadrée
 - la BOM couvre le prototype réel
+- l'audit code pré-achat est écrit
 - les décisions structurantes sont consignées
 
 ## Cas particulier du MIDI

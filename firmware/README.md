@@ -56,6 +56,7 @@ On sépare volontairement le code en trois couches :
 - première cible `targets/daisy/` très mince avec stub compilable
 - config cible Daisy figée en code avec pinmap, OLED, MIDI, audio et session
 - boot cible via store de session possédé par la plateforme
+- audit code pré-achat validé : build standard, tests, smoke tests, `-Werror` et sanitizers
 
 ## Ce que cette base ne fait pas encore
 
@@ -67,6 +68,8 @@ On sépare volontairement le code en trois couches :
 - persistance réelle sur hardware
 - lecture des contrôles physiques réels
 - callback audio réel et drivers `OLED / MIDI UART / ADC`
+
+Voir aussi [../docs/CODE-AUDIT.md](../docs/CODE-AUDIT.md).
 
 ## Build local
 
